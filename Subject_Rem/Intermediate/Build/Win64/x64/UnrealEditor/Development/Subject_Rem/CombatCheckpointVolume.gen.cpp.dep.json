@@ -1,0 +1,19 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\unrealeditor\\inc\\subject_rem\\uht\\combatcheckpointvolume.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\x64\\subject_remeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\subject_rem\\definitions.subject_rem.h",
+            "d:\\subject-rem\\subject_rem\\source\\subject_rem\\variant_combat\\combatcheckpointvolume.h",
+            "d:\\epicgames\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\components\\boxcomponent.h",
+            "d:\\epicgames\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\components\\shapecomponent.h",
+            "d:\\epicgames\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\shapecomponent.generated.h",
+            "d:\\epicgames\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\boxcomponent.generated.h",
+            "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\unrealeditor\\inc\\subject_rem\\uht\\combatcheckpointvolume.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

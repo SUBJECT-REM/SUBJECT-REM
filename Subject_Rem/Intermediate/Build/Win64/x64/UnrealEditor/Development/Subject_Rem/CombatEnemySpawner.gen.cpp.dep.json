@@ -1,0 +1,17 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\unrealeditor\\inc\\subject_rem\\uht\\combatenemyspawner.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\x64\\subject_remeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\subject_rem\\definitions.subject_rem.h",
+            "d:\\subject-rem\\subject_rem\\source\\subject_rem\\variant_combat\\ai\\combatenemyspawner.h",
+            "d:\\subject-rem\\subject_rem\\source\\subject_rem\\variant_combat\\combatactivatable.h",
+            "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\unrealeditor\\inc\\subject_rem\\uht\\combatactivatable.generated.h",
+            "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\unrealeditor\\inc\\subject_rem\\uht\\combatenemyspawner.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

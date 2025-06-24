@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "Subject_Rem",
+			"Path": "..\\Source\\Subject_Rem.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "Subject_RemEditor",
+			"Path": "..\\Source\\Subject_RemEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}

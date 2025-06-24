@@ -1,0 +1,23 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\subject-rem\\subject_rem\\source\\subject_rem\\variant_combat\\combatdummy.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\x64\\subject_remeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\subject_rem\\definitions.subject_rem.h",
+            "d:\\subject-rem\\subject_rem\\source\\subject_rem\\variant_combat\\combatdummy.h",
+            "d:\\subject-rem\\subject_rem\\source\\subject_rem\\variant_combat\\combatdamageable.h",
+            "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\unrealeditor\\inc\\subject_rem\\uht\\combatdamageable.generated.h",
+            "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\unrealeditor\\inc\\subject_rem\\uht\\combatdummy.generated.h",
+            "d:\\epicgames\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\physicsengine\\physicsconstraintcomponent.h",
+            "d:\\epicgames\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\physicsengine\\constraintinstance.h",
+            "d:\\epicgames\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\physicsengine\\constraintdrives.h",
+            "d:\\epicgames\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\constraintdrives.generated.h",
+            "d:\\epicgames\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\constraintinstance.generated.h",
+            "d:\\epicgames\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\physicsconstraintcomponent.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

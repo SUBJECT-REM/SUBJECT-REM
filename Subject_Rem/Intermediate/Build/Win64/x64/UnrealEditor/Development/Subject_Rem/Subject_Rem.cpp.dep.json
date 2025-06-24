@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\subject-rem\\subject_rem\\source\\subject_rem\\subject_rem.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\x64\\subject_remeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "d:\\subject-rem\\subject_rem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\subject_rem\\definitions.subject_rem.h",
+            "d:\\subject-rem\\subject_rem\\source\\subject_rem\\subject_rem.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
