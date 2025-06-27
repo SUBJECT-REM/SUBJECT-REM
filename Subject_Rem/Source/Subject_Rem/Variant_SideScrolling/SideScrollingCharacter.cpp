@@ -60,9 +60,10 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 	JumpMaxCount = 2;
 }
 
-void ASideScrollingCharacter::EndPlay(EEndPlayReason::Type EndPlayReason)
+void ASideScrollingCharacter::BeginPlay()
 {
-	Super::EndPlay(EndPlayReason);
+	Super::BeginPlay();
+	GetCharacterMovement()->JumpZVelocity = JumpVelocity;
 }
 
 void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
