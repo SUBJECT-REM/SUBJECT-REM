@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 
 #include "SideScrollingCharacter.h"
@@ -55,16 +55,14 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 	GetCharacterMovement()->SetPlaneConstraintNormal(FVector(0.0f, 1.0f, 0.0f));
 	GetCharacterMovement()->bConstrainToPlane = true;
 
-	// enable double jump
+
+	// enable double jump - 1단 점프하려면 1로 수정
 	JumpMaxCount = 2;
 }
 
 void ASideScrollingCharacter::EndPlay(EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-
-	// clear the wall jump timer
-	GetWorld()->GetTimerManager().ClearTimer(WallJumpTimer);
 }
 
 void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -95,7 +93,7 @@ void ASideScrollingCharacter::NotifyHit(class UPrimitiveComponent* MyComp, AActo
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
-	// only apply push impulse if we're falling
+	// 캐릭터가 떨어지고 있는 중이 아니라면 return
 	if (!GetCharacterMovement()->IsFalling())
 	{
 		return;
@@ -131,7 +129,7 @@ void ASideScrollingCharacter::Move(const FInputActionValue& Value)
 
 void ASideScrollingCharacter::Drop(const FInputActionValue& Value)
 {
-	// route the input
+	// route the input	
 	DoDrop(Value.Get<float>());
 }
 
@@ -143,18 +141,15 @@ void ASideScrollingCharacter::DropReleased(const FInputActionValue& Value)
 
 void ASideScrollingCharacter::DoMove(float Forward)
 {
-	// is movement temporarily disabled after wall jumping?
-	if (!bHasWallJumped)
-	{
-		// save the movement values
-		ActionValueY = Forward;
+	// save the movement values
+	ActionValueY = Forward;
 
-		// figure out the movement direction
-		const FVector MoveDir = FVector(1.0f, Forward > 0.0f ? 0.1f : -0.1f, 0.0f);
+	// figure out the movement direction
+	const FVector MoveDir = FVector(1.0f, Forward > 0.0f ? 0.1f : -0.1f, 0.0f);
 
-		// apply the movement input
-		AddMovementInput(MoveDir, Forward);
-	}
+	// apply the movement input
+	AddMovementInput(MoveDir, Forward);
+	
 }
 
 void ASideScrollingCharacter::DoDrop(float Value)
@@ -205,9 +200,10 @@ void ASideScrollingCharacter::DoInteract()
 
 void ASideScrollingCharacter::MultiJump()
 {
-	// does the user want to drop to a lower platform?
+	// Platform아래로 떨어지고 싶어 하는지?
 	if (DropValue > 0.0f)
 	{
+		//발 아래 Platform의 ObjectType이 SoftCollision이면 Platform아래로 내려갈 수 있다.
 		CheckForSoftCollision();
 		return;
 	}
@@ -215,62 +211,21 @@ void ASideScrollingCharacter::MultiJump()
 	// reset the drop value
 	DropValue = 0.0f;
 
-	// if we're grounded, disregard advanced jump logic
+	// 떨어지는 중이 아니라면 Jump를 수행한다.
 	if (!GetCharacterMovement()->IsFalling())
 	{
 		Jump();
 		return;
 	}
 
-	// if we have a horizontal input, try for wall jump first
-	if (!bHasWallJumped && !FMath::IsNearlyZero(ActionValueY))
+	//일단 기본 템플릿 테스트를 위해서 남김 - 삭제 예정
+	if (!bHasDoubleJumped)
 	{
-		// trace ahead of the character for walls
-		FHitResult OutHit;
+		// raise the double jump flag
+		bHasDoubleJumped = true;
 
-		const FVector Start = GetActorLocation();
-		const FVector End = Start + (FVector(ActionValueY > 0.0f ? 1.0f : -1.0f, 0.0f, 0.0f) * WallJumpTraceDistance);
-
-		FCollisionQueryParams QueryParams;
-		QueryParams.AddIgnoredActor(this);
-
-		GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, QueryParams);
-
-		if (OutHit.bBlockingHit)
-		{
-			// rotate to the bounce direction
-			const FRotator BounceRot = UKismetMathLibrary::MakeRotFromX(OutHit.ImpactNormal);
-			SetActorRotation(FRotator(0.0f, BounceRot.Yaw, 0.0f));
-
-			// calculate the impulse vector
-			FVector WallJumpImpulse = OutHit.ImpactNormal * WallJumpHorizontalImpulse;
-			WallJumpImpulse.Z = GetCharacterMovement()->JumpZVelocity * WallJumpVerticalMultiplier;
-
-			// launch the character away from the wall
-			LaunchCharacter(WallJumpImpulse, true, true);
-
-			// enable wall jump lockout for a bit
-			bHasWallJumped = true;
-
-			// schedule wall jump lockout reset
-			GetWorld()->GetTimerManager().SetTimer(WallJumpTimer, this, &ASideScrollingCharacter::ResetWallJump, DelayBetweenWallJumps, false);
-
-			return;
-		}
-	}
-
-	// test for double jump only if we haven't already tested for wall jump
-	if (!bHasWallJumped)
-	{
-		// The movement component handles double jump but we still need to manage the flag for animation
-		if (!bHasDoubleJumped)
-		{
-			// raise the double jump flag
-			bHasDoubleJumped = true;
-
-			// let the CMC handle jump
-			Jump();
-		}
+		// let the CMC handle jump
+		Jump();
 	}
 }
 
@@ -285,6 +240,7 @@ void ASideScrollingCharacter::CheckForSoftCollision()
 	const FVector Start = GetActorLocation();
 	const FVector End = Start + (FVector::DownVector * SoftCollisionTraceDistance);
 
+	//아래를 뚫고 내려가고 싶으면 위의 Mesh가 SoftCollisionObjectType이어야한다.
 	FCollisionObjectQueryParams ObjectParams;
 	ObjectParams.AddObjectTypesToQuery(SoftCollisionObjectType);
 
@@ -293,18 +249,12 @@ void ASideScrollingCharacter::CheckForSoftCollision()
 
 	GetWorld()->LineTraceSingleByObjectType(OutHit, Start, End, ObjectParams, QueryParams);
 
-	// did we hit a soft floor?
+	// Trace 결과가 SofrCollision이 맞는가?
 	if (OutHit.GetActor())
 	{
 		// drop through the floor
 		SetSoftCollision(true);
 	}
-}
-
-void ASideScrollingCharacter::ResetWallJump()
-{
-	// reset the wall jump flag
-	bHasWallJumped = false;
 }
 
 void ASideScrollingCharacter::SetSoftCollision(bool bEnabled)
@@ -318,7 +268,3 @@ bool ASideScrollingCharacter::HasDoubleJumped() const
 	return bHasDoubleJumped;
 }
 
-bool ASideScrollingCharacter::HasWallJumped() const
-{
-	return bHasWallJumped;
-}
