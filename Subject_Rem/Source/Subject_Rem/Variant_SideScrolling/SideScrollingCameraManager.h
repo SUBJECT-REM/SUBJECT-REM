@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -17,7 +17,7 @@ class ASideScrollingCameraManager : public APlayerCameraManager
 public:
 
 	/** Overrides the default camera view target calculation */
-	/*	* @param OutVT : Chase Actor
+	/*	* @param OutVT : Chase Actor 한글
 	* @param DeltaTime : Lerp value
 	*/
 	virtual void UpdateViewTarget(FTViewTarget& OutVT, float DeltaTime) override;
