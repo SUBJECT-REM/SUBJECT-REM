@@ -36,7 +36,8 @@
 			"SideScrollingGameMode.cpp.obj",
 			"SideScrollingInteractable.cpp.obj",
 			"SideScrollingPlayerController.cpp.obj",
-			"SideScrollingUI.cpp.obj"
+			"SideScrollingUI.cpp.obj",
+			"MyClass.cpp.obj"
 		]
 	}
 }

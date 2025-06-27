@@ -15,6 +15,7 @@
 			"SideScrollingSoftPlatform.gen.cpp.obj",
 			"SideScrollingStateTreeUtility.gen.cpp.obj",
 			"SideScrollingUI.gen.cpp.obj",
+			"Subject_Rem.init.gen.cpp.obj",
 			"Subject_RemCharacter.gen.cpp.obj",
 			"Subject_RemGameMode.gen.cpp.obj",
 			"Subject_RemPlayerController.gen.cpp.obj",
@@ -35,8 +36,7 @@
 			"SideScrollingGameMode.cpp.obj",
 			"SideScrollingInteractable.cpp.obj",
 			"SideScrollingPlayerController.cpp.obj",
-			"SideScrollingUI.cpp.obj",
-			"Subject_Rem.init.gen.cpp.obj"
+			"SideScrollingUI.cpp.obj"
 		]
 	}
 }

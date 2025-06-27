@@ -39,6 +39,7 @@
 /NATVIS:"../Plugins/Runtime/StateTree/Intermediate/Build/Win64/x64/UnrealEditor/Development/StateTreeModule/StateTree.natvis"
 "D:/SUBJECT-REM/Subject_Rem/Intermediate/Build/Win64/x64/Subject_RemEditor/Development/UnrealEd/SharedPCH.UnrealEd.Project.ValApi.ValExpApi.Cpp20.h.obj"
 "D:/SUBJECT-REM/Subject_Rem/Intermediate/Build/Win64/x64/UnrealEditor/Development/Subject_Rem/Module.Subject_Rem.cpp.obj"
+"D:/SUBJECT-REM/Subject_Rem/Intermediate/Build/Win64/x64/UnrealEditor/Development/Subject_Rem/MyClass.cpp.obj"
 "D:/SUBJECT-REM/Subject_Rem/Intermediate/Build/Win64/x64/UnrealEditor/Development/Subject_Rem/Default.rc2.res"
 "../Intermediate/Build/Win64/x64/UnrealEditor/Development/Engine/UnrealEditor-Engine.lib"
 "../Intermediate/Build/Win64/x64/UnrealEditor/Development/AIModule/UnrealEditor-AIModule.lib"

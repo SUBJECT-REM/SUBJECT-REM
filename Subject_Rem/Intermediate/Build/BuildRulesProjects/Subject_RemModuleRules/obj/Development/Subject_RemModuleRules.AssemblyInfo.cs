@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Subject_RemModuleRules")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Development")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+768935a43a5fbc0126add0c1b1a0fc6c997fe418")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b17dcd196e6c1a03a0bf1b5db79326a0d7a2c598")]
 [assembly: System.Reflection.AssemblyProductAttribute("Subject_RemModuleRules")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Subject_RemModuleRules")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
