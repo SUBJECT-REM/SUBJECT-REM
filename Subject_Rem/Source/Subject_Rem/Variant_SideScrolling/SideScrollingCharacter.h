@@ -73,9 +73,7 @@ public:
 	ASideScrollingCharacter();
 
 protected:
-
-	/** Gameplay cleanup */
-	virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
+	virtual void BeginPlay() override;
 
 	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -120,7 +118,9 @@ public:
 	virtual void DoInteract();
 
 protected:
-
+	//점프 높이 값 설정
+	UPROPERTY(EditDefaultsOnly, Category = "Jump")
+	float JumpVelocity;
 	/** Handles advanced jump logic */
 	void MultiJump();
 	/** Checks for soft collision with platforms */
