@@ -1,0 +1,51 @@
+{
+	"version": 1,
+	"changelists": [
+		{
+			"guid": "00000000000000000000000000000000",
+			"description": "Default Uncontrolled Changelist",
+			"files": [
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/VFX/NS_Damage.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/UI/UI_LifeBar.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Materials/MI_Box_Destroyed.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Materials/M_Lava.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Input/Actions/IA_ChargedAttack.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Input/Actions/IA_ComboAttack.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Input/IMC_Combat.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Input/UI_TouchInterface_Combat.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Input/BPI_TouchInterface_Combat.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/Interactables/BP_CombatActivationVolume.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/Interactables/BP_CombatCheckpointVolume.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/Interactables/BP_CombatDamageableBox.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/Interactables/BP_CombatDummy.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/Interactables/BP_CombatLavaFloor.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/AI/EnvQuery_Fallback.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/AI/EnvQuery_Flank.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/AI/ST_CombatEnemy.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/AI/BP_CombatAIController.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/AI/BP_CombatEnemy.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/AI/BP_CombatEnemySpawner.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/BP_CameraShake_Hit_Enemy.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/BP_CameraShake_Hit_Player.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/BP_CombatCharacter.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/BP_CombatGameMode.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Blueprints/BP_CombatPlayerController.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Anims/AM_ChargedAttack.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Anims/AM_ComboAttack.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Anims/ABP_Manny_Combat.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Lvl_Combat.umap",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Platforming/Lvl_Platforming.umap",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Platforming/VFX/NS_Jump_Trail.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Platforming/Anims/ABP_Manny_Platforming.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Platforming/Blueprints/BP_PlatformingCharacter.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Platforming/Input/Actions/IA_Dash.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Platforming/Input/BPI_TouchInterface_Platforming.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Platforming/Blueprints/BP_PlatformingPlayerController.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Platforming/Input/UI_TouchInterface_Platforming.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Platforming/Blueprints/BP_PlatformingGameMode.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Platforming/Input/IMC_Platforming.uasset",
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Platforming/Anims/AM_Dash.uasset"
+			]
+		}
+	]
+}
