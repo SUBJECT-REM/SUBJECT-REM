@@ -17,22 +17,21 @@ class ASideScrollingCameraManager : public APlayerCameraManager
 public:
 
 	/** Overrides the default camera view target calculation */
+	/*	* @param OutVT : Chase Actor
+	* @param DeltaTime : Lerp value
+	*/
 	virtual void UpdateViewTarget(FTViewTarget& OutVT, float DeltaTime) override;
 
 public:
-
-	/** How close we want to stay to the view target */
+	/*How close to Target */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Side Scrolling Camera", meta=(ClampMin=0, ClampMax=10000, Units="cm"))
 	float CurrentZoom = 1000.0f;
-
-	/** How far above the target do we want the camera to focus */
+	/** Inital Camara Z Value */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Side Scrolling Camera", meta=(ClampMin=0, ClampMax=10000, Units="cm"))
 	float CameraZOffset = 100.0f;
-
 	/** Minimum camera scrolling bounds in world space */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Side Scrolling Camera", meta=(ClampMin=0, ClampMax=10000, Units="cm"))
 	float CameraXMinBounds = -400.0f;
-
 	/** Maximum camera scrolling bounds in world space */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Side Scrolling Camera", meta=(ClampMin=0, ClampMax=10000, Units="cm"))
 	float CameraXMaxBounds = 10000.0f;
@@ -41,7 +40,6 @@ protected:
 
 	/** Last cached camera vertical location. The camera only adjusts its height if necessary. */
 	float CurrentZ = 0.0f;
-
 	/** First-time update camera setup flag */
 	bool bSetup = true;
 };

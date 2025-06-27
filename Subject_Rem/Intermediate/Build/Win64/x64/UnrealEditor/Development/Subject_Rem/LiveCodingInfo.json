@@ -29,7 +29,6 @@
 			"PlatformingGameMode.gen.cpp.obj",
 			"PlatformingPlayerController.gen.cpp.obj",
 			"SideScrollingAIController.gen.cpp.obj",
-			"SideScrollingCameraManager.gen.cpp.obj",
 			"SideScrollingCharacter.gen.cpp.obj",
 			"SideScrollingGameMode.gen.cpp.obj",
 			"SideScrollingInteractable.gen.cpp.obj",
@@ -41,7 +40,6 @@
 			"SideScrollingSoftPlatform.gen.cpp.obj",
 			"SideScrollingStateTreeUtility.gen.cpp.obj",
 			"SideScrollingUI.gen.cpp.obj",
-			"Subject_Rem.init.gen.cpp.obj",
 			"Subject_RemCharacter.gen.cpp.obj",
 			"Subject_RemGameMode.gen.cpp.obj",
 			"Subject_RemPlayerController.gen.cpp.obj",
@@ -81,8 +79,10 @@
 			"SideScrollingMovingPlatform.cpp.obj",
 			"SideScrollingPickup.cpp.obj",
 			"SideScrollingSoftPlatform.cpp.obj",
-			"SideScrollingCameraManager.cpp.obj",
-			"SideScrollingCharacter.cpp.obj"
+			"SideScrollingCharacter.cpp.obj",
+			"SideScrollingCameraManager.gen.cpp.obj",
+			"Subject_Rem.init.gen.cpp.obj",
+			"SideScrollingCameraManager.cpp.obj"
 		],
 		"Module.Subject_Rem.3.cpp.obj": [
 			"SideScrollingGameMode.cpp.obj",

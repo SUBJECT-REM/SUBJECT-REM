@@ -5,6 +5,7 @@
 			"guid": "00000000000000000000000000000000",
 			"description": "Default Uncontrolled Changelist",
 			"files": [
+				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_SideScrolling/Blueprints/BP_SideScrollingCameraManager.uasset",
 				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/VFX/NS_Damage.uasset",
 				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/UI/UI_LifeBar.uasset",
 				"D:/SUBJECT-REM/Subject_Rem/Content/Variant_Combat/Materials/MI_Box_Destroyed.uasset",

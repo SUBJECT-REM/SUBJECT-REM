@@ -69,11 +69,11 @@ struct Z_Construct_UClass_ASideScrollingCameraManager_Statics
 		{ "ClampMax", "10000" },
 		{ "ClampMin", "0" },
 #if !UE_BUILD_SHIPPING
-		{ "Comment", "/** How close we want to stay to the view target */" },
+		{ "Comment", "/*How close to Target */" },
 #endif
 		{ "ModuleRelativePath", "Variant_SideScrolling/SideScrollingCameraManager.h" },
 #if !UE_BUILD_SHIPPING
-		{ "ToolTip", "How close we want to stay to the view target" },
+		{ "ToolTip", "How close to Target" },
 #endif
 		{ "Units", "cm" },
 	};
@@ -82,11 +82,11 @@ struct Z_Construct_UClass_ASideScrollingCameraManager_Statics
 		{ "ClampMax", "10000" },
 		{ "ClampMin", "0" },
 #if !UE_BUILD_SHIPPING
-		{ "Comment", "/** How far above the target do we want the camera to focus */" },
+		{ "Comment", "/** Inital Camara Z Value */" },
 #endif
 		{ "ModuleRelativePath", "Variant_SideScrolling/SideScrollingCameraManager.h" },
 #if !UE_BUILD_SHIPPING
-		{ "ToolTip", "How far above the target do we want the camera to focus" },
+		{ "ToolTip", "Inital Camara Z Value" },
 #endif
 		{ "Units", "cm" },
 	};
@@ -176,10 +176,10 @@ ASideScrollingCameraManager::~ASideScrollingCameraManager() {}
 struct Z_CompiledInDeferFile_FID_SUBJECT_REM_Subject_Rem_Source_Subject_Rem_Variant_SideScrolling_SideScrollingCameraManager_h__Script_Subject_Rem_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ASideScrollingCameraManager, ASideScrollingCameraManager::StaticClass, TEXT("ASideScrollingCameraManager"), &Z_Registration_Info_UClass_ASideScrollingCameraManager, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ASideScrollingCameraManager), 1379907916U) },
+		{ Z_Construct_UClass_ASideScrollingCameraManager, ASideScrollingCameraManager::StaticClass, TEXT("ASideScrollingCameraManager"), &Z_Registration_Info_UClass_ASideScrollingCameraManager, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ASideScrollingCameraManager), 77876168U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_SUBJECT_REM_Subject_Rem_Source_Subject_Rem_Variant_SideScrolling_SideScrollingCameraManager_h__Script_Subject_Rem_3589604202(TEXT("/Script/Subject_Rem"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_SUBJECT_REM_Subject_Rem_Source_Subject_Rem_Variant_SideScrolling_SideScrollingCameraManager_h__Script_Subject_Rem_823219337(TEXT("/Script/Subject_Rem"),
 	Z_CompiledInDeferFile_FID_SUBJECT_REM_Subject_Rem_Source_Subject_Rem_Variant_SideScrolling_SideScrollingCameraManager_h__Script_Subject_Rem_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_SUBJECT_REM_Subject_Rem_Source_Subject_Rem_Variant_SideScrolling_SideScrollingCameraManager_h__Script_Subject_Rem_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
