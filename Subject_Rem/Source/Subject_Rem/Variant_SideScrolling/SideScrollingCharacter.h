@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -12,6 +12,7 @@ struct FInputActionValue;
 
 /**
  *  A player-controllable character side scrolling game
+ * 한글 주석 테스트
  */
 UCLASS(abstract)
 class ASideScrollingCharacter : public ACharacter
