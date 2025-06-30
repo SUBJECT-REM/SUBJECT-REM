@@ -33,7 +33,7 @@ void ASideScrollingCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float De
 		{
 			// lower the setup flag
 			bSetup = false;
-
+			 
 			// initialize the camera viewpoint and return
 			OutVT.POV.Location.X = CurrentActorLocation.X;
 			OutVT.POV.Location.Y = CurrentY;
