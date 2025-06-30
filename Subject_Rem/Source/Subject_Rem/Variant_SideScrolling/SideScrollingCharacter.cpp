@@ -40,13 +40,16 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 	GetCharacterMovement()->SetWalkableFloorAngle(75.0f);
 	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.0f;
+	//걷기 상태에서 감속률 - 값이 높을수록 빨리 멈춤
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.0f;
 	GetCharacterMovement()->bIgnoreBaseRotation = true;
 
 	GetCharacterMovement()->PerchRadiusThreshold = 15.0f;
 	GetCharacterMovement()->LedgeCheckThreshold = 6.0f;
 
+	//점프 높이
 	GetCharacterMovement()->JumpZVelocity = 750.0f;
+	//0.0 (공중에서 조종 불가) ~ 1.0 (지상과 비슷하게 조작가능)
 	GetCharacterMovement()->AirControl = 1.0f;
 
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 750.0f, 0.0f);
@@ -63,7 +66,6 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 void ASideScrollingCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	GetCharacterMovement()->JumpZVelocity = JumpVelocity;
 }
 
 void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -175,6 +177,7 @@ void ASideScrollingCharacter::DoInteract()
 	// do a sphere trace to look for interactive objects
 	FHitResult OutHit;
 
+	//현재 위치에서 팡의 방향으로 SphereTrace를 한다.
 	const FVector Start = GetActorLocation();
 	const FVector End = Start + FVector(100.0f, 0.0f, 0.0f);
 

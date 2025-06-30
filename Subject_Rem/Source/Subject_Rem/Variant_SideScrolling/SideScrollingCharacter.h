@@ -113,14 +113,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
 
-	/** Handles interact inputs from either controls or UI interfaces */
+	/**ISideScrollingInteractable Class와 상호작용하는 기능이다.*/
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoInteract();
 
 protected:
-	//점프 높이 값 설정
-	UPROPERTY(EditDefaultsOnly, Category = "Jump")
-	float JumpVelocity;
 	/** Handles advanced jump logic */
 	void MultiJump();
 	/** Checks for soft collision with platforms */
