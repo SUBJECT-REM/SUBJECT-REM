@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class UInputAction;
+
 struct FInputActionValue;
 
 /**
@@ -17,7 +18,7 @@ UCLASS(abstract)
 class ASideScrollingCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
+protected:
 	/** Player camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Camera", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* Camera;
@@ -36,6 +37,13 @@ protected:
 	/** Interact Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
 	UInputAction* InteractAction;
+	/*UseItem*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* UseItemNum1Actor;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* UseItemNum2Acton;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* UseItemNum3Acton;
 
 	/** Max distance that interactive objects can be triggered */
 	UPROPERTY(EditAnywhere, Category="Side Scrolling")
@@ -134,4 +142,13 @@ public:
 	UFUNCTION(BlueprintPure, Category="Side Scrolling")
 	bool HasDoubleJumped() const;
 
+//UseItemSection
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	virtual void UseItemNum1();
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	virtual void UseItemNum2();
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	virtual void UseItemNum3();
 };

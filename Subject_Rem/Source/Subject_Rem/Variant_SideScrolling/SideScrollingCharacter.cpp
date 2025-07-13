@@ -4,6 +4,7 @@
 #include "SideScrollingCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Component/SRStressHandlerComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "InputActionValue.h"
@@ -89,6 +90,10 @@ void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* P
 		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::Drop);
 		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Completed, this, &ASideScrollingCharacter::DropReleased);
 
+		//UseItem -> 여기에 키 넣어주면 됌
+		EnhancedInputComponent->BindAction(UseItemNum1Actor, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::UseItemNum1);
+		EnhancedInputComponent->BindAction(UseItemNum2Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::UseItemNum2);
+		EnhancedInputComponent->BindAction(UseItemNum3Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::UseItemNum3);
 	}
 }
 
@@ -270,5 +275,20 @@ void ASideScrollingCharacter::SetSoftCollision(bool bEnabled)
 bool ASideScrollingCharacter::HasDoubleJumped() const
 {
 	return bHasDoubleJumped;
+}
+
+void ASideScrollingCharacter::UseItemNum1()
+{
+	UE_LOG(LogTemp, Log, TEXT("UseItemNum1"));
+}
+
+void ASideScrollingCharacter::UseItemNum2()
+{
+	UE_LOG(LogTemp, Log, TEXT("UseItemNum2"));
+}
+
+void ASideScrollingCharacter::UseItemNum3()
+{
+	UE_LOG(LogTemp, Log, TEXT("UseItemNum3"));
 }
 
