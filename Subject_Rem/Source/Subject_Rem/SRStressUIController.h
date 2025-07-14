@@ -22,9 +22,26 @@ protected:
 	float StressProgressBarColor_G = 0.05;
 	float StressProgressBarColor_B = 0.05;
 
+	UPROPERTY(meta = (BindWidget))
+	UImage* HighStressEffect;
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* Pulse;
+
 private:
 	void UpdateStressProgressBar(float StressAmount);
 	USRStressLocalPlayerSubsystem* StressSubsystem;
+
+	/*
+	* 스트레스 이미지의 알파값(투명도)를 조절합니다.
+	* @param 이미지의 투명도 (0.0-1.0)
+	*/
+	void SetHightStressEffectAlpha(float Alpha);
+
+	/*
+	* StressEffect를 재생하는 함수입니다.
+	* @param true = 재생, flase = 멈춤
+	*/
+	void PlayDangerPulse(bool bIsPlay);
 
 
 };

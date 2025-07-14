@@ -4,6 +4,7 @@
 #include "SRStressUIController.h"
 #include "Subsystem/SRStressLocalPlayerSubsystem.h"
 #include "Components/ProgressBar.h"
+#include "Components/Image.h"
 
 void USRStressUIController::NativeConstruct()
 {
@@ -21,13 +22,14 @@ void USRStressUIController::NativeConstruct()
 
             StressSubsystem->OnStressChangeDelegate.AddUObject(this, &ThisClass::UpdateStressProgressBar);
       }
+
+      SetHightStressEffectAlpha(0.0f);
 }
 
 void USRStressUIController::UpdateStressProgressBar(float StressAmount)
 {
       check(StressSubsystem);
 
-      UE_LOG(LogTemp, Log, TEXT("StressProgressBar Update"));
       float StressPercent = StressSubsystem->GetStressPercent();
 
       // ProgressBar에 퍼센트 적용
@@ -44,4 +46,53 @@ void USRStressUIController::UpdateStressProgressBar(float StressAmount)
             FLinearColor FillColor = FLinearColor(0.4f, G, B, 1.0f);
             StressProgressBar->SetFillColorAndOpacity(FillColor);
       }
+
+      //StressEffect 실행 및 멈춤
+      if (StressPercent >= 0.8f)
+      {
+            if (!IsAnimationPlaying(Pulse))
+            {
+                  PlayDangerPulse(true);
+            }
+      }
+      else
+      {
+            if (IsAnimationPlaying(Pulse))
+            {
+                  PlayDangerPulse(false);
+                  SetHightStressEffectAlpha(0.0f);
+            }
+      }
+}
+
+void USRStressUIController::SetHightStressEffectAlpha(float Alpha)
+{
+      check(HighStressEffect);
+
+      UE_LOG(LogTemp, Log, TEXT("StressProgressBar Alpha : %f"), Alpha);
+      FLinearColor Color = HighStressEffect->ColorAndOpacity;
+      Color.A = FMath::Clamp(Alpha, 0.0f, 1.0f);
+      HighStressEffect->SetColorAndOpacity(Color);
+}
+
+void USRStressUIController::PlayDangerPulse(bool bIsPlay)
+{
+      check(Pulse);
+
+      if (bIsPlay)
+      {
+            //재생이 끊겨서 다시 재생되는 현상 방지
+            if (!IsAnimationPlaying(Pulse))
+            {
+                  HighStressEffect->SetVisibility(ESlateVisibility::Visible);
+                  PlayAnimation(Pulse, 0.f, -1);
+            }
+      }
+      else 
+      { 
+            StopAnimation(Pulse);
+            HighStressEffect->SetVisibility(ESlateVisibility::Hidden);
+            SetHightStressEffectAlpha(0.0f);
+      }
+      
 }

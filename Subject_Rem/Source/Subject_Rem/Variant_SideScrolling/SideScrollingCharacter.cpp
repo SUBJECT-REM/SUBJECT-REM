@@ -4,7 +4,6 @@
 #include "SideScrollingCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
-//#include "Component/SRStressHandlerComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "InputActionValue.h"
@@ -14,6 +13,7 @@
 #include "SideScrollingInteractable.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "TimerManager.h"
+#include "Subsystem/SRStressLocalPlayerSubsystem.h"
 
 ASideScrollingCharacter::ASideScrollingCharacter()
 {
@@ -279,16 +279,27 @@ bool ASideScrollingCharacter::HasDoubleJumped() const
 
 void ASideScrollingCharacter::UseItemNum1()
 {
-	UE_LOG(LogTemp, Log, TEXT("UseItemNum1"));
+	if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
+	{
+		if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
+		{
+			StressSubsystem->ChangeStressAmount(10.0f);
+		}
+	}
 }
 
 void ASideScrollingCharacter::UseItemNum2()
 {
-	UE_LOG(LogTemp, Log, TEXT("UseItemNum2"));
+	if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
+	{
+		if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
+		{
+			StressSubsystem->ChangeStressAmount(-10.0f);
+		}
+	}
 }
 
 void ASideScrollingCharacter::UseItemNum3()
 {
-	UE_LOG(LogTemp, Log, TEXT("UseItemNum3"));
-}
-
+	//UE_LOG(LogTemp, Log, TEXT("UseItemNum3"));
+} 
