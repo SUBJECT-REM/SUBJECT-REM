@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -24,9 +24,6 @@ public class Subject_Rem : ModuleRules
 
 		PublicIncludePaths.AddRange(new string[] {
 			"Subject_Rem",
-			"Subject_Rem/Variant_Platforming",
-			"Subject_Rem/Variant_Combat",
-			"Subject_Rem/Variant_Combat/AI",
 			"Subject_Rem/Variant_SideScrolling",
 			"Subject_Rem/Variant_SideScrolling/Gameplay",
 			"Subject_Rem/Variant_SideScrolling/AI"
