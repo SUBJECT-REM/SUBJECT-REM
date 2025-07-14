@@ -4,7 +4,7 @@
 #include "SideScrollingCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Component/SRStressHandlerComponent.h"
+//#include "Component/SRStressHandlerComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "InputActionValue.h"
