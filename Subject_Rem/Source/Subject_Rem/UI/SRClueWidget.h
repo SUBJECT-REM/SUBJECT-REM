@@ -13,6 +13,9 @@
 class UGridPanel;
 class UButton;
 class USRSlotWidget;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCombineButtonClickedSignature, TArray<FName>, ClickedSlot);
+
 UCLASS()
 class SUBJECT_REM_API USRClueWidget : public UUserWidget
 {
@@ -24,6 +27,7 @@ public:
 	* @param 갱신하기 위한 데이터
 	*/	void UpdateClueWidget(const FSRClueData& Data);
 
+	FCombineButtonClickedSignature CombineButtonClickedDelegate;
 protected:
 	virtual void NativeConstruct();
 
@@ -43,6 +47,12 @@ private:
 	UFUNCTION()
 	void ClueCombineDataMoveToClue(USRSlotWidget* ClickedSlot);
 
+	/*
+	* CombineButton 클릭시 아이템들이 조합되도록 델리게이트를 Broadcast합니다.
+	*/
+	UFUNCTION()
+	void OnClickedCombineButton();
+
 	/*단서들을 보여주는 패널*/
 	UPROPERTY(meta = (BindWidget))
 	UGridPanel* ClueGridPanel;
@@ -51,4 +61,9 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UGridPanel* ClueCombineGridPanel;
 
+	/*단서 조합 버튼*/
+	UPROPERTY(meta = (BindWidget))
+	UButton* ClueCombineButton;
+	
+	const int VaildCombineItemNum = 2;
 };

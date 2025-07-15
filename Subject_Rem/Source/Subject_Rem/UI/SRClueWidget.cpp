@@ -9,7 +9,6 @@
 void USRClueWidget::NativeConstruct()
 {
 	check(ClueGridPanel)
-
 	TArray<UWidget*> ClueGridChild = ClueGridPanel->GetAllChildren();
 
 	for (UWidget* Widget : ClueGridChild)
@@ -28,7 +27,6 @@ void USRClueWidget::NativeConstruct()
 	
 
 	check(ClueCombineGridPanel)
-
 	TArray<UWidget*> ClueCombineChild = ClueCombineGridPanel->GetAllChildren();
 
 	for (UWidget* Widget : ClueCombineChild)
@@ -45,12 +43,16 @@ void USRClueWidget::NativeConstruct()
 		ClueCombineSlot->FOnSlotClickedDelegate.AddDynamic(this, &ThisClass::ClueCombineDataMoveToClue);
 	}
 	
+	check(ClueCombineButton)
+	ClueCombineButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedCombineButton);
+	
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
 void USRClueWidget::UpdateClueWidget(const FSRClueData& Data)
 {
 	TArray<UWidget*> Child = ClueGridPanel->GetAllChildren();
+	UE_LOG(LogTemp, Warning, TEXT("UpdateClueWidget"));
 
 	for (UWidget* Widget : Child)
 	{
@@ -62,6 +64,8 @@ void USRClueWidget::UpdateClueWidget(const FSRClueData& Data)
 				UE_LOG(LogTemp, Warning, TEXT("ClueGridPanel Children Cast cannot be cast to USRSlotWidget"));
 			}
 			check(ClueSlot);
+
+			UE_LOG(LogTemp, Warning, TEXT("UpdateClueWidget for "));
 
 			ClueSlot->SetClueData(Data);
 			ClueSlot->SetSlotStyle(ClueSlot->GetClueData().Icon);
@@ -120,4 +124,33 @@ void USRClueWidget::ClueCombineDataMoveToClue(USRSlotWidget* ClickedSlot)
 
 	}
 	
+}
+
+void USRClueWidget::OnClickedCombineButton()
+{
+	check(ClueCombineGridPanel)
+
+	TArray<FName> CombinedClueIds;
+
+	for (UWidget* Widget : ClueCombineGridPanel->GetAllChildren())
+	{
+		USRSlotWidget* ClueSlot = Cast<USRSlotWidget>(Widget);
+		FSRClueData Data = ClueSlot->GetClueData();
+		if (!Data.Id.IsNone())
+		{
+			CombinedClueIds.Add(Data.Id);
+		}
+
+		//조합 이후 ClueCombinePanel 아이템들 제거
+		ClueSlot->SetSlotStyle(nullptr);
+		ClueSlot->SetClueData(FSRClueData());
+		ClueSlot->SetIsEnabled(false);
+	}
+
+	if (CombinedClueIds.Num() == VaildCombineItemNum)
+	{
+		CombineButtonClickedDelegate.Broadcast(CombinedClueIds);
+	}
+
+
 }

@@ -2,7 +2,7 @@
 
 
 #include "Component/SRInventoryComponent.h"
-
+#include "SRClueCombineData.h"
 // Sets default values for this component's properties
 USRInventoryComponent::USRInventoryComponent()
 {
@@ -17,6 +17,26 @@ void USRInventoryComponent::AddClueData(const FSRClueData& Data)
 {
 	ClueDatas.Add(Data);
 	ChangeClueDatasDelegate.Broadcast(Data);
+}
+
+void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
+{
+	//ClueCobine 수행
+	check(ClueCombineDataTable);
+	FString ClueCombineContext;
+	FString ClueContext;
+	FSRClueCombineData* FindCombineData =ClueCombineDataTable->FindRow<FSRClueCombineData>(ClueIds[first], ClueCombineContext);
+	if (FindCombineData)
+	{
+		FSRClueData* CombineClueData =ClueDataTable->FindRow<FSRClueData>(FindCombineData->ReseultClueId, ClueContext);
+		AddClueData(*CombineClueData);
+	}
+
+	//사용한 Clue 제거
+	ClueDatas.RemoveAll([&](const FSRClueData& Data)
+	{
+		return ClueIds.Contains(Data.Id);
+	});
 }
 
 

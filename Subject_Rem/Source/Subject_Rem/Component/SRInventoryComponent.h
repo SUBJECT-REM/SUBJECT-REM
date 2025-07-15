@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "SRClueData.h"
+
 #include "SRInventoryComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeClueDatasSignatue,const FSRClueData&, Data);
@@ -21,11 +22,26 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddClueData(const FSRClueData& Data);
 
+	UFUNCTION()
+	void CombineClue(TArray<FName> ClueIds);
+
 	/*ClueDatas 변경에 대한 델리게이트*/
 	FChangeClueDatasSignatue ChangeClueDatasDelegate;
-private:	
+
 	/*소유하고 있는 단서 데이터들*/
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(VisibleAnywhere)
 	TArray<FSRClueData> ClueDatas;
+private:	
+
 		
+	/*단서 조합을 위한 데이터 테이블*/
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* ClueCombineDataTable;
+
+	/*단서 조합을 위한 데이터 테이블*/
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* ClueDataTable;
+
+	const int first = 0;
+	const int second = 1;
 };

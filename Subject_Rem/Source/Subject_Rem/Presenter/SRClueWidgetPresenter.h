@@ -30,11 +30,15 @@ private:
 	* @param 추가된 데이터
 	*/
 	UFUNCTION()
-	void UpdateClueWidget(const FSRClueData& Data);
+	void RequestUpdateClueWidget(const FSRClueData& Data);
+
+	UFUNCTION()
+	void RequestCombineClue(TArray<FName> ClueIds);
 
 	UPROPERTY()
 	USRInventoryComponent* InvenComp;
 
 	UPROPERTY()
 	USRClueWidget* ClueWidget;
+
 };

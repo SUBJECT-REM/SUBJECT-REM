@@ -18,6 +18,11 @@ public:
 	{
 
 	}
+
+	/*조합에 사용될 단서 Id */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName Id;
+
 	/*단서 이름*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Name;
