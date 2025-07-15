@@ -17,8 +17,10 @@ public class Subject_Rem : ModuleRules
 			"AIModule",
 			"StateTreeModule",
 			"GameplayStateTreeModule",
-			"UMG"
-		});
+			"UMG",
+            "SlateCore",
+            "Slate"
+        });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
