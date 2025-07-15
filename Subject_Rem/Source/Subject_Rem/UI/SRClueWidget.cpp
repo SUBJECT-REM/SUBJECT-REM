@@ -10,9 +10,9 @@ void USRClueWidget::NativeConstruct()
 {
 	check(ClueGridPanel)
 
-	TArray<UWidget*> Child = ClueGridPanel->GetAllChildren();
+	TArray<UWidget*> ClueGridChild = ClueGridPanel->GetAllChildren();
 
-	for (UWidget* Widget : Child)
+	for (UWidget* Widget : ClueGridChild)
 	{
 		USRSlotWidget* ClueSlot = Cast<USRSlotWidget>(Widget);
 		if (!ClueSlot)
@@ -29,9 +29,9 @@ void USRClueWidget::NativeConstruct()
 
 	check(ClueCombineGridPanel)
 
-	TArray<UWidget*> Child = ClueCombineGridPanel->GetAllChildren();
+	TArray<UWidget*> ClueCombineChild = ClueCombineGridPanel->GetAllChildren();
 
-	for (UWidget* Widget : Child)
+	for (UWidget* Widget : ClueCombineChild)
 	{
 		USRSlotWidget* ClueCombineSlot = Cast<USRSlotWidget>(Widget);
 		if (!ClueCombineSlot)
@@ -45,6 +45,7 @@ void USRClueWidget::NativeConstruct()
 		ClueCombineSlot->FOnSlotClickedDelegate.AddDynamic(this, &ThisClass::ClueCombineDataMoveToClue);
 	}
 	
+	SetVisibility(ESlateVisibility::Hidden);
 }
 
 void USRClueWidget::UpdateClueWidget(const FSRClueData& Data)
