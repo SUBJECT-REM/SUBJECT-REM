@@ -41,6 +41,8 @@ protected:
 	/*MouseAction*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* OnMousePressAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* OnMouseTurnAction;
 
 	/*UseItem*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
@@ -152,6 +154,9 @@ public:
 	bool bIsClick = false;
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	virtual void OnClickMouse(const FInputActionValue& Value);
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	virtual void OnMouseTurnAxis(const FInputActionValue& Value);
+
 
 //UseItemSection
 public:

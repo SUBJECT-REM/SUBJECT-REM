@@ -91,7 +91,8 @@ void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* P
 		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Completed, this, &ASideScrollingCharacter::DropReleased);
 
 		//Mouse Action
-		EnhancedInputComponent->BindAction(OnMousePressAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::OnClickMouse);
+		//EnhancedInputComponent->BindAction(OnMousePressAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::OnClickMouse);
+		EnhancedInputComponent->BindAction(OnMouseTurnAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::OnMouseTurnAxis);
 
 		//UseItem -> 여기에 키 넣어주면 됌
 		EnhancedInputComponent->BindAction(UseItemNum1Actor, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::UseItemNum1);
@@ -284,6 +285,13 @@ void ASideScrollingCharacter::OnClickMouse(const FInputActionValue& Value)
 {
 	bIsClick = Value.Get<bool>();
 	UE_LOG(LogTemp, Log, TEXT("OnInputSprinting : %s"), bIsClick ? TEXT("true") : TEXT("false"));
+}
+
+void ASideScrollingCharacter::OnMouseTurnAxis(const FInputActionValue& Value)
+{
+	FVector2D turnAxis = Value.Get<FVector2D>();
+	UE_LOG(LogTemp, Log, TEXT("Turn Axis: X = %f, Y = %f"), turnAxis.X, turnAxis.Y);
+	//GetCharacter()->Turn(turnAxis);
 }
 
 void ASideScrollingCharacter::UseItemNum1()
