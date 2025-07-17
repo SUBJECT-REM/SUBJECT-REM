@@ -90,6 +90,9 @@ void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* P
 		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::Drop);
 		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Completed, this, &ASideScrollingCharacter::DropReleased);
 
+		//Mouse Action
+		EnhancedInputComponent->BindAction(OnMousePressAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::OnClickMouse);
+
 		//UseItem -> 여기에 키 넣어주면 됌
 		EnhancedInputComponent->BindAction(UseItemNum1Actor, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::UseItemNum1);
 		EnhancedInputComponent->BindAction(UseItemNum2Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::UseItemNum2);
@@ -275,6 +278,12 @@ void ASideScrollingCharacter::SetSoftCollision(bool bEnabled)
 bool ASideScrollingCharacter::HasDoubleJumped() const
 {
 	return bHasDoubleJumped;
+}
+
+void ASideScrollingCharacter::OnClickMouse(const FInputActionValue& Value)
+{
+	bIsClick = Value.Get<bool>();
+	UE_LOG(LogTemp, Log, TEXT("OnInputSprinting : %s"), bIsClick ? TEXT("true") : TEXT("false"));
 }
 
 void ASideScrollingCharacter::UseItemNum1()

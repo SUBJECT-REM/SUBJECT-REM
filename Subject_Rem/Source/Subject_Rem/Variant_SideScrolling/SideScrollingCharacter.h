@@ -37,6 +37,11 @@ protected:
 	/** Interact Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
 	UInputAction* InteractAction;
+
+	/*MouseAction*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* OnMousePressAction;
+
 	/*UseItem*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* UseItemNum1Actor;
@@ -141,6 +146,12 @@ public:
 	/** Returns true if the character has just double jumped */
 	UFUNCTION(BlueprintPure, Category="Side Scrolling")
 	bool HasDoubleJumped() const;
+
+//MousePress Section
+public:
+	bool bIsClick = false;
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	virtual void OnClickMouse(const FInputActionValue& Value);
 
 //UseItemSection
 public:
