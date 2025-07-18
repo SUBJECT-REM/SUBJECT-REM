@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "SRClueData.h"
+#include "SRItemData.h"
 #include "SRClueWidget.generated.h"
 
 /**
@@ -25,7 +25,7 @@ public:
 	/*
 	* ClueGridPanel을 갱신하는 함수입니다.
 	* @param 갱신하기 위한 데이터
-	*/	void UpdateClueWidget(const FSRClueData& Data);
+	*/	void UpdateClueWidget(const FSRItemBaseData& Data);
 
 	FCombineButtonClickedSignature CombineButtonClickedDelegate;
 protected:

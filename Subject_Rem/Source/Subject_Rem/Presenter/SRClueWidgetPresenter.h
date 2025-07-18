@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Presenter/SRPresenter.h"
-#include "SRClueData.h"
+#include "SRItemData.h"
 #include "SRClueWidgetPresenter.generated.h"
 
 /**
@@ -13,7 +13,7 @@
 class USRInventoryComponent;
 class USRClueWidget;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateClueWidgetSignature, const FSRClueData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateClueWidgetSignature, const FSRItemBaseData&, Data);
 
 UCLASS(BlueprintType, Blueprintable)
 class SUBJECT_REM_API USRClueWidgetPresenter : public USRPresenter
@@ -30,7 +30,7 @@ private:
 	* @param 추가된 데이터
 	*/
 	UFUNCTION()
-	void RequestUpdateClueWidget(const FSRClueData& Data);
+	void RequestUpdateClueWidget(const FSRItemBaseData& Data);
 
 	UFUNCTION()
 	void RequestCombineClue(TArray<FName> ClueIds);

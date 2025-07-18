@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "SRClueData.h"
+#include "SRItemData.h"
 
 #include "SRInventoryComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeClueDatasSignatue,const FSRClueData&, Data);
+class USRItem;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeClueDatasSignatue,const FSRItemBaseData&, Data);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SUBJECT_REM_API USRInventoryComponent : public UActorComponent
@@ -20,7 +22,13 @@ public:
 	
 	/*단서 데이터 추가*/
 	UFUNCTION(BlueprintCallable)
-	void AddClueData(const FSRClueData& Data);
+	void AddClueData(const FSRItemBaseData& Data);
+
+	UFUNCTION(BlueprintCallable)
+	void AddItemData(const FSRItemData& Data);
+
+	UFUNCTION(BlueprintCallable)
+	void AddItem(const USRItem* Item);
 
 	UFUNCTION()
 	void CombineClue(TArray<FName> ClueIds);
@@ -30,7 +38,11 @@ public:
 
 	/*소유하고 있는 단서 데이터들*/
 	UPROPERTY(VisibleAnywhere)
-	TArray<FSRClueData> ClueDatas;
+	TArray<FSRItemBaseData> ClueDatas;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<USRItem*> AllItem;
+
 private:	
 
 		

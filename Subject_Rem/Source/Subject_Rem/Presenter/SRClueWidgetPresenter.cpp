@@ -27,7 +27,7 @@ void USRClueWidgetPresenter::Init(UActorComponent* InitComponent, UUserWidget* I
 	ClueWidget->CombineButtonClickedDelegate.AddDynamic(this, &ThisClass::RequestCombineClue);
 }
 
-void USRClueWidgetPresenter::RequestUpdateClueWidget(const FSRClueData& Data)
+void USRClueWidgetPresenter::RequestUpdateClueWidget(const FSRItemBaseData& Data)
 {
 	check(ClueWidget)
 

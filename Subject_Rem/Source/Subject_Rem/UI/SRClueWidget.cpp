@@ -21,7 +21,7 @@ void USRClueWidget::NativeConstruct()
 		check(ClueSlot);
 
 		//버튼 비활성화
-		ClueSlot->SetIsEnabled(false);
+		ClueSlot->SetIsEnabled(true);
 		ClueSlot->FOnSlotClickedDelegate.AddDynamic(this, &ThisClass::ClueDataMoveToClueCombine);
 	}
 	
@@ -39,7 +39,7 @@ void USRClueWidget::NativeConstruct()
 		check(ClueCombineSlot);
 
 		//버튼 비활성화
-		ClueCombineSlot->SetIsEnabled(false);
+		ClueCombineSlot->SetIsEnabled(true);
 		ClueCombineSlot->FOnSlotClickedDelegate.AddDynamic(this, &ThisClass::ClueCombineDataMoveToClue);
 	}
 	
@@ -49,33 +49,35 @@ void USRClueWidget::NativeConstruct()
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
-void USRClueWidget::UpdateClueWidget(const FSRClueData& Data)
+void USRClueWidget::UpdateClueWidget(const FSRItemBaseData& Data)
 {
 	TArray<UWidget*> Child = ClueGridPanel->GetAllChildren();
 	UE_LOG(LogTemp, Warning, TEXT("UpdateClueWidget"));
 
 	for (UWidget* Widget : Child)
 	{
-		if (!Widget->GetIsEnabled())
+		USRSlotWidget* ClueSlot = Cast<USRSlotWidget>(Widget);
+		check(ClueSlot);
+
+		if (ClueSlot->GetItemData().Icon == nullptr)
 		{
-			USRSlotWidget* ClueSlot = Cast<USRSlotWidget>(Widget);
 			if (!ClueSlot)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("ClueGridPanel Children Cast cannot be cast to USRSlotWidget"));
 			}
-			check(ClueSlot);
 
 			UE_LOG(LogTemp, Warning, TEXT("UpdateClueWidget for "));
 
-			ClueSlot->SetClueData(Data);
-			ClueSlot->SetSlotStyle(ClueSlot->GetClueData().Icon);
-			
+			ClueSlot->SetItemData(Data);
+			ClueSlot->SetSlotStyle(ClueSlot->GetItemData().Icon);
+
 			//버튼을 활성화 합니다.
 			ClueSlot->SetIsEnabled(true);
 			break;
 		}
 	}
 }
+
 
 void USRClueWidget::ClueDataMoveToClueCombine(USRSlotWidget* ClickedSlot)
 {
@@ -88,8 +90,8 @@ void USRClueWidget::ClueDataMoveToClueCombine(USRSlotWidget* ClickedSlot)
 		if (!Widget->GetIsEnabled())
 		{
 			USRSlotWidget* ClueSlot = Cast<USRSlotWidget>(Widget);
-			ClueSlot->SetClueData(ClickedSlot->GetClueData());
-			ClueSlot->SetSlotStyle(ClueSlot->GetClueData().Icon);
+			ClueSlot->SetItemData(ClickedSlot->GetItemData());
+			ClueSlot->SetSlotStyle(ClueSlot->GetItemData().Icon);
 			ClickedSlot->SetSlotStyle(nullptr);
 
 			//버튼을 활성화 합니다.
@@ -113,8 +115,8 @@ void USRClueWidget::ClueCombineDataMoveToClue(USRSlotWidget* ClickedSlot)
 		if (!Widget->GetIsEnabled())
 		{
 			USRSlotWidget* ClueSlot = Cast<USRSlotWidget>(Widget);
-			ClueSlot->SetClueData(ClickedSlot->GetClueData());
-			ClueSlot->SetSlotStyle(ClueSlot->GetClueData().Icon);
+			ClueSlot->SetItemData(ClickedSlot->GetItemData());
+			ClueSlot->SetSlotStyle(ClueSlot->GetItemData().Icon);
 			ClickedSlot->SetSlotStyle(nullptr);
 
 			ClueSlot->SetIsEnabled(true);
@@ -135,7 +137,7 @@ void USRClueWidget::OnClickedCombineButton()
 	for (UWidget* Widget : ClueCombineGridPanel->GetAllChildren())
 	{
 		USRSlotWidget* ClueSlot = Cast<USRSlotWidget>(Widget);
-		FSRClueData Data = ClueSlot->GetClueData();
+		FSRItemBaseData Data = ClueSlot->GetItemData();
 		if (!Data.Id.IsNone())
 		{
 			CombinedClueIds.Add(Data.Id);
@@ -143,7 +145,7 @@ void USRClueWidget::OnClickedCombineButton()
 
 		//조합 이후 ClueCombinePanel 아이템들 제거
 		ClueSlot->SetSlotStyle(nullptr);
-		ClueSlot->SetClueData(FSRClueData());
+		ClueSlot->SetItemData(FSRItemBaseData());
 		ClueSlot->SetIsEnabled(false);
 	}
 
