@@ -25,7 +25,6 @@ protected:
 	virtual void BeginPlay() override;
 	ASRSmoothRotateActor* RotateActor;
 	AActor* CheckClickHitActor();
-	void ApplyActorRotate(FVector2D TurnAxis);
 
 public:	
 	// Called every frame

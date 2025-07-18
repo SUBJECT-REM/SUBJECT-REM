@@ -18,7 +18,7 @@ public:
 	FORCEINLINE float GetYawRotateSpeed() const { return YawRotateSpeed; };
 	FORCEINLINE float GetPitchRotateSpeed() const { return PitchRotateSpeed; };
 
-	void ApplyRotate();
+	void AddRotationInput(FVector2D DeltaInput);
 
 protected:
 	virtual void BeginPlay() override;
@@ -26,10 +26,15 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* MeshComp;
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Rotate", meta = (PrivateAccess = "true"))
+	// 속도, 감속 관련
+	FVector2D RotateVelocity;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Smooth Rotate", meta = (PrivateAccess = "true"))
 	float YawRotateSpeed = 3.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "Rotate", meta = (PrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Smooth Rotate", meta = (PrivateAccess = "true"))
 	float PitchRotateSpeed = 3.0f;
+	UPROPERTY(EditAnywhere, Category = "Smooth Rotation")
+	float RotationDamping = 6.0f;
 
 public:	
 	virtual void Tick(float DeltaTime) override;

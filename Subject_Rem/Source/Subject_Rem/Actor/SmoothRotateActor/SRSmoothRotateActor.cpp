@@ -37,4 +37,32 @@ void ASRSmoothRotateActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (RotateVelocity.IsNearlyZero()) return;
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (!PlayerController) return;
+
+	FVector ViewLocation;
+	FRotator ViewRotation;
+	PlayerController->GetPlayerViewPoint(ViewLocation, ViewRotation);
+
+	// 회전 축
+	FVector YawAxis = FVector::UpVector;
+	FVector PitchAxis = ViewRotation.RotateVector(FVector::RightVector);
+
+	// 회전 계산
+	FQuat YawQuat(YawAxis, FMath::DegreesToRadians(RotateVelocity.X * YawRotateSpeed * DeltaTime));
+	FQuat PitchQuat(PitchAxis, FMath::DegreesToRadians(-RotateVelocity.Y * PitchRotateSpeed * DeltaTime));
+
+	FQuat NewQuat = PitchQuat * YawQuat * GetActorQuat();
+	SetActorRotation(NewQuat);
+
+	// 감속
+	RotateVelocity = FMath::Vector2DInterpTo(RotateVelocity, FVector2D::ZeroVector, DeltaTime, RotationDamping);
+}
+
+
+void ASRSmoothRotateActor::AddRotationInput(FVector2D DeltaInput)
+{
+	RotateVelocity += DeltaInput * 5.0f;
 }
