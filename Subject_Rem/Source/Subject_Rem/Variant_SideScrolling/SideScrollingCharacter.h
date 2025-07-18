@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class UInputAction;
+class USRQuickSlotComponent;
 
 struct FInputActionValue;
 
@@ -22,6 +23,8 @@ protected:
 	/** Player camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Camera", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* Camera;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "QuickSlot", meta = (AllowPrivateAccess = "true"))
+	USRQuickSlotComponent* QuickSlotComponent;
 
 protected:
 
@@ -162,9 +165,9 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	virtual void UseItemNum1();
+	virtual void QuickSlotNum1();
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	virtual void UseItemNum2();
+	virtual void QuickSlotNum2();
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	virtual void UseItemNum3();
+	virtual void QuickSlotNum3();
 };

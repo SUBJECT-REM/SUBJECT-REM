@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
+#include "Component/Character/SRQuickSlotComponent.h"
 #include "InputActionValue.h"
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
@@ -22,8 +23,9 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 	// create the camera component
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(RootComponent);
-
 	Camera->SetRelativeLocationAndRotation(FVector(0.0f, 300.0f, 0.0f), FRotator(0.0f, -90.0f, 0.0f));
+
+	QuickSlotComponent = CreateDefaultSubobject<USRQuickSlotComponent>(TEXT("QuickSlotComponent"));
 
 	// configure the collision capsule
 	GetCapsuleComponent()->SetCapsuleSize(35.0f, 90.0f);
@@ -91,13 +93,13 @@ void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* P
 		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Completed, this, &ASideScrollingCharacter::DropReleased);
 
 		//Mouse Action
-		//EnhancedInputComponent->BindAction(OnMousePressAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::OnClickMouse);
+		EnhancedInputComponent->BindAction(OnMousePressAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::OnClickMouse);
 		EnhancedInputComponent->BindAction(OnMouseTurnAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::OnMouseTurnAxis);
 
 		//UseItem -> 여기에 키 넣어주면 됌
-		EnhancedInputComponent->BindAction(UseItemNum1Actor, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::UseItemNum1);
-		EnhancedInputComponent->BindAction(UseItemNum2Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::UseItemNum2);
-		EnhancedInputComponent->BindAction(UseItemNum3Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::UseItemNum3);
+		EnhancedInputComponent->BindAction(UseItemNum1Actor, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::QuickSlotNum1);
+		EnhancedInputComponent->BindAction(UseItemNum2Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::QuickSlotNum2);
+		EnhancedInputComponent->BindAction(UseItemNum3Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::QuickSlotNum3);
 	}
 }
 
@@ -285,6 +287,37 @@ void ASideScrollingCharacter::OnClickMouse(const FInputActionValue& Value)
 {
 	bIsClick = Value.Get<bool>();
 	UE_LOG(LogTemp, Log, TEXT("OnInputSprinting : %s"), bIsClick ? TEXT("true") : TEXT("false"));
+
+	if (!bIsClick)
+		return;
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC)
+		return;
+
+	FVector WorldLocation, WorldDirection;
+	if (PC->DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
+	{
+		FVector Start = WorldLocation;
+		FVector End = Start + WorldDirection * 10000.f; // 적당한 거리만큼 쏨
+
+		FHitResult HitResult;
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(this); // 자기 자신은 무시
+
+		bool bHit = GetWorld()->LineTraceSingleByChannel(
+			HitResult,
+			Start,
+			End,
+			ECC_Visibility,
+			Params
+		);
+
+		if (bHit && HitResult.GetActor())
+		{
+			UE_LOG(LogTemp, Log, TEXT("Hit Actor: %s"), *HitResult.GetActor()->GetName());
+		}
+	}
 }
 
 void ASideScrollingCharacter::OnMouseTurnAxis(const FInputActionValue& Value)
@@ -294,29 +327,22 @@ void ASideScrollingCharacter::OnMouseTurnAxis(const FInputActionValue& Value)
 	//GetCharacter()->Turn(turnAxis);
 }
 
-void ASideScrollingCharacter::UseItemNum1()
+void ASideScrollingCharacter::QuickSlotNum1()
 {
-	if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
-	{
-		if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
-		{
-			StressSubsystem->ChangeStressAmount(10.0f);
-		}
-	}
+	//입력부와 실행부를 나눕니다.
+	//이후 퀵 슬롯과 결합을 하지 않기 위해 Component로 나눕니다.
+	check(QuickSlotComponent);
+	QuickSlotComponent->PressQuickSlot(1);
 }
 
-void ASideScrollingCharacter::UseItemNum2()
+void ASideScrollingCharacter::QuickSlotNum2()
 {
-	if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
-	{
-		if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
-		{
-			StressSubsystem->ChangeStressAmount(-10.0f);
-		}
-	}
+	check(QuickSlotComponent);
+	QuickSlotComponent->PressQuickSlot(2);
 }
 
-void ASideScrollingCharacter::UseItemNum3()
+void ASideScrollingCharacter::QuickSlotNum3()
 {
-	//UE_LOG(LogTemp, Log, TEXT("UseItemNum3"));
+	check(QuickSlotComponent);
+	QuickSlotComponent->PressQuickSlot(3);
 } 
