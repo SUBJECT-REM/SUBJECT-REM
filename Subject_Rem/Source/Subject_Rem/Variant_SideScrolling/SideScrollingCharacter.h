@@ -9,6 +9,7 @@
 class UCameraComponent;
 class UInputAction;
 class USRQuickSlotComponent;
+class USRMouseInputComponent;
 
 struct FInputActionValue;
 
@@ -25,6 +26,9 @@ protected:
 	UCameraComponent* Camera;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "QuickSlot", meta = (AllowPrivateAccess = "true"))
 	USRQuickSlotComponent* QuickSlotComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MouseInput", meta = (AllowPrivateAccess = "true"))
+	USRMouseInputComponent* MouseInputComponent;
+
 
 protected:
 
@@ -154,7 +158,6 @@ public:
 
 //MousePress Section
 public:
-	bool bIsClick = false;
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	virtual void OnClickMouse(const FInputActionValue& Value);
 	UFUNCTION(BlueprintCallable, Category = "Input")

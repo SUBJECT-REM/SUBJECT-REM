@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "Component/Character/SRQuickSlotComponent.h"
+#include "Component/Character/SRMouseInputComponent.h"
 #include "InputActionValue.h"
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
@@ -26,6 +27,7 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 	Camera->SetRelativeLocationAndRotation(FVector(0.0f, 300.0f, 0.0f), FRotator(0.0f, -90.0f, 0.0f));
 
 	QuickSlotComponent = CreateDefaultSubobject<USRQuickSlotComponent>(TEXT("QuickSlotComponent"));
+	MouseInputComponent = CreateDefaultSubobject<USRMouseInputComponent>(TEXT("MouseInputComponent"));
 
 	// configure the collision capsule
 	GetCapsuleComponent()->SetCapsuleSize(35.0f, 90.0f);
@@ -285,46 +287,16 @@ bool ASideScrollingCharacter::HasDoubleJumped() const
 
 void ASideScrollingCharacter::OnClickMouse(const FInputActionValue& Value)
 {
-	bIsClick = Value.Get<bool>();
-	UE_LOG(LogTemp, Log, TEXT("OnInputSprinting : %s"), bIsClick ? TEXT("true") : TEXT("false"));
-
-	if (!bIsClick)
-		return;
-
-	APlayerController* PC = Cast<APlayerController>(GetController());
-	if (!PC)
-		return;
-
-	FVector WorldLocation, WorldDirection;
-	if (PC->DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
-	{
-		FVector Start = WorldLocation;
-		FVector End = Start + WorldDirection * 10000.f; // 적당한 거리만큼 쏨
-
-		FHitResult HitResult;
-		FCollisionQueryParams Params;
-		Params.AddIgnoredActor(this); // 자기 자신은 무시
-
-		bool bHit = GetWorld()->LineTraceSingleByChannel(
-			HitResult,
-			Start,
-			End,
-			ECC_Visibility,
-			Params
-		);
-
-		if (bHit && HitResult.GetActor())
-		{
-			UE_LOG(LogTemp, Log, TEXT("Hit Actor: %s"), *HitResult.GetActor()->GetName());
-		}
-	}
+	bool bIsClick = Value.Get<bool>(); 
+	MouseInputComponent->OnClickMouse(bIsClick);
+	
 }
 
 void ASideScrollingCharacter::OnMouseTurnAxis(const FInputActionValue& Value)
 {
 	FVector2D turnAxis = Value.Get<FVector2D>();
-	UE_LOG(LogTemp, Log, TEXT("Turn Axis: X = %f, Y = %f"), turnAxis.X, turnAxis.Y);
-	//GetCharacter()->Turn(turnAxis);
+	MouseInputComponent->OnMouseTurnAxis(turnAxis);
+
 }
 
 void ASideScrollingCharacter::QuickSlotNum1()
