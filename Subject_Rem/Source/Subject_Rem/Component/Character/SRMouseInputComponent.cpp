@@ -31,7 +31,6 @@ void USRMouseInputComponent::OnClickMouse(bool bIsPressed)
 			{
 				UE_LOG(LogTemp, Log, TEXT("None RotateActor : %s"), *ClickedActor->GetName());
 			}
-			
 		}
 	}
 	else 
@@ -44,7 +43,7 @@ void USRMouseInputComponent::OnMouseTurnAxis(FVector2D TurnAxis)
 {
 	if (!RotateActor) return;
 
-	ApplyActorRotate(TurnAxis);
+	RotateActor->AddRotationInput(TurnAxis);
 }
 
 
@@ -73,31 +72,6 @@ AActor* USRMouseInputComponent::CheckClickHitActor()
 		}
 	}
 	return nullptr;
-}
-
-void USRMouseInputComponent::ApplyActorRotate(FVector2D TurnAxis)
-{
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	if (!PlayerController) return;
-
-	FVector ViewLocation;
-	FRotator ViewRotation;
-	PlayerController->GetPlayerViewPoint(ViewLocation, ViewRotation);
-
-	const float YawSpeed = RotateActor->GetYawRotateSpeed();
-	const float PitchSpeed = RotateActor->GetPitchRotateSpeed();
-
-	// 회전 기준 축은 ViewRotation 기준으로 고정
-	FVector YawAxis = FVector::UpVector; // Yaw는 월드 Z축 그대로
-	FVector PitchAxis = ViewRotation.RotateVector(FVector::RightVector); // Pitch는 '화면의 오른쪽' 방향
-
-	// 회전량 → 쿼터니언
-	FQuat YawQuat(YawAxis, FMath::DegreesToRadians(TurnAxis.X * YawSpeed));
-	FQuat PitchQuat(PitchAxis, FMath::DegreesToRadians(-TurnAxis.Y * PitchSpeed)); // 마우스 상하는 반대
-
-	// 누적 회전 적용
-	FQuat NewQuat = PitchQuat * YawQuat * RotateActor->GetActorQuat();
-	RotateActor->SetActorRotation(NewQuat);
 }
 
 
