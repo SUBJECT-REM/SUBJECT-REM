@@ -4,6 +4,8 @@
 #include "SideScrollingCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Component/Character/SRQuickSlotComponent.h"
+#include "Component/Character/SRMouseInputComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "InputActionValue.h"
@@ -22,8 +24,9 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 	// create the camera component
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(RootComponent);
-
 	Camera->SetRelativeLocationAndRotation(FVector(0.0f, 300.0f, 0.0f), FRotator(0.0f, -90.0f, 0.0f));
+	QuickSlotComponent = CreateDefaultSubobject<USRQuickSlotComponent>(TEXT("QuickSlotComponent"));
+	MouseInputComponent = CreateDefaultSubobject<USRMouseInputComponent>(TEXT("MouseInputComponent"));
 
 	// configure the collision capsule
 	GetCapsuleComponent()->SetCapsuleSize(35.0f, 90.0f);
@@ -90,10 +93,14 @@ void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* P
 		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::Drop);
 		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Completed, this, &ASideScrollingCharacter::DropReleased);
 
+		//Mouse Action
+		EnhancedInputComponent->BindAction(OnMousePressAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::OnClickMouse);
+		EnhancedInputComponent->BindAction(OnMouseTurnAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::OnMouseTurnAxis);
+
 		//UseItem -> 여기에 키 넣어주면 됌
-		EnhancedInputComponent->BindAction(UseItemNum1Actor, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::UseItemNum1);
-		EnhancedInputComponent->BindAction(UseItemNum2Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::UseItemNum2);
-		EnhancedInputComponent->BindAction(UseItemNum3Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::UseItemNum3);
+		EnhancedInputComponent->BindAction(UseItemNum1Actor, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::QuickSlotNum1);
+		EnhancedInputComponent->BindAction(UseItemNum2Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::QuickSlotNum2);
+		EnhancedInputComponent->BindAction(UseItemNum3Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::QuickSlotNum3);
 	}
 }
 
@@ -277,29 +284,34 @@ bool ASideScrollingCharacter::HasDoubleJumped() const
 	return bHasDoubleJumped;
 }
 
-void ASideScrollingCharacter::UseItemNum1()
+void ASideScrollingCharacter::OnClickMouse(const FInputActionValue& Value)
 {
-	if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
-	{
-		if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
-		{
-			StressSubsystem->ChangeStressAmount(10.0f);
-		}
-	}
+	bool bIsClick = Value.Get<bool>();
+	MouseInputComponent->OnClickMouse(bIsClick);
 }
 
-void ASideScrollingCharacter::UseItemNum2()
+void ASideScrollingCharacter::OnMouseTurnAxis(const FInputActionValue& Value)
 {
-	if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
-	{
-		if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
-		{
-			StressSubsystem->ChangeStressAmount(-10.0f);
-		}
-	}
+	FVector2D turnAxis = Value.Get<FVector2D>();
+	MouseInputComponent->OnMouseTurnAxis(turnAxis);
 }
 
-void ASideScrollingCharacter::UseItemNum3()
+void ASideScrollingCharacter::QuickSlotNum1()
 {
-	//UE_LOG(LogTemp, Log, TEXT("UseItemNum3"));
+	//입력부와 실행부를 나눕니다.
+	//이후 퀵 슬롯과 결합을 하지 않기 위해 Component로 나눕니다.
+	check(QuickSlotComponent);
+	QuickSlotComponent->PressQuickSlot(1);
+}
+
+void ASideScrollingCharacter::QuickSlotNum2()
+{
+	check(QuickSlotComponent);
+	QuickSlotComponent->PressQuickSlot(2);
+}
+
+void ASideScrollingCharacter::QuickSlotNum3()
+{
+	check(QuickSlotComponent);
+	QuickSlotComponent->PressQuickSlot(3);
 } 
