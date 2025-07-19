@@ -7,6 +7,8 @@
 #include "SideScrollingCharacter.generated.h"
 
 class UCameraComponent;
+class USRQuickSlotComponent;
+class USRMouseInputComponent;
 class UInputAction;
 
 struct FInputActionValue;
@@ -22,6 +24,10 @@ protected:
 	/** Player camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Camera", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* Camera;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "QuickSlot", meta = (AllowPrivateAccess = "true"))
+	USRQuickSlotComponent* QuickSlotComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MouseInput", meta = (AllowPrivateAccess = "true"))
+	USRMouseInputComponent* MouseInputComponent;
 
 protected:
 
@@ -37,6 +43,13 @@ protected:
 	/** Interact Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
 	UInputAction* InteractAction;
+
+	/*MouseAction*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* OnMousePressAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* OnMouseTurnAction;
+
 	/*UseItem*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* UseItemNum1Actor;
@@ -142,13 +155,20 @@ public:
 	UFUNCTION(BlueprintPure, Category="Side Scrolling")
 	bool HasDoubleJumped() const;
 
+	//MousePress Section
+public:
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	virtual void OnClickMouse(const FInputActionValue& Value);
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	virtual void OnMouseTurnAxis(const FInputActionValue& Value);
+
 //UseItemSection
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	virtual void UseItemNum1();
+	virtual void QuickSlotNum1();
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	virtual void UseItemNum2();
+	virtual void QuickSlotNum2();
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	virtual void UseItemNum3();
+	virtual void QuickSlotNum3();
 };
