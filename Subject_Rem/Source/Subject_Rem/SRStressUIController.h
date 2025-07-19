@@ -10,6 +10,9 @@ class UProgressBar;
 class UImage;
 class USRStressLocalPlayerSubsystem;
 
+//임시
+class USRRotateItemPreviewWidget;
+
 UCLASS()
 class SUBJECT_REM_API USRStressUIController : public UUserWidget
 {
@@ -26,6 +29,10 @@ protected:
 	UImage* HighStressEffect;
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* Pulse;
+
+	//임시
+	UPROPERTY(meta = (BindWidget))
+	USRRotateItemPreviewWidget* RotateItemPreview;
 
 private:
 	void UpdateStressProgressBar(float StressAmount);
