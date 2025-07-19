@@ -11,6 +11,7 @@
 class USRItem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeClueDatasSignatue,const FSRItemBaseData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeInventoryDataSignature, const FSRItemBaseData&, Data);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SUBJECT_REM_API USRInventoryComponent : public UActorComponent
@@ -20,13 +21,6 @@ class SUBJECT_REM_API USRInventoryComponent : public UActorComponent
 public:	
 	USRInventoryComponent();
 	
-	/*단서 데이터 추가*/
-	UFUNCTION(BlueprintCallable)
-	void AddClueData(const FSRItemBaseData& Data);
-
-	UFUNCTION(BlueprintCallable)
-	void AddItemData(const FSRItemData& Data);
-
 	UFUNCTION(BlueprintCallable)
 	void AddItem(const USRItem* Item);
 
@@ -36,23 +30,22 @@ public:
 	/*ClueDatas 변경에 대한 델리게이트*/
 	FChangeClueDatasSignatue ChangeClueDatasDelegate;
 
-	/*소유하고 있는 단서 데이터들*/
-	UPROPERTY(VisibleAnywhere)
-	TArray<FSRItemBaseData> ClueDatas;
+	FChangeInventoryDataSignature ChangeInventoryDataDelegate;
 
 	UPROPERTY(VisibleAnywhere)
-	TArray<USRItem*> AllItem;
+	TArray<const USRItem*> InventoryItems;
 
 private:	
+	/*단서 데이터 추가*/
+	UFUNCTION(BlueprintCallable)
+	void AddClueData(const FSRItemBaseData& Data);
 
-		
+	UFUNCTION(BlueprintCallable)
+	void AddItemData(const FSRItemData& Data);
+
 	/*단서 조합을 위한 데이터 테이블*/
 	UPROPERTY(EditDefaultsOnly)
-	UDataTable* ClueCombineDataTable;
-
-	/*단서 조합을 위한 데이터 테이블*/
-	UPROPERTY(EditDefaultsOnly)
-	UDataTable* ClueDataTable;
+	UDataTable* ClueCombineDataRuleTable;
 
 	const int first = 0;
 	const int second = 1;

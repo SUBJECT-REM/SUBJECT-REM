@@ -9,6 +9,20 @@
  * 
  */
 USTRUCT(BlueprintType)
+struct FPeriodicStressIncrease
+{
+    GENERATED_BODY()
+
+    // 주기(초 단위)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Stress")
+    float Interval = 1.0f;
+
+    // 주기마다 증가할 스트레스량
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Stress")
+    float Amount = 0.0f;
+};
+
+USTRUCT(BlueprintType)
 struct FSRItemBaseData
 {
 	GENERATED_BODY()
@@ -60,4 +74,24 @@ public:
 	/*단서 조합 후 결과 Clue Id*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName ClueCombineResultId;
+};
+
+USTRUCT(BlueprintType)
+struct FSRCombinedClueData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+
+	/*조합 결과 나오는 텍스트 문구*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ResultText;
+
+	/*단서 조합 후 즉시 증가하는 스트레스 증가량 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ImmediateStessIncrease;
+	
+	/*단서 조합 후 주기마다 증가하는 스트레스 증가량 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FPeriodicStressIncrease PeriodicStressIncrease;
 };

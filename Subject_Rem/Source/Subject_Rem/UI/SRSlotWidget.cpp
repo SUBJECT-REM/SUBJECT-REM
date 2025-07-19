@@ -12,8 +12,10 @@ void USRSlotWidget::NativeConstruct()
 
 	if (Button)
 	{
-		Button->OnClicked.AddDynamic(this, &ThisClass::OnButtonClicked);
+		Button->OnPressed.AddDynamic(this, &ThisClass::OnButtonClicked);
 	}
+
+	DefaultSlotStyle = Button->GetStyle();
 }
 
 void USRSlotWidget::SetSlotStyle(UObject* Icon)
@@ -22,7 +24,7 @@ void USRSlotWidget::SetSlotStyle(UObject* Icon)
 
 	if (Icon == nullptr)
 	{
-		Button->SetStyle(FButtonStyle::GetDefault());
+		Button->SetStyle(DefaultSlotStyle);
 	}
 
 	else
@@ -44,9 +46,15 @@ void USRSlotWidget::SetSlotStyle(UObject* Icon)
 	}
 }
 
+FButtonStyle USRSlotWidget::GetSlotStyle()
+{
+	return Button->GetStyle();
+}
+
 void USRSlotWidget::SetItemData(const FSRItemBaseData& NewData)
 {
 	ItemData = NewData;
+	bIsOccupied = true;
 }
 
 const FSRItemBaseData& USRSlotWidget::GetItemData() const
@@ -79,7 +87,6 @@ void USRSlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoi
 
 	if (OutOperation == nullptr)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Cyan, TEXT("Drag Start"));
 		USRDragDropOperation* DragDropOper = NewObject<USRDragDropOperation>();
 	
 		check(DragDropOper);
@@ -87,11 +94,7 @@ void USRSlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoi
 		DragDropOper->DefaultDragVisual = this;
 		DragDropOper->DraggedSlot = this;
 	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Cyan, TEXT("Drag Again"));
 
-	}
 }
 
 bool USRSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
@@ -101,17 +104,16 @@ bool USRSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEve
 	if (InOperation)
 	{
 		USRDragDropOperation* DragDropOper = Cast<USRDragDropOperation>(InOperation);
-		ItemData = DragDropOper->DraggedSlot->ItemData;
-		DragDropOper->DraggedSlot->SetSlotStyle(nullptr);
-		DragDropOper->DraggedSlot->ItemData = FSRItemBaseData();
-		SetSlotStyle(ItemData.Icon);
 
-		UE_LOG(LogTemp, Warning, TEXT("Drop  : InOperaction vaild And  Drop Slot Name : %s"), *this->GetName());
-	}
-	else
-	{
+		check(DragDropOper);
 
-		UE_LOG(LogTemp, Warning, TEXT("Drop  : InOperaction is not vaild "));
+		DragDropOper->MoveToSlotData(this);
+
+		//ItemData = DragDropOper->DraggedSlot->ItemData;
+		//DragDropOper->DraggedSlot->SetSlotStyle(nullptr);
+		//DragDropOper->DraggedSlot->ItemData = FSRItemBaseData();
+		//SetSlotStyle(ItemData.Icon);
 	}
+
 	return true;
 }	

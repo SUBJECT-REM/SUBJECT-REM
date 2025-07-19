@@ -20,9 +20,8 @@ void USRClueWidget::NativeConstruct()
 		}
 		check(ClueSlot);
 
-		//버튼 비활성화
 		ClueSlot->SetIsEnabled(true);
-		ClueSlot->FOnSlotClickedDelegate.AddDynamic(this, &ThisClass::ClueDataMoveToClueCombine);
+		//ClueSlot->FOnSlotClickedDelegate.AddDynamic(this, &ThisClass::ClueDataMoveToClueCombine);
 	}
 	
 
@@ -38,9 +37,8 @@ void USRClueWidget::NativeConstruct()
 		}
 		check(ClueCombineSlot);
 
-		//버튼 비활성화
 		ClueCombineSlot->SetIsEnabled(true);
-		ClueCombineSlot->FOnSlotClickedDelegate.AddDynamic(this, &ThisClass::ClueCombineDataMoveToClue);
+		//ClueCombineSlot->FOnSlotClickedDelegate.AddDynamic(this, &ThisClass::ClueCombineDataMoveToClue);
 	}
 	
 	check(ClueCombineButton)

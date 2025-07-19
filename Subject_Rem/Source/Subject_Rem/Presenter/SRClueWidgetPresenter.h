@@ -13,8 +13,6 @@
 class USRInventoryComponent;
 class USRClueWidget;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateClueWidgetSignature, const FSRItemBaseData&, Data);
-
 UCLASS(BlueprintType, Blueprintable)
 class SUBJECT_REM_API USRClueWidgetPresenter : public USRPresenter
 {

@@ -18,30 +18,26 @@ USRInventoryComponent::USRInventoryComponent()
 
 void USRInventoryComponent::AddClueData(const FSRItemBaseData& Data)
 {
-	ClueDatas.Add(Data);
 	ChangeClueDatasDelegate.Broadcast(Data);
 }
 
 void USRInventoryComponent::AddItemData(const FSRItemData& Data)
 {
-	FString ItemDataContext;
-
-	//if()
-	const UDataTable* DataTable = Data.ItemDataTable.DataTable;
-	DataTable->FindRow<FSRItemData>(Data.ItemDataTable.RowName, ItemDataContext);
+	ChangeInventoryDataDelegate.Broadcast(Data.BaseInfo);
 }
 
 void USRInventoryComponent::AddItem(const USRItem* Item)
 {
+	check(Item);
 
 	const IUseableInterface* UseableItem = Cast<IUseableInterface>(Item);
 	const FSRItemData ItemData = Item->GetItemData();
 	
+
 	if (UseableItem)
 	{
 
 	}
-
 	//Useable아이템이 아니라면. ClueData입니다.
 	else
 	{
@@ -55,26 +51,32 @@ void USRInventoryComponent::AddItem(const USRItem* Item)
 		AddClueData(ItemData.BaseInfo);
 	}
 
+	AddItemData(ItemData);
+	InventoryItems.Add(Item);
 
 }
 
 void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
 {
 	//ClueCobine 수행
-	check(ClueCombineDataTable);
+	check(ClueCombineDataRuleTable);
 	FString ClueCombineContext;
 	FString ClueContext;
-	FSRClueCombineData* FindCombineData =ClueCombineDataTable->FindRow<FSRClueCombineData>(ClueIds[first], ClueCombineContext);
+	FSRClueCombineData* FindCombineData = ClueCombineDataRuleTable->FindRow<FSRClueCombineData>(ClueIds[first], ClueCombineContext);
 	if (FindCombineData)
 	{
-		FSRItemBaseData* CombineClueData =ClueDataTable->FindRow<FSRItemBaseData>(FindCombineData->ReseultClueId, ClueContext);
-		AddClueData(*CombineClueData);
+		//FSRItemBaseData* CombineClueData =ClueDataTable->FindRow<FSRItemBaseData>(FindCombineData->ReseultClueId, ClueContext);
+
+		//AddClueData(*CombineClueData);
 	}
 
 	//사용한 Clue 제거
-	ClueDatas.RemoveAll([&](const FSRItemBaseData& Data)
+	InventoryItems.RemoveAll([&](const USRItem* Item)
 	{
-		return ClueIds.Contains(Data.Id);
+			if (!Item) return false;
+
+			const FSRItemData& ItemData = Item->GetItemData();
+			return ClueIds.Contains(ItemData.BaseInfo.Id);
 	});
 }
 

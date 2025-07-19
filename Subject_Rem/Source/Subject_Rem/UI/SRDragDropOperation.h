@@ -19,6 +19,9 @@ class SUBJECT_REM_API USRDragDropOperation : public UDragDropOperation
 	GENERATED_BODY()
 	
 public:
+	void MoveToSlotData(USRSlotWidget* Drop);
+
+	UPROPERTY()
 	USRSlotWidget* DraggedSlot;
 
 };
