@@ -2,15 +2,27 @@
 
 #include "UI/SRRotateItemPreviewWidget.h"
 #include "Actor/SmoothRotateActor/SRSmoothRotateActor.h"
+#include "Kismet/GameplayStatics.h"
 
 void USRRotateItemPreviewWidget::NativeConstruct()
 {
 	UE_LOG(LogTemp, Log, TEXT("NativeConstruct"));
+
+
+	// 액터 찾기
+	if (TargetActor) return;
+
+	//0.5초 뒤에 찾기
+	FTimerHandle FindTargetActorTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(FindTargetActorTimerHandle, this, &ThisClass::GetTargetActorFromLevel, 0.5f, false);
+
+	//바로 찾기.
+	//GetTargetActorFromLevel()
 }
 
 void USRRotateItemPreviewWidget::NativeDestruct()
 {
-	UE_LOG(LogTemp, Log, TEXT("NativeDestruct"));
+	//UE_LOG(LogTemp, Log, TEXT("NativeDestruct"));
 	bDragging = false;
 }
 
@@ -18,7 +30,7 @@ FReply USRRotateItemPreviewWidget::NativeOnMouseButtonDown(const FGeometry& InGe
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
-	UE_LOG(LogTemp, Log, TEXT("NativeOnMouseButtonDown"));
+	//UE_LOG(LogTemp, Log, TEXT("NativeOnMouseButtonDown"));
 	if (InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
 	{
 		bDragging = true;
@@ -36,7 +48,7 @@ FReply USRRotateItemPreviewWidget::NativeOnMouseMove(const FGeometry& InGeometry
 
 	if (bDragging)
 	{
-		UE_LOG(LogTemp, Log, TEXT("NativeOnMouseButtonMove"));
+		//UE_LOG(LogTemp, Log, TEXT("NativeOnMouseButtonMove"));
 	}
 	if (bDragging && TargetActor)
 	{
@@ -69,4 +81,23 @@ void USRRotateItemPreviewWidget::NativeOnMouseLeave(const FPointerEvent& InMouse
 	Super::NativeOnMouseLeave(InMouseEvent);
 	UE_LOG(LogTemp, Log, TEXT("NativeOnMouseLeave"));
 	bDragging = false;
+}
+
+void USRRotateItemPreviewWidget::GetTargetActorFromLevel()
+{
+	// 액터 찾기
+	if (TargetActor) return;
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASRSmoothRotateActor::StaticClass(), FoundActors);
+
+	if (FoundActors.Num() > 0)
+	{
+		TargetActor = Cast<ASRSmoothRotateActor>(FoundActors[0]);
+		UE_LOG(LogTemp, Warning, TEXT("TargetActor Found: %s"), *TargetActor->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASRSmoothRotateActor not found"));
+	}
 }

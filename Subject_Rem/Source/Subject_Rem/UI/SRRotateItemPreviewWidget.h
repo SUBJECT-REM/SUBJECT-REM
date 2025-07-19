@@ -38,6 +38,9 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UImage* PreviewImage;
 
+private: 
+	void GetTargetActorFromLevel();
+
 public:
 	void SetTargetActor(ASRSmoothRotateActor* InActor) { TargetActor = InActor; }
 };

@@ -51,7 +51,7 @@ void ASRSmoothRotateActor::Tick(float DeltaTime)
 	FVector PitchAxis = ViewRotation.RotateVector(FVector::RightVector);
 
 	// 회전 계산
-	FQuat YawQuat(YawAxis, FMath::DegreesToRadians(RotateVelocity.X * YawRotateSpeed * DeltaTime));
+	FQuat YawQuat(YawAxis, FMath::DegreesToRadians(-RotateVelocity.X * YawRotateSpeed * DeltaTime));
 	FQuat PitchQuat(PitchAxis, FMath::DegreesToRadians(-RotateVelocity.Y * PitchRotateSpeed * DeltaTime));
 
 	FQuat NewQuat = PitchQuat * YawQuat * GetActorQuat();
