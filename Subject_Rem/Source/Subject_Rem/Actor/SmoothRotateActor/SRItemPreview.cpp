@@ -21,7 +21,11 @@ ASRItemPreview::ASRItemPreview()
 void ASRItemPreview::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	//RotateableMeshComp를 제외하고는 캡쳐하지 않도록 처리
+	SceneCaptureComponent2D->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
+	SceneCaptureComponent2D->ShowOnlyComponents.Empty();
+	SceneCaptureComponent2D->ShowOnlyComponents.Add(RotateableMeshComp);
 }
 
 // Called every frame
