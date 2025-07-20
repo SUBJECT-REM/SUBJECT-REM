@@ -8,6 +8,7 @@
 
 class UImage;
 class ASRSmoothRotateActor;
+class USRRotateableStaticMeshComponent;
 
 UCLASS()
 class SUBJECT_REM_API USRRotateItemPreviewWidget : public UUserWidget
@@ -33,7 +34,7 @@ private:
 	FVector2D LastMousePosition;
 
 	UPROPERTY()
-	ASRSmoothRotateActor* TargetActor;
+	USRRotateableStaticMeshComponent* RotateableMeshComp;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* PreviewImage;
@@ -42,5 +43,5 @@ private:
 	void GetTargetActorFromLevel();
 
 public:
-	void SetTargetActor(ASRSmoothRotateActor* InActor) { TargetActor = InActor; }
+	//void SetTargetActor(ASRSmoothRotateActor* InActor) { TargetActor = InActor; }
 };

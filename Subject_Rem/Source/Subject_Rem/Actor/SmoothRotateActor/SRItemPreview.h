@@ -8,6 +8,7 @@
 
 class USceneComponent;
 class USceneCaptureComponent2D;
+class USRRotateableStaticMeshComponent;
 
 UCLASS()
 class SUBJECT_REM_API ASRItemPreview : public AActor
@@ -19,6 +20,7 @@ public:
 	ASRItemPreview();
 	//어떤 StaticMesh로 랜더링할지 정함. nullptr을 넣으면 사라짐.
 	void ReplaceStaticMesh(UStaticMesh* NewMesh);
+	FORCEINLINE USRRotateableStaticMeshComponent* GetRotateableMeshComp() { return RotateableMeshComp; };
 
 protected:
 	// Called when the game starts or when spawned
@@ -28,7 +30,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	USceneCaptureComponent2D* SceneCaptureComponent2D;
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* MeshComp;
+	USRRotateableStaticMeshComponent* RotateableMeshComp;
 
 public:	
 	// Called every frame

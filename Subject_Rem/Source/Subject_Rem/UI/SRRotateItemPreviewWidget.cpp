@@ -1,7 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UI/SRRotateItemPreviewWidget.h"
-#include "Actor/SmoothRotateActor/SRSmoothRotateActor.h"
+#include "Actor/SmoothRotateActor/SRItemPreview.h"
+#include "Component/SRRotateableStaticMeshComponent.h"
+//#include "Actor/SmoothRotateActor/SRSmoothRotateActor.h"
 #include "Kismet/GameplayStatics.h"
 
 void USRRotateItemPreviewWidget::NativeConstruct()
@@ -10,7 +12,7 @@ void USRRotateItemPreviewWidget::NativeConstruct()
 
 
 	// 액터 찾기
-	if (TargetActor) return;
+	if (RotateableMeshComp) return;
 
 	//0.5초 뒤에 찾기
 	FTimerHandle FindTargetActorTimerHandle;
@@ -50,16 +52,28 @@ FReply USRRotateItemPreviewWidget::NativeOnMouseMove(const FGeometry& InGeometry
 	{
 		//UE_LOG(LogTemp, Log, TEXT("NativeOnMouseButtonMove"));
 	}
-	if (bDragging && TargetActor)
+	//if (bDragging && TargetActor)
+	//{
+	//	FVector2D CurrentPosition = InMouseEvent.GetScreenSpacePosition();
+	//	FVector2D Delta = CurrentPosition - LastMousePosition;
+
+	//	TargetActor->AddRotationInput(Delta * 0.2f); // 조정 가능
+
+	//	LastMousePosition = CurrentPosition;
+	//	return FReply::Handled();
+	//}
+
+	if (bDragging && RotateableMeshComp)
 	{
 		FVector2D CurrentPosition = InMouseEvent.GetScreenSpacePosition();
 		FVector2D Delta = CurrentPosition - LastMousePosition;
 
-		TargetActor->AddRotationInput(Delta * 0.2f); // 조정 가능
+		RotateableMeshComp->AddRotationInput(Delta * 0.2f);
 
 		LastMousePosition = CurrentPosition;
 		return FReply::Handled();
 	}
+
 	return FReply::Unhandled();
 }
 
@@ -86,18 +100,26 @@ void USRRotateItemPreviewWidget::NativeOnMouseLeave(const FPointerEvent& InMouse
 void USRRotateItemPreviewWidget::GetTargetActorFromLevel()
 {
 	// 액터 찾기
-	if (TargetActor) return;
+	if (RotateableMeshComp) return;
 
 	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASRSmoothRotateActor::StaticClass(), FoundActors);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASRItemPreview::StaticClass(), FoundActors);
 
 	if (FoundActors.Num() > 0)
 	{
-		TargetActor = Cast<ASRSmoothRotateActor>(FoundActors[0]);
-		UE_LOG(LogTemp, Warning, TEXT("TargetActor Found: %s"), *TargetActor->GetName());
+		ASRItemPreview* PreviewActor = Cast<ASRItemPreview>(FoundActors[0]);
+		if (PreviewActor && PreviewActor->GetRotateableMeshComp())
+		{
+			RotateableMeshComp = PreviewActor->GetRotateableMeshComp();
+			UE_LOG(LogTemp, Log, TEXT("RotateableMeshComp Found: %s"), *RotateableMeshComp->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ASRItemPreview found, but RotateableMeshComp is null"));
+		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ASRSmoothRotateActor not found"));
+		UE_LOG(LogTemp, Warning, TEXT("ASRItemPreview not found"));
 	}
 }

@@ -2,6 +2,7 @@
 
 
 #include "Actor/SmoothRotateActor/SRItemPreview.h"
+#include "Component/SRRotateableStaticMeshComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
 
 // Sets default values
@@ -13,7 +14,7 @@ ASRItemPreview::ASRItemPreview()
 	SceneComponent = CreateDefaultSubobject<USceneComponent>("SceneComponent");
 	SetRootComponent(SceneComponent);
 	SceneCaptureComponent2D = CreateDefaultSubobject<USceneCaptureComponent2D>("SceneCaptureComponent2D");
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	RotateableMeshComp = CreateDefaultSubobject<USRRotateableStaticMeshComponent>(TEXT("RotateableMeshComp"));
 }
 
 // Called when the game starts or when spawned
@@ -35,11 +36,11 @@ void ASRItemPreview::ReplaceStaticMesh(UStaticMesh* NewMesh)
 	//메시 제거
 	if (!NewMesh)
 	{
-		MeshComp->SetStaticMesh(nullptr);
+		RotateableMeshComp->SetStaticMesh(nullptr);
 		UE_LOG(LogTemp, Log, TEXT("Mesh cleared (set to nullptr)"));
 		return;
 	}
 
-	MeshComp->SetStaticMesh(NewMesh);
+	RotateableMeshComp->SetStaticMesh(NewMesh);
 	UE_LOG(LogTemp, Log, TEXT("Mesh replaced with: %s"), *NewMesh->GetName());
 }
