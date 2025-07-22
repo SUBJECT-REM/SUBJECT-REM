@@ -9,16 +9,21 @@
 #include "Presenter/SRClueWidgetPresenter.h"
 #include "Presenter/SRInventoryPresenter.h"
 
-void USRInvestigationMenu::Init(UObject* DataSource)
+void USRInvestigationMenu::InitInvestigationMenuWidget(UObject* DataSource)
 {
 	check(DataSource);
 
 	UActorComponent* Comp =Cast<UActorComponent>(DataSource);
 
 	check(Comp);
-
-	InvenPresenter = NewObject<USRInventoryPresenter>();
-	CluePresenter = NewObject<USRClueWidgetPresenter>();
+	if (!InvenPresenter)
+	{
+		InvenPresenter = NewObject<USRInventoryPresenter>(GetWorld());
+	}
+	if (!CluePresenter)
+	{
+		CluePresenter = NewObject<USRClueWidgetPresenter>(GetWorld());
+	}
 
 	check(InvenPresenter);
 	check(CluePresenter);

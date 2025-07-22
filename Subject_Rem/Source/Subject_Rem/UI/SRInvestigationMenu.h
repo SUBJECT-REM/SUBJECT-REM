@@ -27,7 +27,7 @@ class SUBJECT_REM_API USRInvestigationMenu : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void Init(UObject* DataSource);
+	void InitInvestigationMenuWidget(UObject* DataSource);
 
 	void OpenOnlyWidget(UUserWidget* WantOpenWidget);
 
