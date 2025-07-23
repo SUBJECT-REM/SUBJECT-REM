@@ -62,6 +62,11 @@ const FSRItemBaseData& USRSlotWidget::GetItemData() const
 	return ItemData;
 }
 
+void USRSlotWidget::SetIsOccupied(bool IsOccupied)
+{
+	bIsOccupied = IsOccupied;
+}
+
 void USRSlotWidget::OnButtonClicked()
 {
 	FOnSlotClickedDelegate.Broadcast(this);
@@ -74,6 +79,7 @@ FReply USRSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry
 
 	if (InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
 	{
+		InMouseEvent.GetScreenSpacePosition();
 		Reply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
 	}
 
@@ -85,16 +91,28 @@ void USRSlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoi
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
-	if (OutOperation == nullptr)
-	{
-		USRDragDropOperation* DragDropOper = NewObject<USRDragDropOperation>();
-	
-		check(DragDropOper);
-		OutOperation = DragDropOper;
-		DragDropOper->DefaultDragVisual = this;
-		DragDropOper->DraggedSlot = this;
-	}
+	check(DragVisualWidgetClass);
 
+	
+		if (OutOperation == nullptr)
+		{
+			USRDragDropOperation* DragDropOper = NewObject<USRDragDropOperation>();
+			USRSlotWidget* DragPreview = CreateWidget<USRSlotWidget>(GetWorld(), DragVisualWidgetClass); // 드래그 미리보기 위젯 클래스
+
+			check(DragDropOper);
+			check(DragPreview);
+
+			
+			DragPreview->SetSlotStyle(ItemData.Icon);
+
+			OutOperation = DragDropOper;
+			DragDropOper->DefaultDragVisual = DragPreview;
+			DragDropOper->DraggedSlot = this;
+
+			SetSlotStyle(nullptr);
+
+		}
+	
 }
 
 bool USRSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
@@ -109,10 +127,6 @@ bool USRSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEve
 
 		DragDropOper->MoveToSlotData(this);
 
-		//ItemData = DragDropOper->DraggedSlot->ItemData;
-		//DragDropOper->DraggedSlot->SetSlotStyle(nullptr);
-		//DragDropOper->DraggedSlot->ItemData = FSRItemBaseData();
-		//SetSlotStyle(ItemData.Icon);
 	}
 
 	return true;

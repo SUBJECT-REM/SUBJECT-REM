@@ -15,7 +15,7 @@ class UButton;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlotClickedSignature, USRSlotWidget*, ClickedSlot);
 
-UCLASS()
+UCLASS(Blueprintable)
 class SUBJECT_REM_API USRSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
@@ -32,12 +32,14 @@ public:
 	void SetSlotStyle(UObject* Icon);
 	FButtonStyle GetSlotStyle();
 
+	void SetButtonIcon(UObject* Icon);
+
 	void SetItemData(const FSRItemBaseData& NewData);
 	const FSRItemBaseData& GetItemData() const;
 
 
-
-	bool IsEmpty() const { return !bIsOccupied; }
+	void SetIsOccupied(bool IsOccupied);
+	bool GetIsOccupied() const { return bIsOccupied; }
 protected:
 	virtual void NativeConstruct() override;
 
@@ -54,5 +56,11 @@ private:
 
 	bool bIsOccupied = false;
 	
+	FVector2D PressedPosition;
+	float DragThreshold = 10.f; // 화면 좌표 기준으로 10픽셀 이상 움직이면 드래그로 간주
+
 	FButtonStyle DefaultSlotStyle;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> DragVisualWidgetClass;
 };
