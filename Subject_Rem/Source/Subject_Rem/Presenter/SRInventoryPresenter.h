@@ -26,7 +26,10 @@ public:
 
 private:
 	UFUNCTION()
-	void RequestUpdateInventoryWidget(const FSRItemBaseData& Data);
+	void RequestAddInventoryWidget(const FSRItemBaseData& Data);
+
+	UFUNCTION()
+	void RequsetRemoveInventoryWidget(const TArray<FName>& ItemIds);
 
 	UPROPERTY()
 	USRInventoryComponent* InvenComp;

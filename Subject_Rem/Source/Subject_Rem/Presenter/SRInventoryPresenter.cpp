@@ -17,10 +17,8 @@ void USRInventoryPresenter::Init(UActorComponent* InitComponent, UUserWidget* In
 	}
 	check(InvenComp);
 	
-	if (!InvenComp->ChangeInventoryDataDelegate.IsAlreadyBound(this, &ThisClass::RequestUpdateInventoryWidget))
-	{
-		InvenComp->ChangeInventoryDataDelegate.AddDynamic(this, &ThisClass::RequestUpdateInventoryWidget);
-	}
+	InvenComp->AddInventoryDataDelegate.AddDynamic(this, &ThisClass::RequestAddInventoryWidget);
+	InvenComp->RemoveInventoryDataDelegate.AddDynamic(this, &ThisClass::RequsetRemoveInventoryWidget);
 
 	InventoryWidget = Cast<USRInventoryWidget>(InitWidget);
 	if (!InventoryWidget)
@@ -30,7 +28,12 @@ void USRInventoryPresenter::Init(UActorComponent* InitComponent, UUserWidget* In
 	}
 }
 
-void USRInventoryPresenter::RequestUpdateInventoryWidget(const FSRItemBaseData& Data)
+void USRInventoryPresenter::RequestAddInventoryWidget(const FSRItemBaseData& Data)
 {
-	InventoryWidget->UpdateInventoryGridPanel(Data);
+	InventoryWidget->AddItemInventoryGridPanel(Data);
+}
+
+void USRInventoryPresenter::RequsetRemoveInventoryWidget(const TArray<FName>& ItemIds)
+{
+	InventoryWidget->RemoveItemInventoryGridPanel(ItemIds);
 }

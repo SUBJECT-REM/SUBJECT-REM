@@ -13,6 +13,7 @@
 class UGridPanel;
 class UButton;
 class USRSlotWidget;
+class USRClueCombineResultWidget;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCombineButtonClickedSignature, TArray<FName>, ClickedSlot);
 
@@ -25,11 +26,13 @@ public:
 	/*
 	* ClueGridPanel을 갱신하는 함수입니다.
 	* @param 갱신하기 위한 데이터
-	*/	void UpdateClueWidget(const FSRItemBaseData& Data);
-
+	*/
+	void UpdateClueGridWidget(const FSRItemBaseData& Data);
+	void UpdateClueCombineResultWidget(const FSRItemBaseData& Data);
+	
 	FCombineButtonClickedSignature CombineButtonClickedDelegate;
 protected:
-	virtual void NativeConstruct();
+	virtual void NativeConstruct() override;
 
 private:
 
@@ -60,6 +63,10 @@ private:
 	/*단서 조합 패널*/
 	UPROPERTY(meta = (BindWidget))
 	UGridPanel* ClueCombineGridPanel;
+
+	/*단서 조합 결과*/
+	UPROPERTY(meta = (BindWidget))
+	USRClueCombineResultWidget* ClueCombineResultWidget;
 
 	/*단서 조합 버튼*/
 	UPROPERTY(meta = (BindWidget))

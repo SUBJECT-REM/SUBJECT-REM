@@ -28,10 +28,13 @@ private:
 	* @param 추가된 데이터
 	*/
 	UFUNCTION()
-	void RequestUpdateClueWidget(const FSRItemBaseData& Data);
+	void RequestUpdateClueGridWidget(const FSRItemBaseData& Data);
 
 	UFUNCTION()
 	void RequestCombineClue(TArray<FName> ClueIds);
+
+	UFUNCTION()
+	void RequsetUpdateClueCombineResultWidget(const FSRItemBaseData& Data);
 
 	UPROPERTY()
 	USRInventoryComponent* InvenComp;

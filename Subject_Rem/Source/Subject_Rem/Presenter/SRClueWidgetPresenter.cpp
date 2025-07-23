@@ -15,7 +15,8 @@ void USRClueWidgetPresenter::Init(UActorComponent* InitComponent, UUserWidget* I
 		return;
 	}
 	check(InvenComp);
-	InvenComp->ChangeClueDatasDelegate.AddDynamic(this, &ThisClass::RequestUpdateClueWidget);
+	InvenComp->AddClueDatasDelegate.AddDynamic(this, &ThisClass::RequestUpdateClueGridWidget);
+	InvenComp->ClueMapCreatedDelegate.AddDynamic(this, &ThisClass::RequsetUpdateClueCombineResultWidget);
 
 	ClueWidget = Cast<USRClueWidget>(InitWidget);
 	if (!ClueWidget)
@@ -27,14 +28,19 @@ void USRClueWidgetPresenter::Init(UActorComponent* InitComponent, UUserWidget* I
 	ClueWidget->CombineButtonClickedDelegate.AddDynamic(this, &ThisClass::RequestCombineClue);
 }
 
-void USRClueWidgetPresenter::RequestUpdateClueWidget(const FSRItemBaseData& Data)
+void USRClueWidgetPresenter::RequestUpdateClueGridWidget(const FSRItemBaseData& Data)
 {
 	check(ClueWidget)
 
-	ClueWidget->UpdateClueWidget(Data);
+	ClueWidget->UpdateClueGridWidget(Data);
 }
 
 void USRClueWidgetPresenter::RequestCombineClue(TArray<FName> ClueIds)
 {
 	InvenComp->CombineClue(ClueIds);
+}
+
+void USRClueWidgetPresenter::RequsetUpdateClueCombineResultWidget(const FSRItemBaseData& Data)
+{
+	ClueWidget->UpdateClueCombineResultWidget(Data);
 }

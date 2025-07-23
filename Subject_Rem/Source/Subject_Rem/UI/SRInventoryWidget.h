@@ -25,7 +25,8 @@ public:
 	void UpdateItemName(FName Name);
 	void UpdateItemDes(FName Des);
 
-	void UpdateInventoryGridPanel(const FSRItemBaseData& Data);
+	void AddItemInventoryGridPanel(const FSRItemBaseData& Data);
+	void RemoveItemInventoryGridPanel(const TArray<FName>& ItemIds);
 protected:
 	virtual void NativeConstruct() override;
 private:

@@ -43,7 +43,7 @@ void USRInventoryWidget::UpdateItemDes(FName Des)
 	ItemDescription->SetText(FText::FromName(Des));
 }
 
-void USRInventoryWidget::UpdateInventoryGridPanel(const FSRItemBaseData& Data)
+void USRInventoryWidget::AddItemInventoryGridPanel(const FSRItemBaseData& Data)
 {
 	TArray<UWidget*> Child = InventoryGridPanel->GetAllChildren();
 
@@ -52,15 +52,30 @@ void USRInventoryWidget::UpdateInventoryGridPanel(const FSRItemBaseData& Data)
 		USRSlotWidget* InvenSlot = Cast<USRSlotWidget>(Widget);
 		check(InvenSlot);
 
-		if (InvenSlot->GetItemData().Icon == nullptr)
+		if (!InvenSlot->GetIsOccupied())
 		{
-
+			UE_LOG(LogTemp, Warning, TEXT("Updated Inventory Slot Name %s"), *InvenSlot->GetName());
 			InvenSlot->SetItemData(Data);
 			InvenSlot->SetSlotStyle(InvenSlot->GetItemData().Icon);
-
-			//버튼을 활성화 합니다.
-			InvenSlot->SetIsEnabled(true);
+			InvenSlot->SetIsOccupied(true);
 			break;
+		}
+	}
+}
+
+void USRInventoryWidget::RemoveItemInventoryGridPanel(const TArray<FName>& ItemIds)
+{
+	for (UWidget* Widget : InventoryGridPanel->GetAllChildren())
+	{
+		USRSlotWidget* InvenSlot = Cast<USRSlotWidget>(Widget);
+		if (!InvenSlot) continue;
+
+		const FSRItemBaseData& Data = InvenSlot->GetItemData();
+		if (ItemIds.Contains(Data.Id))
+		{
+			InvenSlot->SetSlotStyle(nullptr);
+			InvenSlot->SetItemData(FSRItemBaseData());
+			InvenSlot->SetIsOccupied(false);
 		}
 	}
 }

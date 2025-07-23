@@ -8,10 +8,13 @@
 
 #include "SRInventoryComponent.generated.h"
 
+class UDataTable;
 class USRItem;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeClueDatasSignatue,const FSRItemBaseData&, Data);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeInventoryDataSignature, const FSRItemBaseData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddClueDatasSignatue,const FSRItemBaseData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddInventoryDataSignature, const FSRItemBaseData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRemoveInventoryDataSignature, const TArray<FName>&, RemovedItemIds);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueMapCreatedSignature, const FSRItemBaseData&, Data);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SUBJECT_REM_API USRInventoryComponent : public UActorComponent
@@ -25,16 +28,24 @@ public:
 	void AddItem(const USRItem* Item);
 
 	UFUNCTION()
+	void RemoveItems(const TArray<FName>& ItemIds);
+
+	UFUNCTION()
 	void CombineClue(TArray<FName> ClueIds);
 
-	/*ClueDatas 변경에 대한 델리게이트*/
-	FChangeClueDatasSignatue ChangeClueDatasDelegate;
-
-	FChangeInventoryDataSignature ChangeInventoryDataDelegate;
+	/*Clue 변경에 대한 델리게이트*/
+	FAddClueDatasSignatue AddClueDatasDelegate;
+	/*인벤토리 아이템 추가,제거에 대한 델리게이트*/
+	FAddInventoryDataSignature AddInventoryDataDelegate;
+	FRemoveInventoryDataSignature RemoveInventoryDataDelegate;
+	/*ClueMap 생성에 대한 델리게이트*/
+	FOnClueMapCreatedSignature ClueMapCreatedDelegate;
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<const USRItem*> InventoryItems;
 
+	UPROPERTY(VisibleAnywhere)
+	TArray<FSRClueMapData> ClueMapDatas;
 private:	
 	/*단서 데이터 추가*/
 	UFUNCTION(BlueprintCallable)
@@ -43,9 +54,10 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void AddItemData(const FSRItemData& Data);
 
-	/*단서 조합을 위한 데이터 테이블*/
 	UPROPERTY(EditDefaultsOnly)
-	UDataTable* ClueCombineDataRuleTable;
+	UDataTable* AllItemsDataTable;
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* ClueCombineRuleDataTable;
 
 	const int first = 0;
 	const int second = 1;

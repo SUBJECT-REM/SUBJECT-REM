@@ -3,6 +3,7 @@
 
 #include "UI/SRClueWidget.h"
 #include "UI/SRSlotWidget.h"
+#include "UI/SRClueCombineResultWidget.h"
 #include "Components/Button.h"
 #include "Components/GridPanel.h"
 
@@ -47,7 +48,7 @@ void USRClueWidget::NativeConstruct()
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
-void USRClueWidget::UpdateClueWidget(const FSRItemBaseData& Data)
+void USRClueWidget::UpdateClueGridWidget(const FSRItemBaseData& Data)
 {
 	TArray<UWidget*> Child = ClueGridPanel->GetAllChildren();
 	UE_LOG(LogTemp, Warning, TEXT("UpdateClueWidget"));
@@ -74,6 +75,18 @@ void USRClueWidget::UpdateClueWidget(const FSRItemBaseData& Data)
 			break;
 		}
 	}
+}
+
+void USRClueWidget::UpdateClueCombineResultWidget(const FSRItemBaseData& Data)
+{
+	ClueCombineResultWidget->SetClueMapImage(Data.Icon);
+	ClueCombineResultWidget->SetClueMapDes(Data.Description);
+	ClueCombineResultWidget->SetClueMapName(Data.Name);
+	if (ClueCombineResultWidget->GetVisibility() != ESlateVisibility::Visible)
+	{
+		ClueCombineResultWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+
 }
 
 
