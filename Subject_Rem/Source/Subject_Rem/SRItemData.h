@@ -6,7 +6,31 @@
 #include "Engine/Texture2D.h"
 #include "SRItemData.generated.h"
 /**
- * 
+*	[FSRItemData] (아이템들의 기본 데이터 정보가 담긴 데이터 테이블 로우)
+			|
+			├── FDataTableRowHandle ItemDataTable(Consume, 에 대한 세부정보 ,Clue의 경우 FSRItemData에서 필요한 정보가 다 포함되었음. )
+			├── FSRItemBaseData
+					├── FName Id;
+					├── FName Name;
+					├── FName Description
+					├── UTexture2D* Icon
+					└── UStaticMesh* Mesh
+
+*	[FSRClueCombineData] (Clue조합을 정보를 담긴 데이터 테이블 로우)
+			|
+			├── FName ClueId1
+			├── FName ClueId2
+			└── FDataTableRowHandle ClueCombineResult(FSRCombinedClueData - 생성된 ClueMap 정보)
+
+
+*	[FSRClueMapData]
+			|
+			├── UTexture2D* Icon
+			├── FName ResultText
+			├── float ImmediateStressIncrease
+			└── FPeriodicStressIncrease
+					├── float Interval
+					└── float Amount
  */
 USTRUCT(BlueprintType)
 struct FPeriodicStressIncrease
@@ -57,35 +81,34 @@ struct FSRItemData : public FTableRowBase
 	FSRItemBaseData BaseInfo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FDataTableRowHandle ItemDataTable;
+	FDataTableRowHandle ItemDataTable; 
 };
 
 USTRUCT(BlueprintType)
-struct FSRClueData : public FTableRowBase
+struct FSRClueCombineRuleData : public FTableRowBase
 {
 	GENERATED_BODY()
 
 public:
-
-	/*조합에 사용될 다른 Clue Id */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName OtherCombineClueId;
+	FName ClueId1;
 
-	/*단서 조합 후 결과 Clue Id*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName ClueCombineResultId;
+	FName ClueId2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FDataTableRowHandle ClueCombineResult; // → FSRClueMapData
 };
 
 USTRUCT(BlueprintType)
-struct FSRCombinedClueData : public FTableRowBase
+struct FSRClueMapData : public FTableRowBase
 {
 	GENERATED_BODY()
 
 public:
-
-	/*조합 결과 나오는 텍스트 문구*/
+	/*ClueMap Id, 이름, 설명, 아이콘 ,메시*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName ResultText;
+	FSRItemBaseData BaseInfo;
 
 	/*단서 조합 후 즉시 증가하는 스트레스 증가량 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -94,4 +117,8 @@ public:
 	/*단서 조합 후 주기마다 증가하는 스트레스 증가량 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FPeriodicStressIncrease PeriodicStressIncrease;
+
+	/*진실, 거짓단서 유무*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bResult;
 };
