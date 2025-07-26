@@ -3,6 +3,7 @@
 
 #include "UI/SRSlotWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include"UI/SRSlotDragVisualWidget.h"
 #include "UI/SRDragDropOperation.h"
 #include "Components/Button.h"
 
@@ -86,19 +87,19 @@ void USRSlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoi
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
-	check(DragVisualWidgetClass);
+	check(SlotDragVisualWidgetClass);
 
 	if (OutOperation == nullptr)
-	{
+	{	
 		USRDragDropOperation* DragDropOper = NewObject<USRDragDropOperation>();
-		USRSlotWidget* DragPreview = CreateWidget<USRSlotWidget>(GetWorld(), DragVisualWidgetClass); // 드래그 미리보기 위젯 클래스
+		USRSlotDragVisualWidget* DragPreview = CreateWidget<USRSlotDragVisualWidget>(GetWorld(), SlotDragVisualWidgetClass); // 드래그 미리보기 위젯 클래스
 
 		check(DragDropOper);
 		check(DragPreview);
 
 		DragDropOper->OnDragCancelled.AddDynamic(this, &ThisClass::SlotDragCancelled);
 
-		DragPreview->SetSlotIcon(ItemData.Icon);
+		DragPreview->SetDragVisualImage(ItemData.Icon);
 
 		OutOperation = DragDropOper;
 		DragDropOper->DefaultDragVisual = DragPreview;

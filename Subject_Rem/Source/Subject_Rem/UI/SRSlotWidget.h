@@ -57,5 +57,5 @@ private:
 	FButtonStyle DefaultSlotStyle;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UUserWidget> DragVisualWidgetClass;
+	TSubclassOf<UUserWidget> SlotDragVisualWidgetClass;
 };
