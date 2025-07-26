@@ -39,10 +39,12 @@ public:
 
 	UFUNCTION()
 	void OpenClueMap();
+
 protected:
 	virtual void NativeConstruct() override;
 
 private:
+	void ChangeButtonZOrder(UButton* Widget, int8 NewZOrder);
 	UPROPERTY(meta = (BindWidget))
 	UButton* InventoryButton;
 	

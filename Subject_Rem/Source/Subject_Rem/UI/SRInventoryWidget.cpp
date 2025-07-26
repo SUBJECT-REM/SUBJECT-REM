@@ -24,7 +24,7 @@ void USRInventoryWidget::NativeConstruct()
 		}
 		check(InvenSlot);
 
-		InvenSlot->SetIsEnabled(false);
+		InvenSlot->SetIsEnabled(true);
 		InvenSlot->OnSlotClickedDelegate.AddDynamic(this, &ThisClass::UpdateItemDescriptionPanel);
 	}
 
@@ -56,7 +56,6 @@ void USRInventoryWidget::AddItemInventoryGridPanel(const FSRItemBaseData& Data)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Updated Inventory Slot Name %s"), *InvenSlot->GetName());
 
-			InvenSlot->SetIsEnabled(true);
 			InvenSlot->SetItemData(Data);
 			InvenSlot->SetSlotIcon(InvenSlot->GetItemData().Icon);
 			InvenSlot->SetIsOccupied(true);
@@ -75,7 +74,6 @@ void USRInventoryWidget::RemoveItemInventoryGridPanel(const TArray<FName>& ItemI
 		const FSRItemBaseData& Data = InvenSlot->GetItemData();
 		if (ItemIds.Contains(Data.Id))
 		{
-			InvenSlot->SetIsEnabled(false);
 			InvenSlot->SetSlotIcon(nullptr);
 			InvenSlot->SetItemData(FSRItemBaseData());
 			InvenSlot->SetIsOccupied(false);
