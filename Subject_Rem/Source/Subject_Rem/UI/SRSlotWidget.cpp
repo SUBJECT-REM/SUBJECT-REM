@@ -12,49 +12,64 @@ void USRSlotWidget::NativeConstruct()
 
 	if (Button)
 	{
-		Button->OnPressed.AddDynamic(this, &ThisClass::OnButtonClicked);
+		DefaultSlotStyle = Button->GetStyle();
 	}
 
-	DefaultSlotStyle = Button->GetStyle();
 }
 
-void USRSlotWidget::SetSlotStyle(UObject* Icon)
+FReply USRSlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	FEventReply reply;
+	reply.NativeReply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+	if (!bIsOccupied)
+	{
+		return reply.NativeReply;
+	}
+
+	OnSlotClickedDelegate.Broadcast(this);
+
+	if (InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
+	{
+		reply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
+	}
+
+
+	return reply.NativeReply;
+}
+
+void USRSlotWidget::SetSlotIcon(UObject* Icon)
 {
 	check(Button)
 
-	if (Icon == nullptr)
-	{
-		Button->SetStyle(DefaultSlotStyle);
-	}
+		if (Icon == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Icon nullptr"));	
+			Button->SetStyle(DefaultSlotStyle);
+		}
 
-	else
-	{
-		FButtonStyle ButtonStyle;
-		FSlateBrush NormalStyle;
-		NormalStyle.SetResourceObject(Icon);
-		ButtonStyle.SetNormal(NormalStyle);
+		else
+		{
+			FButtonStyle ButtonStyle;
+			FSlateBrush NormalStyle;
+			NormalStyle.SetResourceObject(Icon);
+			ButtonStyle.SetNormal(NormalStyle);
 
-		FSlateBrush HoverStyle;
-		HoverStyle.SetResourceObject(Icon);
-		ButtonStyle.SetHovered(HoverStyle);
+			FSlateBrush HoverStyle;
+			HoverStyle.SetResourceObject(Icon);
+			ButtonStyle.SetHovered(HoverStyle);
 
-		FSlateBrush PressStyle;
-		PressStyle.SetResourceObject(Icon);
-		ButtonStyle.SetPressed(PressStyle);
+			FSlateBrush PressStyle;
+			PressStyle.SetResourceObject(Icon);
+			ButtonStyle.SetPressed(PressStyle);
 
-		Button->SetStyle(ButtonStyle);
-	}
-}
-
-FButtonStyle USRSlotWidget::GetSlotStyle()
-{
-	return Button->GetStyle();
+			Button->SetStyle(ButtonStyle);
+		}
 }
 
 void USRSlotWidget::SetItemData(const FSRItemBaseData& NewData)
 {
 	ItemData = NewData;
-	bIsOccupied = true;
 }
 
 const FSRItemBaseData& USRSlotWidget::GetItemData() const
@@ -67,57 +82,44 @@ void USRSlotWidget::SetIsOccupied(bool IsOccupied)
 	bIsOccupied = IsOccupied;
 }
 
-void USRSlotWidget::OnButtonClicked()
-{
-	FOnSlotClickedDelegate.Broadcast(this);
-}
-
-FReply USRSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-	FEventReply Reply;
-	Reply.NativeReply = Super::NativeOnPreviewMouseButtonDown(InGeometry, InMouseEvent);
-
-	if (InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
-	{
-		InMouseEvent.GetScreenSpacePosition();
-		Reply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
-	}
-
-
-	return Reply.NativeReply;
-}
-
 void USRSlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
 	check(DragVisualWidgetClass);
 
-	
-		if (OutOperation == nullptr)
-		{
-			USRDragDropOperation* DragDropOper = NewObject<USRDragDropOperation>();
-			USRSlotWidget* DragPreview = CreateWidget<USRSlotWidget>(GetWorld(), DragVisualWidgetClass); // 드래그 미리보기 위젯 클래스
+	if (OutOperation == nullptr)
+	{
+		USRDragDropOperation* DragDropOper = NewObject<USRDragDropOperation>();
+		USRSlotWidget* DragPreview = CreateWidget<USRSlotWidget>(GetWorld(), DragVisualWidgetClass); // 드래그 미리보기 위젯 클래스
 
-			check(DragDropOper);
-			check(DragPreview);
+		check(DragDropOper);
+		check(DragPreview);
 
-			
-			DragPreview->SetSlotStyle(ItemData.Icon);
+		DragDropOper->OnDragCancelled.AddDynamic(this, &ThisClass::SlotDragCancelled);
 
-			OutOperation = DragDropOper;
-			DragDropOper->DefaultDragVisual = DragPreview;
-			DragDropOper->DraggedSlot = this;
+		DragPreview->SetSlotIcon(ItemData.Icon);
 
-			SetSlotStyle(nullptr);
+		OutOperation = DragDropOper;
+		DragDropOper->DefaultDragVisual = DragPreview;
+		DragDropOper->DraggedSlot = this;
+		DragDropOper->DraggedSlotItemData = ItemData;
 
-		}
-	
+		//빈슬롯으로 세팅해줍니다.
+		SetIsOccupied(false);
+		SetSlotIcon(nullptr);
+		SetItemData(FSRItemBaseData());
+	}
+
 }
 
 bool USRSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+
+	//이미 사용중인 슬롯이라면 Drop하지 하지 않도록 합니다.
+	if (GetIsOccupied())
+		return false;
 
 	if (InOperation)
 	{
@@ -126,8 +128,23 @@ bool USRSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEve
 		check(DragDropOper);
 
 		DragDropOper->MoveToSlotData(this);
-
 	}
 
 	return true;
-}	
+}
+
+void USRSlotWidget::SlotDragCancelled(UDragDropOperation* DragDropOper)
+{
+	USRDragDropOperation* SlotDragDropOper = Cast<USRDragDropOperation>(DragDropOper);
+	USRSlotWidget* DraggedSlot = SlotDragDropOper->DraggedSlot;
+
+	check(SlotDragDropOper);
+	check(DraggedSlot);
+
+	const FSRItemBaseData SlotItemData = SlotDragDropOper->DraggedSlotItemData;
+
+	SetItemData(SlotItemData);
+	SetSlotIcon(SlotItemData.Icon);
+	SetIsOccupied(true);
+}
+

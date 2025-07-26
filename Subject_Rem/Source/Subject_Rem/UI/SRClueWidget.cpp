@@ -6,6 +6,8 @@
 #include "UI/SRClueCombineResultWidget.h"
 #include "Components/Button.h"
 #include "Components/GridPanel.h"
+#include "Components/UniformGridPanel.h"
+
 
 void USRClueWidget::NativeConstruct()
 {
@@ -22,7 +24,6 @@ void USRClueWidget::NativeConstruct()
 		check(ClueSlot);
 
 		ClueSlot->SetIsEnabled(true);
-		//ClueSlot->FOnSlotClickedDelegate.AddDynamic(this, &ThisClass::ClueDataMoveToClueCombine);
 	}
 	
 
@@ -39,7 +40,6 @@ void USRClueWidget::NativeConstruct()
 		check(ClueCombineSlot);
 
 		ClueCombineSlot->SetIsEnabled(true);
-		//ClueCombineSlot->FOnSlotClickedDelegate.AddDynamic(this, &ThisClass::ClueCombineDataMoveToClue);
 	}
 	
 	check(ClueCombineButton)
@@ -68,10 +68,11 @@ void USRClueWidget::UpdateClueGridWidget(const FSRItemBaseData& Data)
 			UE_LOG(LogTemp, Warning, TEXT("UpdateClueWidget for "));
 
 			ClueSlot->SetItemData(Data);
-			ClueSlot->SetSlotStyle(ClueSlot->GetItemData().Icon);
+			ClueSlot->SetSlotIcon(ClueSlot->GetItemData().Icon);
 
 			//버튼을 활성화 합니다.
-			ClueSlot->SetIsEnabled(true);
+			ClueSlot->SetIsOccupied(true);
+
 			break;
 		}
 	}
@@ -102,8 +103,8 @@ void USRClueWidget::ClueDataMoveToClueCombine(USRSlotWidget* ClickedSlot)
 		{
 			USRSlotWidget* ClueSlot = Cast<USRSlotWidget>(Widget);
 			ClueSlot->SetItemData(ClickedSlot->GetItemData());
-			ClueSlot->SetSlotStyle(ClueSlot->GetItemData().Icon);
-			ClickedSlot->SetSlotStyle(nullptr);
+			ClueSlot->SetSlotIcon(ClueSlot->GetItemData().Icon);
+			ClickedSlot->SetSlotIcon(nullptr);
 
 			//버튼을 활성화 합니다.
 			ClueSlot->SetIsEnabled(true);
@@ -127,8 +128,8 @@ void USRClueWidget::ClueCombineDataMoveToClue(USRSlotWidget* ClickedSlot)
 		{
 			USRSlotWidget* ClueSlot = Cast<USRSlotWidget>(Widget);
 			ClueSlot->SetItemData(ClickedSlot->GetItemData());
-			ClueSlot->SetSlotStyle(ClueSlot->GetItemData().Icon);
-			ClickedSlot->SetSlotStyle(nullptr);
+			ClueSlot->SetSlotIcon(ClueSlot->GetItemData().Icon);
+			ClickedSlot->SetSlotIcon(nullptr);
 
 			ClueSlot->SetIsEnabled(true);
 			ClickedSlot->SetIsEnabled(false);
@@ -155,7 +156,7 @@ void USRClueWidget::OnClickedCombineButton()
 		}
 
 		//조합 이후 ClueCombinePanel 아이템들 제거
-		ClueSlot->SetSlotStyle(nullptr);
+		ClueSlot->SetSlotIcon(nullptr);
 		ClueSlot->SetItemData(FSRItemBaseData());
 		ClueSlot->SetIsEnabled(false);
 	}

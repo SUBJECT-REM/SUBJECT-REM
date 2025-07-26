@@ -24,4 +24,7 @@ public:
 	UPROPERTY()
 	USRSlotWidget* DraggedSlot;
 
+	//DragCancel시 해당 캐싱한 데이터를 사용합니다.
+	FSRItemBaseData DraggedSlotItemData;
+
 };

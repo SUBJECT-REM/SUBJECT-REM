@@ -106,7 +106,7 @@ void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
 			RemoveItems(ClueIds);
 
 			//UI 델리게이트 브로드캐스트
-			ClueMapCreatedDelegate.Broadcast(FindClueMapResult->BaseInfo);
+			ClueMapResultDelegate.Broadcast(FindClueMapResult->BaseInfo);
 			return;
 		}
 	}

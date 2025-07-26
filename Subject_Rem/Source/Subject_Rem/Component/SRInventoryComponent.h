@@ -14,7 +14,7 @@ class USRItem;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddClueDatasSignatue,const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddInventoryDataSignature, const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRemoveInventoryDataSignature, const TArray<FName>&, RemovedItemIds);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueMapCreatedSignature, const FSRItemBaseData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueMapResultSignature, const FSRItemBaseData&, Data);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SUBJECT_REM_API USRInventoryComponent : public UActorComponent
@@ -35,11 +35,13 @@ public:
 
 	/*Clue 변경에 대한 델리게이트*/
 	FAddClueDatasSignatue AddClueDatasDelegate;
+
 	/*인벤토리 아이템 추가,제거에 대한 델리게이트*/
 	FAddInventoryDataSignature AddInventoryDataDelegate;
 	FRemoveInventoryDataSignature RemoveInventoryDataDelegate;
+
 	/*ClueMap 생성에 대한 델리게이트*/
-	FOnClueMapCreatedSignature ClueMapCreatedDelegate;
+	FOnClueMapResultSignature ClueMapResultDelegate;
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<const USRItem*> InventoryItems;

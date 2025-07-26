@@ -11,6 +11,7 @@
  * 
  */
 class UGridPanel;
+class UUniformGridPanel;
 class UButton;
 class USRSlotWidget;
 class USRClueCombineResultWidget;
@@ -58,7 +59,7 @@ private:
 
 	/*단서들을 보여주는 패널*/
 	UPROPERTY(meta = (BindWidget))
-	UGridPanel* ClueGridPanel;
+	UUniformGridPanel* ClueGridPanel;
 
 	/*단서 조합 패널*/
 	UPROPERTY(meta = (BindWidget))
