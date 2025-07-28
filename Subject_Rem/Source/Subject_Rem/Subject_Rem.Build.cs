@@ -19,7 +19,8 @@ public class Subject_Rem : ModuleRules
 			"GameplayStateTreeModule",
 			"UMG",
             "SlateCore",
-            "Slate"
+            "Slate",
+            "GameplayTags"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
