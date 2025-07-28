@@ -18,6 +18,18 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stress")
 	void ChangeStressAmount(float ChangeValue);
+
+	FTimerHandle ChangeStressTimerHandler;
+	/* 스트레스 일정 시간마다 값 증가 및 감소
+	* @param 스트레스 증가 및 감소 (증가시 +, 감소시 -)
+	* @param 몇초에 한번 감소 및 증가를 하는가 (1.5 -> 1.5초마다 실행.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Stress")
+	void ChangeStressByTime(float ChangeValue, float Time);
+	/*
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Stress")
+	void ClearStressTimer();
 	/*
 	* @return 현재까지 스트레스 퍼센트 (0-1)
 	*/
