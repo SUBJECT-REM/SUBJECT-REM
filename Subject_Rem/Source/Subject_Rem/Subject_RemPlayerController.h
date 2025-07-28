@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -17,8 +17,9 @@ class ASubject_RemPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	TArray<UInputMappingContext*> GetDefaultMappingContexts() const { return DefaultMappingContexts; }
 protected:
-
 	/** Input Mapping Contexts */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category ="Input", meta = (AllowPrivateAccess = "true"))
 	TArray<UInputMappingContext*> DefaultMappingContexts;
