@@ -21,8 +21,13 @@ class SUBJECT_REM_API USRClueCombineResultWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintCallable)
 	void SetClueMapImage(UTexture2D* Icon);
+
+	UFUNCTION(BlueprintCallable)
 	void SetClueMapDes(FName Text);
+
+	UFUNCTION(BlueprintCallable)
 	void SetClueMapName(FName Text);
 protected:
 	virtual void NativeConstruct() override;

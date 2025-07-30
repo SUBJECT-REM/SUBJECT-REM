@@ -8,44 +8,84 @@
 #include "SRTutorialManager.generated.h"
 
 
-USTRUCT()
+/**
+ * 튜토리얼 단계 정보를 담는 구조체
+ */
+class UInputMappingContext;
+
+USTRUCT(BlueprintType)
 struct FTutorialInfo
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	FGameplayTag ID;
+    // 튜토리얼 단계 ID
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial")
+    FGameplayTag ID;
 
-	FGameplayTag ObjectivesTag;
+    // 이 단계에서 달성해야 하는 목표 태그
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial")
+    FGameplayTag ObjectivesTag;
 
-	FGameplayTag NextTutorial;
+    // 다음 튜토리얼 단계 ID (없으면 튜토리얼 종료)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial")
+    FGameplayTag NextTutorial;
+
+    //단계에서 허용할 입력 매핑
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TArray<UInputMappingContext*> AllowedInputContexts;
 };
 
+/**
+ * 튜토리얼 매니저: 현재 튜토리얼 상태를 관리하고,
+ * 목표 달성 시 다음 단계로 자동 전환하는 클래스
+ */
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTutorialStepChanged, FGameplayTag, NewTutorialID);
 
 UCLASS()
 class SUBJECT_REM_API ASRTutorialManager : public AActor
 {
-	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	ASRTutorialManager();
+    GENERATED_BODY()
 
-	void AddStateTag(FGameplayTag Tag);
-	void RemoveStateTag(FGameplayTag Tag);
+public:
+    ASRTutorialManager();
 
-	FGameplayTagContainer CurrentTags;
+    /** 외부에서 튜토리얼 목표를 달성했음을 알릴 때 호출 */
+    UFUNCTION(BlueprintCallable, Category = "Tutorial")
+    void NotifyObjectiveCompleted(FGameplayTag CompletedTag);
+
+    /** 현재 튜토리얼 단계의 ID 반환 */
+    UFUNCTION(BlueprintCallable, Category = "Tutorial")
+    FGameplayTag GetCurrentTutorialID() const { return CurrentTutorialID; }
+
+    /** 현재 목표 태그 반환 */
+    UFUNCTION(BlueprintCallable, Category = "Tutorial")
+    FGameplayTag GetCurrentObjectiveTag() const { return CurrentObjectiveTag; }
+
+    UPROPERTY(BlueprintAssignable, Category = "Tutorial")
+    FTutorialStepChanged  OnTutorialStepChanged;
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable)
-	void Move();
+    /** 첫 번째 튜토리얼 단계 시작 */
+    void StartFirstTutorial();
 
-private:
-	FTutorialInfo FoundNextTutorialByTag(FGameplayTag Tag);
+    /** 특정 튜토리얼 단계로 전환 */
+    void SetupTutorial(FGameplayTag TutorialID);
 
+    /** 튜토리얼 정보 검색 */
+    FTutorialInfo* FindTutorialInfo(FGameplayTag TutorialID);
 
-	UPROPERTY(EditDefaultsOnly)
-	TArray<FTutorialInfo> TutorialInfos;
+    /** 현재 튜토리얼 단계 ID */
+    UPROPERTY(VisibleAnywhere, Category = "Tutorial|State")
+    FGameplayTag CurrentTutorialID;
+
+    /** 현재 목표 태그 */
+    UPROPERTY(VisibleAnywhere, Category = "Tutorial|State")
+    FGameplayTag CurrentObjectiveTag;
+
+    /** 모든 튜토리얼 단계 데이터 */
+    UPROPERTY(EditDefaultsOnly, Category = "Tutorial|Data")
+    TArray<FTutorialInfo> TutorialInfos;
+
 };

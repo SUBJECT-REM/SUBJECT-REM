@@ -3,9 +3,13 @@
 
 #include "SRGameplayTags.h"
 
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Tutorial_ID_Move, "Tutorial.Objectives.Move", "Tutorial ID Tag");
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Tutorial_ID_PickupItem, "Tutorial.Objectives.Move", "Tutorial ID Tag");
+namespace SRGameplayTags
+{
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Tutorial_ID_Move, "Tutorial.ID.Move", "Tutorial ID Tag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Tutorial_ID_PickupItem, "Tutorial.ID.PickupItem", "Tutorial ID Tag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Tutorial_ID_ClosePickupItemResult, "Tutorial.ID.ClosePickupItemResult", "Tutorial ID Tag");
 
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Tutorial_Objectives_Move, "Tutorial.Objectives.Move", "Tutorial Objectives Tag");
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(Tutorial_Objectives_PickupItem, "Tutorial.Objectives.PickupItem", "Tutorial Objectives Tag");
-
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Tutorial_Objectives_Move, "Tutorial.Objectives.Move", "Tutorial Objectives Tag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Tutorial_Objectives_PickupItem, "Tutorial.Objectives.PickupItem", "Tutorial Objectives Tag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Tutorial_Objectives_ClosePickupItemResult, "Tutorial.Objectives.ClosePickupItemResult", "Tutorial Objectives Tag");
+}
