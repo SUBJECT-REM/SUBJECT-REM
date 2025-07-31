@@ -16,7 +16,7 @@ void USRClueWidgetPresenter::Init(UActorComponent* InitComponent, UUserWidget* I
 	}
 	check(InvenComp);
 	InvenComp->AddClueDatasDelegate.AddDynamic(this, &ThisClass::RequestUpdateClueGridWidget);
-	InvenComp->ClueMapResultDelegate.AddDynamic(this, &ThisClass::RequsetUpdateClueCombineResultWidget);
+	InvenComp->ClueCombineResultDelegate.AddDynamic(this, &ThisClass::RequsetUpdateClueCombineResultWidget);
 
 	ClueWidget = Cast<USRClueWidget>(InitWidget);
 	if (!ClueWidget)
