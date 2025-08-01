@@ -34,7 +34,7 @@ private:
 	void RequestCombineClue(TArray<FName> ClueIds);
 
 	UFUNCTION()
-	void RequsetUpdateClueCombineResultWidget(const FSRItemBaseData& Data);
+	void RequsetUpdateClueCombineResultWidget(const FSRClueMapData& Data);
 
 	UPROPERTY()
 	USRInventoryComponent* InvenComp;

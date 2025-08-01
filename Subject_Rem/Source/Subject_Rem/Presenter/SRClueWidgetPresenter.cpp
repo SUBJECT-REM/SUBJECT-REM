@@ -40,7 +40,7 @@ void USRClueWidgetPresenter::RequestCombineClue(TArray<FName> ClueIds)
 	InvenComp->CombineClue(ClueIds);
 }
 
-void USRClueWidgetPresenter::RequsetUpdateClueCombineResultWidget(const FSRItemBaseData& Data)
+void USRClueWidgetPresenter::RequsetUpdateClueCombineResultWidget(const FSRClueMapData& Data)
 {
-	ClueWidget->UpdateClueCombineResultWidget(Data);
+	ClueWidget->UpdateClueCombineResultWidget(Data.BaseInfo);
 }
