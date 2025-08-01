@@ -17,6 +17,7 @@ class UButton;
 class UOverlay;
 class USRInventoryWidget;
 class USRClueWidget;
+class USRClueMapWidget;
 class USRInventoryPresenter;
 class USRClueWidgetPresenter;
 
@@ -59,6 +60,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	USRClueWidget* ClueWidget;
+
+	UPROPERTY(meta = (BindWidget))
+	USRClueMapWidget* ClueMapWidget;
 
 	UPROPERTY(meta = (BindWidget))
 	UOverlay* MenuOverlay;

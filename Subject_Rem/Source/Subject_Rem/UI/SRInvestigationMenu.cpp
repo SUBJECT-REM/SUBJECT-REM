@@ -3,6 +3,7 @@
 
 #include "UI/SRInvestigationMenu.h"
 #include "UI/SRInventoryWidget.h"
+#include "UI/ClueMap/SRClueMapWidget.h"
 #include "UI/SRClueWidget.h" 
 #include "Components/Button.h"
 #include "Components/Overlay.h"
@@ -66,7 +67,7 @@ void USRInvestigationMenu::OpenClueMap()
 	ChangeButtonZOrder(InventoryButton, 2);
 	ChangeButtonZOrder(ClueButton, 2);
 	//아직 ClueMap이 없습니다.
-	OpenOnlyWidget(nullptr);
+	OpenOnlyWidget(ClueMapWidget);
 }
 
 void USRInvestigationMenu::NativeConstruct()
