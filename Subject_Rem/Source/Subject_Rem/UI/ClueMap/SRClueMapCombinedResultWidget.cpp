@@ -7,6 +7,9 @@
 
 void USRClueMapCombinedResultWidget::NativeConstruct()
 {
+      SetVisibility(ESlateVisibility::Hidden);
+      //CombinedCLueID로 이미지를 Load해야합니다.
+
       if (ClueDataTable && CombinedClueImage)
       {
             // RowName으로 DataTable Row 검색 -> A12 이런 식으로 되어있음.

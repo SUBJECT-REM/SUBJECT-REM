@@ -16,31 +16,24 @@ void USRClueMapWidget::NativeOnInitialized()
       {
             UE_LOG(LogTemp, Warning, TEXT("Not Find Inven"));
       }
+
+      FindCombinedResultWidgets();
 }
 
 void USRClueMapWidget::NativeConstruct()
 {
       Super::NativeConstruct();
-
-	if (!bIsInitialized)
-	{
-		bIsInitialized = true;
-            //최초 한번만 실행할 로직
-            
-	}
-	
-      //Inventory와 Bind
+      //UE_LOG(LogTemp, Warning, TEXT("NativeConstruct - ClueMap"));
       
 }
 
 void USRClueMapWidget::NativeDestruct()
 {
       Super::NativeDestruct();
-      UnbindInventoryDelegate(); // 닫을 때 바인딩 해제
 }
 
 
-void USRClueMapWidget::FindClueCombinedResultWidgets()
+void USRClueMapWidget::FindCombinedResultWidgets()
 {
       check(ClueMapCanvas);
 
@@ -50,7 +43,26 @@ void USRClueMapWidget::FindClueCombinedResultWidgets()
             //찾은 Widget이 USRClueMapCombinedResultWidget인지 확인한다.
             if (USRClueMapCombinedResultWidget* CombinedResultWidget = Cast<USRClueMapCombinedResultWidget>(ClueMapCanvas->GetChildAt(i)))
             {
-                  //CombinedResultWidget
+                  UE_LOG(LogTemp, Warning, TEXT("Found ClueMapCombined ID : %s"), *CombinedResultWidget->CombinedClueID.ToString());
+                  CombinedClueWidgets.Add(CombinedResultWidget->CombinedClueID, CombinedResultWidget);
+            }
+      }
+}
+
+void USRClueMapWidget::FindCombinedClueResultWidget(FName CombinedClueName)
+{
+      UE_LOG(LogTemp, Warning, TEXT("FindCombinedClueResultWidget : %s"), *CombinedClueName.ToString());
+      for (const TPair<FName, USRClueMapCombinedResultWidget*>& Pair : CombinedClueWidgets)
+      {
+            FName Key = Pair.Key;
+            USRClueMapCombinedResultWidget* Widget = Pair.Value;
+
+            //해당 Widget을 찾았다면 
+            if (Key == CombinedClueName)
+            {
+                  UE_LOG(LogTemp, Warning, TEXT("Clue Found"));
+                  FoundCombinedClueWidgets.Add(Key, Widget);
+                  Widget->SetVisibility(ESlateVisibility::Visible);
             }
       }
 }
@@ -58,11 +70,13 @@ void USRClueMapWidget::FindClueCombinedResultWidgets()
 void USRClueMapWidget::HandleCombinedClue(const FSRClueMapData& Data)
 {
       //여기서 Broadcast로 들어온 Data에서 FName을 추출한다.
+      UE_LOG(LogTemp, Warning, TEXT("Clue Combined"));
       FSRItemBaseData CombinedClueBaseInfo= Data.BaseInfo;
       FName CombinedClueName = CombinedClueBaseInfo.Name;
-      CombinedClueWidgets.Add(CombinedClueName, Data);
 
-      //진실 단서라면 
+      FindCombinedClueResultWidget(CombinedClueName);
+
+      //진실 단서라면
       if (Data.bResult == true)
       {
             UE_LOG(LogTemp, Warning, TEXT("True Clue Combined"));
@@ -86,7 +100,6 @@ void USRClueMapWidget::FindPlayerInventoryComponent()
 
 void USRClueMapWidget::BindInventoryDelegate()
 {
-      //찾은 InventoryComponent가 없으면 찾는다.
       if (!InventoryComponent)
       {
             UE_LOG(LogTemp, Warning, TEXT("ClueMapWidget - Inventory Widget Not Found"));

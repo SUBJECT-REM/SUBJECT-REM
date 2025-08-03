@@ -33,16 +33,21 @@ protected:
 
 
 	//ClueMap
-	void FindClueCombinedResultWidgets();
+	//최초에 한번만 실행하며 CombinedClueWidget을 찾습니다.
+	void FindCombinedResultWidgets();
+	void FindCombinedClueResultWidget(FName CombinedClueName);
 	UFUNCTION()
 	void HandleCombinedClue(const FSRClueMapData& Data);
 
 	void FindPlayerInventoryComponent();
 	void BindInventoryDelegate();
+	//현재 사용하지 않음.
 	void UnbindInventoryDelegate();
 
-	//FName으로 찾아 해당 FSRClueMapData를 얻습니다. - 진실, 거짓 상관없이 다 담습니다.
-	TMap<FName, FSRClueMapData> CombinedClueWidgets;
+	//Widget들만 모아서 미리 찾아 Array에 넣는 Array
+	TMap<FName, USRClueMapCombinedResultWidget*> CombinedClueWidgets;
+	//FName으로 찾아 해당 조합된 USRClueMapCombinedResultWidget를 얻습니다. - 진실, 거짓 상관없이 다 담습니다.
+	TMap<FName, USRClueMapCombinedResultWidget*> FoundCombinedClueWidgets;
 	//진실 단서만 담습니다.
 	TArray<FName> TrueClues;
 

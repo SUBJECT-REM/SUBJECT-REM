@@ -24,7 +24,7 @@ public:
 
 	//Descrtion을 위한 Button
 	UPROPERTY(meta = (BindWidget))
-	UButton* CharacterButton;
+	UButton* CombinedClueButton;
 	//Button Image;
 	UPROPERTY(meta = (BindWidget))
 	UImage* CombinedClueImage;
