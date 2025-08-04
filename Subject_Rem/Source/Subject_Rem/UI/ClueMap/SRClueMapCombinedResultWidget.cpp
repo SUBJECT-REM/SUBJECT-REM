@@ -10,18 +10,18 @@ void USRClueMapCombinedResultWidget::NativeConstruct()
       SetVisibility(ESlateVisibility::Hidden);
       //CombinedCLueID로 이미지를 Load해야합니다.
 
-      if (ClueDataTable && CombinedClueImage)
-      {
-            // RowName으로 DataTable Row 검색 -> A12 이런 식으로 되어있음.
-            const FSRClueMapData* Row = ClueDataTable->FindRow<FSRClueMapData>(CombinedClueID, TEXT(""));
+      //if (ClueDataTable && CombinedClueImage)
+      //{
+      //      // RowName으로 DataTable Row 검색 -> A12 이런 식으로 되어있음.
+      //      const FSRClueMapData* Row = ClueDataTable->FindRow<FSRClueMapData>(CombinedClueID, TEXT(""));
 
-            if (Row)
-            {
-                  //UE_LOG(LogTemp, Warning, TEXT("Struct Find Complete"));
-                  // UImage는 Texture2D를 직접 못 쓰므로 Brush로 변환
-                  FSlateBrush Brush;
-                  //Brush.SetResourceObject(Row->CharacterTexture);
-                  CombinedClueImage->SetBrush(Brush);
-            }
-      }
+      //      if (Row)
+      //      {
+      //            //UE_LOG(LogTemp, Warning, TEXT("Struct Find Complete"));
+      //            // UImage는 Texture2D를 직접 못 쓰므로 Brush로 변환
+      //            FSlateBrush Brush;
+      //            //Brush.SetResourceObject(Row->CharacterTexture);
+      //            CombinedClueImage->SetBrush(Brush);
+      //      }
+      //}
 }

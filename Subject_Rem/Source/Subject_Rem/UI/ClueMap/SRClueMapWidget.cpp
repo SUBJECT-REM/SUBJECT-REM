@@ -5,6 +5,7 @@
 #include "Components/CanvasPanel.h"
 #include "Component/SRInventoryComponent.h"
 #include "UI/ClueMap/SRClueMapCombinedResultWidget.h"
+#include "UI/ClueMap/SRTrueClueLinkWidget.h"
 
 void USRClueMapWidget::NativeOnInitialized()
 {
@@ -12,12 +13,14 @@ void USRClueMapWidget::NativeOnInitialized()
       
       FindPlayerInventoryComponent();
       BindInventoryDelegate();
+
       if (!InventoryComponent)
       {
             UE_LOG(LogTemp, Warning, TEXT("Not Find Inven"));
       }
 
       FindCombinedResultWidgets();
+      FindTrueClueLinkWidgets();
 }
 
 void USRClueMapWidget::NativeConstruct()
@@ -45,24 +48,41 @@ void USRClueMapWidget::FindCombinedResultWidgets()
             {
                   UE_LOG(LogTemp, Warning, TEXT("Found ClueMapCombined ID : %s"), *CombinedResultWidget->CombinedClueID.ToString());
                   CombinedClueWidgets.Add(CombinedResultWidget->CombinedClueID, CombinedResultWidget);
+                  //TrueClues.Add(CombinedClueName);
             }
       }
 }
 
-void USRClueMapWidget::FindCombinedClueResultWidget(FName CombinedClueName)
+void USRClueMapWidget::FindTrueClueLinkWidgets()
 {
-      UE_LOG(LogTemp, Warning, TEXT("FindCombinedClueResultWidget : %s"), *CombinedClueName.ToString());
+      check(ClueLinkLineCanvas);
+
+      const int32 ChildCount = ClueLinkLineCanvas->GetChildrenCount();
+      for (int32 i = 0; i < ChildCount; ++i)
+      {
+            //찾은 Widget이 USRClueMapCombinedResultWidget인지 확인한다.
+            if (USRTrueClueLinkWidget* TrueClueLinkWidget = Cast<USRTrueClueLinkWidget>(ClueLinkLineCanvas->GetChildAt(i)))
+            {
+                  TrueClueLinkWidgets.Add(TrueClueLinkWidget);
+            }
+      }
+} 
+
+void USRClueMapWidget::FindCombinedClueResultWidget(FName CombinedClueID)
+{
       for (const TPair<FName, USRClueMapCombinedResultWidget*>& Pair : CombinedClueWidgets)
       {
             FName Key = Pair.Key;
             USRClueMapCombinedResultWidget* Widget = Pair.Value;
 
             //해당 Widget을 찾았다면 
-            if (Key == CombinedClueName)
+            if (Key == CombinedClueID)
             {
                   UE_LOG(LogTemp, Warning, TEXT("Clue Found"));
                   FoundCombinedClueWidgets.Add(Key, Widget);
+                  UE_LOG(LogTemp, Warning, TEXT("Clue Found : Visiblity true"));
                   Widget->SetVisibility(ESlateVisibility::Visible);
+                  UE_LOG(LogTemp, Warning, TEXT("Widget Visibility After Set: %d"), (int32)Widget->GetVisibility());
             }
       }
 }
@@ -70,17 +90,39 @@ void USRClueMapWidget::FindCombinedClueResultWidget(FName CombinedClueName)
 void USRClueMapWidget::HandleCombinedClue(const FSRClueMapData& Data)
 {
       //여기서 Broadcast로 들어온 Data에서 FName을 추출한다.
-      UE_LOG(LogTemp, Warning, TEXT("Clue Combined"));
       FSRItemBaseData CombinedClueBaseInfo= Data.BaseInfo;
-      FName CombinedClueName = CombinedClueBaseInfo.Name;
+      FName CombinedClueID = CombinedClueBaseInfo.Id;
 
-      FindCombinedClueResultWidget(CombinedClueName);
+      UE_LOG(LogTemp, Warning, TEXT("CombinedClueID: %s"), *CombinedClueID.ToString());
+      FindCombinedClueResultWidget(CombinedClueID);
 
       //진실 단서라면
       if (Data.bResult == true)
       {
             UE_LOG(LogTemp, Warning, TEXT("True Clue Combined"));
-            TrueClues.Add(CombinedClueName);
+            TrueClues.Add(CombinedClueID);
+      }
+}
+
+void USRClueMapWidget::DrawTrueClueLinkLine()
+{
+      for (USRTrueClueLinkWidget* LinkLine : TrueClueLinkWidgets)
+      {
+            if (!LinkLine) continue;
+
+            //해당 LinkWidget이 연결될 두 단서가 현재 찾아진 단서인지 확인합니다.
+            const bool bClueAFound = TrueClues.Contains(LinkLine->GetClueAName());
+            const bool bClueBFound = TrueClues.Contains(LinkLine->GetClueBName());
+
+            //둘 다 찾은 단서라면 해당 두 단서를 연결하는 Widget을 보이도록 합니다.
+            if (bClueAFound && bClueBFound)
+            {
+                  LinkLine->SetVisibility(ESlateVisibility::Visible);
+            }
+            else
+            {
+                  LinkLine->SetVisibility(ESlateVisibility::Hidden);
+            }
       }
 }
 
