@@ -98,6 +98,7 @@ void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
 			}
 
 			FSRClueMapData* FindClueMapResult = ClueMapDataTable->FindRow<FSRClueMapData>(ClueCombineResultRowName, ClueMapContext);
+			//bResult -> true 진실, false 면 거짓.
 			if (FindClueMapResult->bResult)
 			{
 				ClueMapDatas.Add(*FindClueMapResult);
@@ -106,11 +107,8 @@ void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
 			RemoveItems(ClueIds);
 
 			//UI 델리게이트 브로드캐스트
-			ClueMapResultDelegate.Broadcast(FindClueMapResult->BaseInfo);
+			ClueCombineResultDelegate.Broadcast(*FindClueMapResult);
 			return;
 		}
 	}
 }
-
-
-

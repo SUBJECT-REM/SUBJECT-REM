@@ -14,7 +14,7 @@ class USRItem;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddClueDatasSignatue,const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddInventoryDataSignature, const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRemoveInventoryDataSignature, const TArray<FName>&, RemovedItemIds);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueMapResultSignature, const FSRItemBaseData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueCombineResultSignature, const FSRClueMapData&, Data);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SUBJECT_REM_API USRInventoryComponent : public UActorComponent
@@ -41,11 +41,12 @@ public:
 	FRemoveInventoryDataSignature RemoveInventoryDataDelegate;
 
 	/*ClueMap 생성에 대한 델리게이트*/
-	FOnClueMapResultSignature ClueMapResultDelegate;
+	FOnClueCombineResultSignature ClueCombineResultDelegate;
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<const USRItem*> InventoryItems;
 
+	//조합 결과의 모음 - > 옮겨도 괜춘함.
 	UPROPERTY(VisibleAnywhere)
 	TArray<FSRClueMapData> ClueMapDatas;
 private:	
