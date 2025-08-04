@@ -58,6 +58,7 @@ protected:
 	//최초에 한번만 실행하며 SRTrueClueLinkWidget을 찾습니다.
 	void FindTrueClueLinkWidgets();
 	TArray<USRTrueClueLinkWidget*> TrueClueLinkWidgets;
+	//진실단서끼리 연결하는 LineWidget을 보이도록 합니다.
 	void DrawTrueClueLinkLine();
 
 private:

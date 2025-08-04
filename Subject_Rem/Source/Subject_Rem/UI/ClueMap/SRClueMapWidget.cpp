@@ -46,9 +46,14 @@ void USRClueMapWidget::FindCombinedResultWidgets()
             //찾은 Widget이 USRClueMapCombinedResultWidget인지 확인한다.
             if (USRClueMapCombinedResultWidget* CombinedResultWidget = Cast<USRClueMapCombinedResultWidget>(ClueMapCanvas->GetChildAt(i)))
             {
-                  UE_LOG(LogTemp, Warning, TEXT("Found ClueMapCombined ID : %s"), *CombinedResultWidget->CombinedClueID.ToString());
+                  //UE_LOG(LogTemp, Warning, TEXT("Found ClueMapCombined ID : %s"), *CombinedResultWidget->CombinedClueID.ToString());
                   CombinedClueWidgets.Add(CombinedResultWidget->CombinedClueID, CombinedResultWidget);
-                  //TrueClues.Add(CombinedClueName);
+
+                  //Test용으로 처음부터 더해버림 이후에 삭제해야함.
+                  //TrueClues.Add(CombinedResultWidget->CombinedClueID);
+                  ////Test로 10초 뒤 그림
+                  //FTimerHandle TestTimerHandle;
+                  //GetWorld()->GetTimerManager().SetTimer(TestTimerHandle,this,&USRClueMapWidget::DrawTrueClueLinkLine,10.0f, false);
             }
       }
 }
@@ -78,11 +83,8 @@ void USRClueMapWidget::FindCombinedClueResultWidget(FName CombinedClueID)
             //해당 Widget을 찾았다면 
             if (Key == CombinedClueID)
             {
-                  UE_LOG(LogTemp, Warning, TEXT("Clue Found"));
                   FoundCombinedClueWidgets.Add(Key, Widget);
-                  UE_LOG(LogTemp, Warning, TEXT("Clue Found : Visiblity true"));
                   Widget->SetVisibility(ESlateVisibility::Visible);
-                  UE_LOG(LogTemp, Warning, TEXT("Widget Visibility After Set: %d"), (int32)Widget->GetVisibility());
             }
       }
 }

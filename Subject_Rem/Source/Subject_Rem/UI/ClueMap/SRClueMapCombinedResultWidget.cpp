@@ -7,7 +7,12 @@
 
 void USRClueMapCombinedResultWidget::NativeConstruct()
 {
+      //이후 Hidden으로 변경
+      //SetVisibility(ESlateVisibility::Visible);
+      
       SetVisibility(ESlateVisibility::Hidden);
+     
+
       //CombinedCLueID로 이미지를 Load해야합니다.
 
       //if (ClueDataTable && CombinedClueImage)
