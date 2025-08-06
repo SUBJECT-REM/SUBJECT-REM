@@ -19,8 +19,8 @@ USRInventoryComponent::USRInventoryComponent()
 
 void USRInventoryComponent::BeginPlay()
 {
+	Super::BeginPlay();
 	EnsureItemPickupPresenter();
-
 }
 
 void USRInventoryComponent::AddClueData(const FSRItemBaseData& Data)
