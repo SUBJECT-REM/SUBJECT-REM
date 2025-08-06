@@ -48,6 +48,10 @@ protected:
 
 private:
 	void ChangeButtonZOrder(UButton* Widget, int8 NewZOrder);
+
+	UFUNCTION()
+	void HandleVisibilityChange(ESlateVisibility InVisibility);
+
 	UPROPERTY(meta = (BindWidget))
 	UButton* InventoryButton;
 	

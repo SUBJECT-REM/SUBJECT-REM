@@ -12,6 +12,7 @@
  */
 class USRInventoryComponent;
 class USRClueWidget;
+class ASRTutorialManager;
 
 UCLASS(BlueprintType, Blueprintable)
 class SUBJECT_REM_API USRClueWidgetPresenter : public USRPresenter
@@ -36,10 +37,15 @@ private:
 	UFUNCTION()
 	void RequsetUpdateClueCombineResultWidget(const FSRClueMapData& Data);
 
+	UFUNCTION()
+	void HandleCombineClueTutorial(TArray<FName> ClueIds);
+
 	UPROPERTY()
 	USRInventoryComponent* InvenComp;
 
 	UPROPERTY()
 	USRClueWidget* ClueWidget;
 
+	UPROPERTY()
+	ASRTutorialManager* TutorialManager;
 };

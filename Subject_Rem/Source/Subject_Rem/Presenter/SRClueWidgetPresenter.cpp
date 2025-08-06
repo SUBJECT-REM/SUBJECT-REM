@@ -5,6 +5,10 @@
 #include "SRClueWidgetPresenter.h"
 #include "UI/SRClueWidget.h"
 #include "Component/SRInventoryComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Actor/Tutorial/SRTutorialManager.h"
+#include "SRGameplayTags.h"
+
 
 void USRClueWidgetPresenter::Init(UActorComponent* InitComponent, UUserWidget* InitWidget)
 {
@@ -26,6 +30,13 @@ void USRClueWidgetPresenter::Init(UActorComponent* InitComponent, UUserWidget* I
 	}
 	check(ClueWidget)
 	ClueWidget->CombineButtonClickedDelegate.AddDynamic(this, &ThisClass::RequestCombineClue);
+	ClueWidget->CombineButtonClickedDelegate.AddDynamic(this, &ThisClass::HandleCombineClueTutorial);
+
+	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRTutorialManager::StaticClass());
+	if (FoundActor)
+	{
+		TutorialManager = Cast<ASRTutorialManager>(FoundActor);
+	}
 }
 
 void USRClueWidgetPresenter::RequestUpdateClueGridWidget(const FSRItemBaseData& Data)
@@ -43,4 +54,13 @@ void USRClueWidgetPresenter::RequestCombineClue(TArray<FName> ClueIds)
 void USRClueWidgetPresenter::RequsetUpdateClueCombineResultWidget(const FSRClueMapData& Data)
 {
 	ClueWidget->UpdateClueCombineResultWidget(Data.BaseInfo);
+}
+
+void USRClueWidgetPresenter::HandleCombineClueTutorial(TArray<FName> ClueIds)
+{
+	if (TutorialManager)
+	{
+		TutorialManager->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_CombineClue);
+		ClueWidget->CombineButtonClickedDelegate.RemoveDynamic(this, &ThisClass::HandleCombineClueTutorial);
+	}
 }

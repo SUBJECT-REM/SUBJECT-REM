@@ -90,6 +90,8 @@ void USRInvestigationMenu::NativeConstruct()
 	InventoryButton->OnClicked.AddDynamic(this, &ThisClass::OpenInventory);
 	ClueButton->OnClicked.AddDynamic(this, &ThisClass::OpenClue);
 	ClueMapButton->OnClicked.AddDynamic(this, &ThisClass::OpenClueMap);
+
+	OnVisibilityChanged.AddDynamic(this, &ThisClass::HandleVisibilityChange);
 }
 
 void USRInvestigationMenu::ChangeButtonZOrder(UButton* Widget,int8 NewZOrder)
@@ -98,6 +100,15 @@ void USRInvestigationMenu::ChangeButtonZOrder(UButton* Widget,int8 NewZOrder)
 	check(CanvasPanelSlot);
 
 	CanvasPanelSlot->SetZOrder(NewZOrder);
+}
+
+void USRInvestigationMenu::HandleVisibilityChange(ESlateVisibility InVisibility)
+{
+	if (InVisibility == ESlateVisibility::Visible && TutorialManager)
+	{
+		TutorialManager->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_OepnInvenstigation);
+		OnVisibilityChanged.RemoveDynamic(this, &ThisClass::HandleVisibilityChange);
+	}
 }
 
 void USRInvestigationMenu::NotifyClueButtonClick()
