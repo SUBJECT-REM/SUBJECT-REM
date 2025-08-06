@@ -121,10 +121,6 @@ void USRClueMapWidget::DrawTrueClueLinkLine()
             {
                   LinkLine->SetVisibility(ESlateVisibility::Visible);
             }
-            else
-            {
-                  LinkLine->SetVisibility(ESlateVisibility::Hidden);
-            }
       }
 }
 
