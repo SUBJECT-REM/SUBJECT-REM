@@ -10,6 +10,7 @@
 
 class UDataTable;
 class USRItem;
+class USRItemPickupResultPresenter;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddClueDatasSignatue,const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddInventoryDataSignature, const FSRItemBaseData&, Data);
@@ -49,6 +50,8 @@ public:
 	//조합 결과의 모음 - > 옮겨도 괜춘함.
 	UPROPERTY(VisibleAnywhere)
 	TArray<FSRClueMapData> ClueMapDatas;
+protected:
+	virtual void BeginPlay() override;
 private:	
 	/*단서 데이터 추가*/
 	UFUNCTION(BlueprintCallable)
@@ -57,11 +60,20 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void AddItemData(const FSRItemData& Data);
 
+	//아이템 줍기시 나타낼 위젯에 대한 Presenter를 생성 및 초기화합니다.
+	//아이템 줍을 시점 및 데이터와 밀접하여 InventoryComp에 넣어놨음.
+	void EnsureItemPickupPresenter();
+
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* AllItemsDataTable;
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* ClueCombineRuleDataTable;
 
+	UPROPERTY()
+	USRItemPickupResultPresenter* ItemPickupPresenter;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<USRItemPickupResultPresenter> ItemPickupPresenterClass;
 	const int first = 0;
 	const int second = 1;
 };

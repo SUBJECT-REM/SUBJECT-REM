@@ -4,6 +4,8 @@
 #include "Component/SRInventoryComponent.h"
 #include "SRItem.h"
 #include "Interface/UseableInterface.h"
+#include "Presenter/SRItemPickupResultPresenter.h"
+
 
 // Sets default values for this component's properties
 USRInventoryComponent::USRInventoryComponent()
@@ -15,6 +17,12 @@ USRInventoryComponent::USRInventoryComponent()
 	// ...
 }
 
+void USRInventoryComponent::BeginPlay()
+{
+	EnsureItemPickupPresenter();
+
+}
+
 void USRInventoryComponent::AddClueData(const FSRItemBaseData& Data)
 {
 	AddClueDatasDelegate.Broadcast(Data);
@@ -23,6 +31,17 @@ void USRInventoryComponent::AddClueData(const FSRItemBaseData& Data)
 void USRInventoryComponent::AddItemData(const FSRItemData& Data)
 {
 	AddInventoryDataDelegate.Broadcast(Data.BaseInfo);
+}
+
+void USRInventoryComponent::EnsureItemPickupPresenter()
+{
+	if (!ItemPickupPresenter)
+	{
+		ItemPickupPresenter = NewObject<USRItemPickupResultPresenter>(this, ItemPickupPresenterClass);
+
+		check(ItemPickupPresenter);
+		ItemPickupPresenter->Init(this, nullptr);
+	}
 }
 
 void USRInventoryComponent::AddItem(const USRItem* Item)
