@@ -5,11 +5,17 @@
 #include "UI/SRInventoryWidget.h"
 #include "UI/ClueMap/SRClueMapWidget.h"
 #include "UI/SRClueWidget.h" 
+#include "Actor/Tutorial/SRTutorialManager.h"
 #include "Components/Button.h"
 #include "Components/Overlay.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/HorizontalBox.h"
 #include "Presenter/SRClueWidgetPresenter.h"
 #include "Presenter/SRInventoryPresenter.h"
+#include "Kismet/GameplayStatics.h"
+#include "SRGameplayTags.h"
+
+
 
 
 void USRInvestigationMenu::InitInvestigationMenuWidget(UObject* DataSource)
@@ -33,6 +39,13 @@ void USRInvestigationMenu::InitInvestigationMenuWidget(UObject* DataSource)
 
 	InvenPresenter->Init(Comp, InventoryWidget);
 	CluePresenter->Init(Comp, ClueWidget);
+
+	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRTutorialManager::StaticClass());
+	if (FoundActor)
+	{
+		 TutorialManager = Cast<ASRTutorialManager>(FoundActor);
+	}
+
 }
 
 void USRInvestigationMenu::OpenOnlyWidget(UUserWidget* WantOpenWidget)
@@ -59,6 +72,8 @@ void USRInvestigationMenu::OpenClue()
 	ChangeButtonZOrder(InventoryButton, 2);
 	ChangeButtonZOrder(ClueMapButton, 2);
 	OpenOnlyWidget(ClueWidget);
+
+	NotifyClueButtonClick();
 }
 
 void USRInvestigationMenu::OpenClueMap()
@@ -83,6 +98,15 @@ void USRInvestigationMenu::ChangeButtonZOrder(UButton* Widget,int8 NewZOrder)
 	check(CanvasPanelSlot);
 
 	CanvasPanelSlot->SetZOrder(NewZOrder);
+}
+
+void USRInvestigationMenu::NotifyClueButtonClick()
+{
+	if (TutorialManager)
+	{
+		TutorialManager->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_ClickClueButton);
+	}
+	ClueButtonClickInductionBox->SetVisibility(ESlateVisibility::Hidden);
 }
 
 
