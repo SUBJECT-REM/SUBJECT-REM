@@ -33,14 +33,21 @@ struct FTutorialInfo
     //단계에서 허용할 입력 매핑
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TArray<UInputMappingContext*> AllowedInputContexts;
+
+    //같은 태그가 몇번 필요한지 예) 초반 아이템 줍기 2번 이후 Clue 조합 튜토리얼로 넘어가도록 하기 위해
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial")
+    int32 RequiredCount = 1;
 };
 
 /**
  * 튜토리얼 매니저: 현재 튜토리얼 상태를 관리하고,
  * 목표 달성 시 다음 단계로 자동 전환하는 클래스
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTutorialStartedSignature, FGameplayTag, ObjectiveTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTutorialCompletedSignature, FGameplayTag, ObjectiveTag);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTutorialStepChanged, FGameplayTag, NewTutorialID);
+
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTutorialStepChanged, FGameplayTag, NewTutorialID);
 
 UCLASS()
 class SUBJECT_REM_API ASRTutorialManager : public AActor
@@ -62,8 +69,11 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Tutorial")
     FGameplayTag GetCurrentObjectiveTag() const { return CurrentObjectiveTag; }
 
-    UPROPERTY(BlueprintAssignable, Category = "Tutorial")
-    FTutorialStepChanged  OnTutorialStepChanged;
+    //UPROPERTY(BlueprintAssignable, Category = "Tutorial")
+    //FTutorialStepChanged  OnTutorialStepChanged;
+
+    FTutorialStartedSignature OnTutorialStartDelegate;
+    FTutorialCompletedSignature OnTutorialCompleteDelegate;
 protected:
     virtual void BeginPlay() override;
 
@@ -83,6 +93,10 @@ protected:
     /** 현재 목표 태그 */
     UPROPERTY(VisibleAnywhere, Category = "Tutorial|State")
     FGameplayTag CurrentObjectiveTag;
+
+    // 현재 각 목표 태그가 몇 번 완료되었는지를 추적
+    UPROPERTY()
+    TMap<FGameplayTag, int32> ObjectiveProgress;
 
     /** 모든 튜토리얼 단계 데이터 */
     UPROPERTY(EditDefaultsOnly, Category = "Tutorial|Data")

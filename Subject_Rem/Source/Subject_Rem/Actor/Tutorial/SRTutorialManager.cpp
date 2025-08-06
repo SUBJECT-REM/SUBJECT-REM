@@ -40,7 +40,7 @@ void ASRTutorialManager::SetupTutorial(FGameplayTag TutorialID)
     CurrentTutorialID = Info->ID;
     CurrentObjectiveTag = Info->ObjectivesTag;
 
-    OnTutorialStepChanged.Broadcast(TutorialID);
+    OnTutorialStartDelegate.Broadcast(TutorialID);
 
     if (Info->AllowedInputContexts.Num())
     {
@@ -48,14 +48,16 @@ void ASRTutorialManager::SetupTutorial(FGameplayTag TutorialID)
         {
             if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
             {
-                Subsystem->ClearAllMappings(); // 이전 입력 제거
+                //Subsystem->RemoveMappingContext();
 
+                Subsystem->ClearAllMappings(); // 이전 입력 제거
+                UE_LOG(LogTemp, Warning, TEXT("Clear All Mappings "));
                 for (UInputMappingContext* Context : Info->AllowedInputContexts)
                 {
                     if (Context)
                     {
                         UE_LOG(LogTemp, Warning, TEXT("Current Input  Mapping Context :%s"), *Context->GetName());
-                        Subsystem->AddMappingContext(Context, 0);
+                        Subsystem->AddMappingContext(Context, 10);
                    
                     }
                 }
@@ -72,17 +74,31 @@ void ASRTutorialManager::NotifyObjectiveCompleted(FGameplayTag CompletedTag)
     if (CompletedTag != CurrentObjectiveTag)
         return;
 
-    UE_LOG(LogTemp, Log, TEXT("Objective Completed: %s"), *CompletedTag.ToString());
-
     FTutorialInfo* Info = FindTutorialInfo(CurrentTutorialID);
     if (!Info) return;
 
-    if (Info->NextTutorial.IsValid())
+    // 누적 횟수 증가
+    int32& Count = ObjectiveProgress.FindOrAdd(CompletedTag);
+    Count++;
+
+    UE_LOG(LogTemp, Log, TEXT("Objective %s Progress: %d / %d"), *CompletedTag.ToString(), Count, Info->RequiredCount);
+
+    if (Count >= Info->RequiredCount)
     {
-        SetupTutorial(Info->NextTutorial); // 다음 단계 시작
-    }
-    else
-    {
-        UE_LOG(LogTemp, Log, TEXT("Tutorial Finished!"));
+        UE_LOG(LogTemp, Log, TEXT("Objective Fully Completed: %s"), *CompletedTag.ToString());
+
+        OnTutorialCompleteDelegate.Broadcast(CurrentTutorialID);
+        // 다음 튜토리얼로 진행
+        if (Info->NextTutorial.IsValid())
+        {
+            SetupTutorial(Info->NextTutorial);
+
+            // 진행 상태 초기화
+            ObjectiveProgress.Remove(CompletedTag);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Log, TEXT("Tutorial Finished!"));
+        }
     }
 }
