@@ -1,0 +1,69 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "UI/SRItemPickupResultWidget.h"
+#include "Components/TextBlock.h"
+
+
+void USRItemPickupResultWidget::NativeConstruct()
+{
+	OnVisibilityChanged.AddDynamic(this, &ThisClass::HandleVisibilityChange);
+	
+	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+	{
+		FInputModeUIOnly InputMode;
+		InputMode.SetWidgetToFocus(TakeWidget());
+		PC->SetInputMode(InputMode);
+	}
+
+}
+
+void USRItemPickupResultWidget::SetItemDes(FName Text)
+{
+	ItemDes->SetText(FText::FromName(Text));
+}
+
+void USRItemPickupResultWidget::SetItemName(FName Text)
+{
+	ItemName->SetText(FText::FromName(Text));
+}
+
+FReply USRItemPickupResultWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	if (InKeyEvent.GetKey() == EKeys::SpaceBar)
+	{
+		SetVisibility(ESlateVisibility::Collapsed);
+		return FReply::Handled();
+	}
+
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+
+}
+
+void USRItemPickupResultWidget::HandleVisibilityChange(ESlateVisibility NewVisibility)
+{
+	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+	{
+		switch (NewVisibility)
+		{
+		case ESlateVisibility::Visible:
+		{	// 최초 생성 시에도 입력 모드 설정
+			FInputModeUIOnly InputMode;
+				InputMode.SetWidgetToFocus(TakeWidget());
+				PC->SetInputMode(InputMode);
+				break;
+		}
+		case ESlateVisibility::Hidden:
+		case ESlateVisibility::Collapsed:
+		{
+			FInputModeGameAndUI InputMode;
+			PC->SetInputMode(InputMode);
+			PC->bShowMouseCursor = false;
+			break;
+		}
+
+		default:
+			break;
+		};
+	}
+}
