@@ -83,6 +83,8 @@ void USRInvestigationMenu::OpenClueMap()
 	ChangeButtonZOrder(ClueButton, 2);
 	//아직 ClueMap이 없습니다.
 	OpenOnlyWidget(ClueMapWidget);
+
+	NotifyClueButtonClick();
 }
 
 void USRInvestigationMenu::NativeConstruct()
