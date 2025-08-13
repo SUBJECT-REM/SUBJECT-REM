@@ -30,10 +30,6 @@ protected:
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* Pulse;
 
-	//임시
-	UPROPERTY(meta = (BindWidget))
-	USRRotateItemPreviewWidget* RotateItemPreview;
-
 private:
 	void UpdateStressProgressBar(float StressAmount);
 	USRStressLocalPlayerSubsystem* StressSubsystem;
