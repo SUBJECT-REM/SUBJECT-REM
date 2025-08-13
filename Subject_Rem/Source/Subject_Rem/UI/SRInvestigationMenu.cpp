@@ -86,6 +86,7 @@ void USRInvestigationMenu::OpenClueMap()
 	//아직 ClueMap이 없습니다.
 	OpenOnlyWidget(ClueMapWidget);
 
+	NotifyClueMapButtonClick();
 }
 
 void USRInvestigationMenu::NativeConstruct()
@@ -95,7 +96,9 @@ void USRInvestigationMenu::NativeConstruct()
 	ClueMapButton->OnClicked.AddDynamic(this, &ThisClass::OpenClueMap);
 
 	OnVisibilityChanged.AddDynamic(this, &ThisClass::HandleVisibilityChange);
+
 	ClueButtonClickInductionBox->SetVisibility(ESlateVisibility::Hidden);
+	ClueMapButtonClickInductionBox->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void USRInvestigationMenu::ChangeButtonZOrder(UButton* Widget,int8 NewZOrder)
@@ -117,14 +120,19 @@ void USRInvestigationMenu::HandleVisibilityChange(ESlateVisibility InVisibility)
 
 void USRInvestigationMenu::OnTutorialStart(FGameplayTag Tag)
 {
-	UE_LOG(LogTemp, Warning, TEXT("MenuWidget - OnTutorialStart TagName : %s"), *Tag.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Menu OnTutorialStart Tag Name : %s"), *Tag.ToString());
 	if (Tag == SRGameplayTags::Tutorial_ID_ClickClueButton)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ClickClueButton TutorialStart "));
 		//ClueButton을 클릭하도록 하고 다른 UI클릭은 못하도록합니다.
 		ClueButtonClickInductionBox->SetVisibility(ESlateVisibility::Visible);
 		InventoryButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 		ClueMapButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+	}
+	else if (Tag == SRGameplayTags::Tutorial_ID_ClickClueMapButton)
+	{
+		ClueMapButtonClickInductionBox->SetVisibility(ESlateVisibility::Visible);
+		InventoryButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+		ClueButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 
 }
@@ -138,6 +146,12 @@ void USRInvestigationMenu::OnTutorialComplete(FGameplayTag Tag)
 		InventoryButton->SetVisibility(ESlateVisibility::Visible);
 		ClueMapButton->SetVisibility(ESlateVisibility::Visible);
 	}
+	else if (Tag == SRGameplayTags::Tutorial_ID_ClickClueMapButton)
+	{
+		ClueMapButtonClickInductionBox->SetVisibility(ESlateVisibility::Hidden);
+		InventoryButton->SetVisibility(ESlateVisibility::Visible);
+		ClueButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+	}
 }
 
 void USRInvestigationMenu::NotifyClueButtonClick()
@@ -147,6 +161,15 @@ void USRInvestigationMenu::NotifyClueButtonClick()
 		TutorialManager->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_ClickClueButton);
 	}
 	ClueButtonClickInductionBox->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void USRInvestigationMenu::NotifyClueMapButtonClick()
+{
+	if (TutorialManager)
+	{
+		TutorialManager->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_ClickClueMapButton);
+	}
+	ClueMapButtonClickInductionBox->SetVisibility(ESlateVisibility::Hidden);
 }
 
 

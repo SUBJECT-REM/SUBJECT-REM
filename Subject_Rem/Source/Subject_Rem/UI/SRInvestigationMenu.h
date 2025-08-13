@@ -59,6 +59,10 @@ private:
 	UFUNCTION()
 	void OnTutorialComplete(FGameplayTag Tag);
 
+	void NotifyClueButtonClick();
+
+	void NotifyClueMapButtonClick();
+
 	UPROPERTY(meta = (BindWidget))
 	UButton* InventoryButton;
 	
@@ -89,10 +93,11 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UHorizontalBox* ClueButtonClickInductionBox;
 
+	UPROPERTY(meta = (BindWidget))
+	UHorizontalBox* ClueMapButtonClickInductionBox;
 	//Presenter에서 처리할라했지만 아직 InvestigationMenu에서는 다른 동작이 없기에 새 Presenter를 만들지 않았음.
 	//추후 게임로직과 연결되는 부분이 점점 생긴다면 Presenter를 만들것같음.
 	UPROPERTY()
 	ASRTutorialManager* TutorialManager;
 
-	void NotifyClueButtonClick();
 };
