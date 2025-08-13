@@ -43,7 +43,7 @@ private:
 	void HandleTutorialCompleted(FGameplayTag Tag);
 
 	UFUNCTION()
-	void LateCompleteTutorialObjective();
+	void HiddenPlayerTutorialWidgetComponent();
 
 	ASRTutorialManager* TutorialManager;
 		
@@ -54,7 +54,7 @@ private:
 
 	//튜토리얼 완료 지연 - 예) 움직이고 3초뒤 튜토리얼 완료
 	UPROPERTY(EditDefaultsOnly)
-	float TutorialCompletedDelaySeconds;
+	float TutorialWidgetHiddenDelay;
 
 	//튜토리얼 아이디
 	UPROPERTY(EditDefaultsOnly)

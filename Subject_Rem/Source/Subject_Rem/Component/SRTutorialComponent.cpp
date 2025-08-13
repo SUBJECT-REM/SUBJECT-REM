@@ -20,18 +20,7 @@ void USRTutorialComponent::NotifyTutorialObjective(FGameplayTag ObjectiveTag)
 {
 	if (TutorialManager)
 	{
-		if (TutorialCompletedDelaySeconds > 0)
-		{
-			FTimerHandle TutorialCompletedDelayHandle;
-			PendingObjectiveTag = ObjectiveTag;
-			GetWorld()->GetTimerManager().SetTimer(TutorialCompletedDelayHandle, this, &ThisClass::LateCompleteTutorialObjective, TutorialCompletedDelaySeconds, false);
-		}
-		else
-		{
-			TutorialManager->NotifyObjectiveCompleted(ObjectiveTag);
-		}
-
-	
+		TutorialManager->NotifyObjectiveCompleted(ObjectiveTag);
 	}
 	else
 	{
@@ -73,19 +62,13 @@ void USRTutorialComponent::HandleTutorialCompleted(FGameplayTag Tag)
 	//Widget제거
 	if (OwnerTutorialWidgetComp && Tag == ExpectedTag)
 	{
-		OwnerTutorialWidgetComp->SetVisibility(false);
+		FTimerHandle WidgetHiddenTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(WidgetHiddenTimerHandle, this, &ThisClass::HiddenPlayerTutorialWidgetComponent, TutorialWidgetHiddenDelay ,false);
 	}
 }
 
-void USRTutorialComponent::LateCompleteTutorialObjective()
+void USRTutorialComponent::HiddenPlayerTutorialWidgetComponent()
 {
-	if (TutorialManager && PendingObjectiveTag.IsValid())
-	{
-		TutorialManager->NotifyObjectiveCompleted(PendingObjectiveTag);
-		PendingObjectiveTag = FGameplayTag(); // 초기화
-
-	
-	}
+	OwnerTutorialWidgetComp->SetVisibility(false);
 
 }
-
