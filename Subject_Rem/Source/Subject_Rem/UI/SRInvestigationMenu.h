@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "GameplayTagContainer.h"
 #include "SRInvestigationMenu.generated.h"
 
 /**
@@ -51,6 +52,12 @@ private:
 
 	UFUNCTION()
 	void HandleVisibilityChange(ESlateVisibility InVisibility);
+
+	UFUNCTION()
+	void OnTutorialStart(FGameplayTag Tag);
+
+	UFUNCTION()
+	void OnTutorialComplete(FGameplayTag Tag);
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* InventoryButton;

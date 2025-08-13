@@ -46,6 +46,8 @@ void USRInvestigationMenu::InitInvestigationMenuWidget(UObject* DataSource)
 		 TutorialManager = Cast<ASRTutorialManager>(FoundActor);
 	}
 
+	TutorialManager->OnTutorialStartDelegate.AddDynamic(this, &ThisClass::OnTutorialStart);
+	TutorialManager->OnTutorialCompleteDelegate.AddDynamic(this, &ThisClass::OnTutorialComplete);
 }
 
 void USRInvestigationMenu::OpenOnlyWidget(UUserWidget* WantOpenWidget)
@@ -84,7 +86,6 @@ void USRInvestigationMenu::OpenClueMap()
 	//아직 ClueMap이 없습니다.
 	OpenOnlyWidget(ClueMapWidget);
 
-	NotifyClueButtonClick();
 }
 
 void USRInvestigationMenu::NativeConstruct()
@@ -94,6 +95,7 @@ void USRInvestigationMenu::NativeConstruct()
 	ClueMapButton->OnClicked.AddDynamic(this, &ThisClass::OpenClueMap);
 
 	OnVisibilityChanged.AddDynamic(this, &ThisClass::HandleVisibilityChange);
+	ClueButtonClickInductionBox->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void USRInvestigationMenu::ChangeButtonZOrder(UButton* Widget,int8 NewZOrder)
@@ -110,6 +112,31 @@ void USRInvestigationMenu::HandleVisibilityChange(ESlateVisibility InVisibility)
 	{
 		TutorialManager->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_OepnInvenstigation);
 		OnVisibilityChanged.RemoveDynamic(this, &ThisClass::HandleVisibilityChange);
+	}
+}
+
+void USRInvestigationMenu::OnTutorialStart(FGameplayTag Tag)
+{
+	UE_LOG(LogTemp, Warning, TEXT("MenuWidget - OnTutorialStart TagName : %s"), *Tag.ToString());
+	if (Tag == SRGameplayTags::Tutorial_ID_ClickClueButton)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ClickClueButton TutorialStart "));
+		//ClueButton을 클릭하도록 하고 다른 UI클릭은 못하도록합니다.
+		ClueButtonClickInductionBox->SetVisibility(ESlateVisibility::Visible);
+		InventoryButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+		ClueMapButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+	}
+
+}
+
+void USRInvestigationMenu::OnTutorialComplete(FGameplayTag Tag)
+{
+	if (Tag == SRGameplayTags::Tutorial_ID_ClickClueButton)
+	{
+		//다른 입력을 다시 활성화하도록함.
+		ClueButtonClickInductionBox->SetVisibility(ESlateVisibility::Hidden);
+		InventoryButton->SetVisibility(ESlateVisibility::Visible);
+		ClueMapButton->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 
