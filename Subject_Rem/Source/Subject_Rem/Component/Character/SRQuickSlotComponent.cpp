@@ -2,6 +2,7 @@
 
 
 #include "Component/Character/SRQuickSlotComponent.h"
+#include "Subsystem/SRStressLocalPlayerSubsystem.h"
 
 // Sets default values for this component's properties
 USRQuickSlotComponent::USRQuickSlotComponent()
@@ -31,6 +32,29 @@ void USRQuickSlotComponent::PressQuickSlot(uint8 QuickSlotNum)
 void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 {
 	UE_LOG(LogTemp, Log, TEXT("UseQuickSlot : %d"), QuickSlotNum);
+
+	//Test - 필요하면 아래 if - else 문 삭제해도 됩니다.
+	if (QuickSlotNum == 1)
+	{
+		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
+		{
+			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
+			{
+				StressSubsystem->ChangeStressAmount(1.0f);
+			}
+		}
+	}
+	else if (QuickSlotNum == 2)
+	{
+		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
+		{
+			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
+			{
+				StressSubsystem->ChangeStressAmount(-1.0f);
+			}
+		}
+	}
+	//Test 끝
 }
 
 
