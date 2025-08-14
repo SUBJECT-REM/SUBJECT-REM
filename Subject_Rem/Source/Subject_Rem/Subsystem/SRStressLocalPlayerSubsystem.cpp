@@ -17,6 +17,7 @@ void USRStressLocalPlayerSubsystem::ChangeStressAmount(const float ChangeValue)
 
 void USRStressLocalPlayerSubsystem::ChangeStressByTime(const float ChangeValue, const float Time)
 {
+	//UE_LOG(LogTemp, Log, TEXT("Change Stress By Time"));
 	GetWorld()->GetTimerManager().SetTimer(ChangeStressTimerHandler, [this, ChangeValue, Time]()
 	{
 			ChangeStressAmount(ChangeValue);

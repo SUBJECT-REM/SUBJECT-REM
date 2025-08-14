@@ -27,7 +27,7 @@ void USRStressBar::NativeConstruct()
 
 void USRStressBar::UpdateStressProgressBar(float StressAmount)
 {
-      UE_LOG(LogTemp, Warning, TEXT("Stress Bar Update"));
+      //UE_LOG(LogTemp, Warning, TEXT("Stress Bar Update"));
 
       StackedStressBar->SetPercent(StressSubsystem->GetStressPercent());
 }
@@ -41,9 +41,10 @@ void USRStressBar::OnStressWillChangeSoon(float ChangeValue, float DelayTime)
       const float FutureStress = FMath::Clamp(CurrentStress + ChangeValue, 0.f, 100.f); // 예: 95
 
       //미리 PreviewBar를 채움.
-      UE_LOG(LogTemp, Warning, TEXT("Stress Preview Bar Percent : %f"), FutureStress/100.0f);
+      //UE_LOG(LogTemp, Warning, TEXT("Stress Preview Bar Percent : %f"), FutureStress/100.0f);
       StressPreviewBar->SetPercent(FutureStress / 100.0f);
 
+      PendingLerpTime = 0.0f;
       bIsPendingLerp = true;
 }
 
@@ -53,7 +54,7 @@ void USRStressBar::StressChangePreviewColorChange(float InDeltaTime)
 
       PendingLerpTime += InDeltaTime;
       float Alpha = FMath::Clamp(PendingLerpTime / PendingLerpDuration, 0.f, 1.f);
-      UE_LOG(LogTemp, Warning, TEXT("StressBar Native Tick Alpha : %f"), Alpha);
+      //UE_LOG(LogTemp, Warning, TEXT("StressBar Native Tick Alpha : %f"), Alpha);
 
       // 점진적으로 붉은색으로 보간
       float R = FMath::Lerp(0.4f, 1.0f, Alpha); // 더 빨강으로
@@ -62,7 +63,7 @@ void USRStressBar::StressChangePreviewColorChange(float InDeltaTime)
 
       FLinearColor FillColor = FLinearColor(R, G, B, 1.0f);
 
-      UE_LOG(LogTemp, Warning, TEXT("FillColor: R=%f, G=%f, B=%f, A=%f"), FillColor.R, FillColor.G, FillColor.B, FillColor.A);
+      //UE_LOG(LogTemp, Warning, TEXT("FillColor: R=%f, G=%f, B=%f, A=%f"), FillColor.R, FillColor.G, FillColor.B, FillColor.A);
 
       StressPreviewBar->SetFillColorAndOpacity(FillColor);
          

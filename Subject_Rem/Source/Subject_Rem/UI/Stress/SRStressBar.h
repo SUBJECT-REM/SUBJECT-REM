@@ -33,6 +33,4 @@ private:
 	bool bIsPendingLerp = false;
 	float PendingLerpTime = 0.f;
 	float PendingLerpDuration = 0.f;
-	int32 PendingStartIndex = 0;
-	int32 PendingCount = 0;
 };
