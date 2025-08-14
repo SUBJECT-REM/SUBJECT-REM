@@ -46,8 +46,11 @@ void USRInvestigationMenu::InitInvestigationMenuWidget(UObject* DataSource)
 		 TutorialManager = Cast<ASRTutorialManager>(FoundActor);
 	}
 
-	TutorialManager->OnTutorialStartDelegate.AddDynamic(this, &ThisClass::OnTutorialStart);
-	TutorialManager->OnTutorialCompleteDelegate.AddDynamic(this, &ThisClass::OnTutorialComplete);
+	if (TutorialManager)
+	{
+		TutorialManager->OnTutorialStartDelegate.AddDynamic(this, &ThisClass::OnTutorialStart);
+		TutorialManager->OnTutorialCompleteDelegate.AddDynamic(this, &ThisClass::OnTutorialComplete);
+	}
 }
 
 void USRInvestigationMenu::OpenOnlyWidget(UUserWidget* WantOpenWidget)
