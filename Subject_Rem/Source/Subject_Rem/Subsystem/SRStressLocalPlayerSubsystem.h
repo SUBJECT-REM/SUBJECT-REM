@@ -7,6 +7,7 @@
 #include "SRStressLocalPlayerSubsystem.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnStressChangeDelegate, const float)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStressChangeByTimeDelegate, const float, const float)
 
 UCLASS()
 class SUBJECT_REM_API USRStressLocalPlayerSubsystem : public ULocalPlayerSubsystem
@@ -43,6 +44,7 @@ public:
 	FORCEINLINE float GetMaxStress() const { return MaxStress; };
 
 	FOnStressChangeDelegate OnStressChangeDelegate;
+	FOnStressChangeByTimeDelegate OnStressChangeByTimeDelegate;
 
 private:
 	/* 로컬 플레이어의 현재 스트레스 */

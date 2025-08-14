@@ -17,10 +17,13 @@ void USRStressLocalPlayerSubsystem::ChangeStressAmount(const float ChangeValue)
 
 void USRStressLocalPlayerSubsystem::ChangeStressByTime(const float ChangeValue, const float Time)
 {
-	GetWorld()->GetTimerManager().SetTimer(ChangeStressTimerHandler, [this, ChangeValue]()
+	GetWorld()->GetTimerManager().SetTimer(ChangeStressTimerHandler, [this, ChangeValue, Time]()
 	{
 			ChangeStressAmount(ChangeValue);
-	}, Time, true);
+			ChangeStressByTime(ChangeValue, Time);
+	}, Time, false);
+
+	OnStressChangeByTimeDelegate.Broadcast(ChangeValue, Time);
 }
 
 void USRStressLocalPlayerSubsystem::ClearStressTimer()

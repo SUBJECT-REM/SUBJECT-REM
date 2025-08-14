@@ -14,19 +14,25 @@ UCLASS()
 class SUBJECT_REM_API USRStressBar : public UUserWidget
 {
 	GENERATED_BODY()
-
-public:
-	UFUNCTION(BlueprintCallable)
-	float GetHealthPercent();
 protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY(meta = (BindWidget))
-	UHorizontalBox* HorizontalBox;
-	UPROPERTY()
-	TArray<UProgressBar*> ProgressBarArray;
+	UProgressBar* StackedStressBar;
+	UPROPERTY(meta = (BindWidget))
+	UProgressBar* StressPreviewBar;
 private:
 	USRStressLocalPlayerSubsystem* StressSubsystem;
 	void UpdateStressProgressBar(float StressAmount);
-	void CollectProgressBars();
+
+//ColorChange
+	void OnStressWillChangeSoon(float ChangeValue, float DelayTime);
+	//Tick에서 발동됩니다.
+	UFUNCTION(BlueprintCallable)
+	void StressChangePreviewColorChange(float InDeltaTime);
+	bool bIsPendingLerp = false;
+	float PendingLerpTime = 0.f;
+	float PendingLerpDuration = 0.f;
+	int32 PendingStartIndex = 0;
+	int32 PendingCount = 0;
 };

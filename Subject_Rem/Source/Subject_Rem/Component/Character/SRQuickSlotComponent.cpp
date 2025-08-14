@@ -54,6 +54,16 @@ void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 			}
 		}
 	}
+	else if (QuickSlotNum == 3)
+	{
+		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
+		{
+			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
+			{
+				StressSubsystem->ChangeStressByTime(5.0f, 1.0f);
+			}
+		}
+	}
 	//Test 끝
 }
 
