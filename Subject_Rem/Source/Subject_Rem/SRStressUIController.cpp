@@ -32,22 +32,6 @@ void USRStressUIController::UpdateStressProgressBar(float StressAmount)
 
       float StressPercent = StressSubsystem->GetStressPercent();
 
-      // ProgressBar에 퍼센트 적용
-      if (StressProgressBar)
-      {
-            StressProgressBar->SetPercent(StressPercent);
-
-            // G, B는 0 ~ 0.05 사이에서 감소
-            float GBAlpha = FMath::Clamp(StressPercent / 0.8f, 0.0f, 1.0f);
-            float G = FMath::Lerp(0.05f, 0.0f, GBAlpha);
-            float B = FMath::Lerp(0.05f, 0.0f, GBAlpha);
-
-            // R은 고정값 (빨강 강조)
-            FLinearColor FillColor = FLinearColor(0.4f, G, B, 1.0f);
-            StressProgressBar->SetFillColorAndOpacity(FillColor);
-      }
-
-      //StressEffect 실행 및 멈춤
       if (StressPercent >= 0.8f)
       {
             if (!IsAnimationPlaying(Pulse))
@@ -69,7 +53,6 @@ void USRStressUIController::SetHightStressEffectAlpha(float Alpha)
 {
       check(HighStressEffect);
 
-      UE_LOG(LogTemp, Log, TEXT("StressProgressBar Alpha : %f"), Alpha);
       FLinearColor Color = HighStressEffect->ColorAndOpacity;
       Color.A = FMath::Clamp(Alpha, 0.0f, 1.0f);
       HighStressEffect->SetColorAndOpacity(Color);

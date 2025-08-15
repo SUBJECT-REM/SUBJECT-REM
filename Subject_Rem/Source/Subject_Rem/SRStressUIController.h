@@ -21,11 +21,6 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar* StressProgressBar;
-	float StressProgressBarColor_G = 0.05;
-	float StressProgressBarColor_B = 0.05;
-
-	UPROPERTY(meta = (BindWidget))
 	UImage* HighStressEffect;
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* Pulse;
@@ -45,6 +40,5 @@ private:
 	* @param true = 재생, flase = 멈춤
 	*/
 	void PlayDangerPulse(bool bIsPlay);
-
 
 };
