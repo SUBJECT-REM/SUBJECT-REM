@@ -5,7 +5,14 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 
-void USRInputLocalPlayerSubsystem::ApplyInputRestriction()
+void USRInputLocalPlayerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+
+	Collection.InitializeDependency(UEnhancedInputLocalPlayerSubsystem::StaticClass());
+}
+
+void USRInputLocalPlayerSubsystem::LockInput()
 {
 	ULocalPlayer* LocalPlayer = GetLocalPlayer();
 	check(LocalPlayer);
@@ -15,13 +22,11 @@ void USRInputLocalPlayerSubsystem::ApplyInputRestriction()
 
 	if (EnhancedInputSubsystem)
 	{
-		//현재 입력매핑컨텍스트를 가져오고 , 캐싱 후 제거
-		//EnhancedInputSubsystem->
 		EnhancedInputSubsystem->ClearAllMappings(); 
 	}
 }
 
-void USRInputLocalPlayerSubsystem::RemoveInputRestriction()
+void USRInputLocalPlayerSubsystem::UnlockInput()
 {
 
 	ULocalPlayer* LocalPlayer = GetLocalPlayer();
@@ -29,31 +34,58 @@ void USRInputLocalPlayerSubsystem::RemoveInputRestriction()
 
 	UEnhancedInputLocalPlayerSubsystem* EnhancedInputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
 	check(EnhancedInputSubsystem);
-	if (CachedIMC.IsValid())
+
+	// 캐시가 있으면 캐시를, 없으면 기본 세트를 복원
+	const TArray<FIMCEntry>& ToRestore = (CachedIMCs.Num() > 0) ? CachedIMCs : DefaultContexts;
+
+	for (const FIMCEntry& E : ToRestore)
 	{
-		// 먼저 깨끗하게
-		EnhancedInputSubsystem->ClearAllMappings();
-		// 캐시했던 IMC를 원래 우선순위로 다시 적용
-		EnhancedInputSubsystem->AddMappingContext(CachedIMC.Context, CachedIMC.Priority);
+		if (E.IsValid())
+		{
+			EnhancedInputSubsystem->AddMappingContext(E.Context, E.Priority);
+		}
 	}
 }
 
-void USRInputLocalPlayerSubsystem::ReplaceContext(UInputMappingContext* ReplaceContext, int32 Priority)
+void USRInputLocalPlayerSubsystem::ReplaceContexts(const TArray<FIMCEntry>& NewContexts)
 {
-	check(ReplaceContext);
+	auto* EI = GetEnhancedChecked();
 
+	// 통째로 교체
+	EI->ClearAllMappings();
+
+	for (const FIMCEntry& E : NewContexts)
+	{
+		if (E.IsValid())
+		{
+			EI->AddMappingContext(E.Context, E.Priority);
+		}
+	}
+}
+
+void USRInputLocalPlayerSubsystem::SetDefaultContexts(const TArray<FIMCEntry>& Contexts)
+{
 	ULocalPlayer* LocalPlayer = GetLocalPlayer();
 	check(LocalPlayer);
 
 	UEnhancedInputLocalPlayerSubsystem* EnhancedInputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
 	check(EnhancedInputSubsystem);
 
-	if (EnhancedInputSubsystem)
+	for (FIMCEntry CurrentContext : Contexts)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("replace Context"));
-		EnhancedInputSubsystem->ClearAllMappings(); 
-		EnhancedInputSubsystem->AddMappingContext(ReplaceContext, Priority);
-
-		CachedIMC = FIMCEntry(ReplaceContext , Priority);
+		EnhancedInputSubsystem->AddMappingContext(CurrentContext.Context, CurrentContext.Priority);
+	
+		DefaultContexts.Add(CurrentContext);
 	}
+}
+
+UEnhancedInputLocalPlayerSubsystem* USRInputLocalPlayerSubsystem::GetEnhancedChecked() const
+{
+	ULocalPlayer* LP = GetLocalPlayer();
+	check(LP);
+
+	UEnhancedInputLocalPlayerSubsystem* EI = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LP);
+	check(EI);
+
+	return EI;
 }

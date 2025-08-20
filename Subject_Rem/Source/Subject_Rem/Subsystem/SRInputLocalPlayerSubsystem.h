@@ -10,6 +10,7 @@
  * 
  */
 class UInputMappingContext;
+class UEnhancedInputLocalPlayerSubsystem;
 
 USTRUCT()
 struct FIMCEntry
@@ -33,21 +34,25 @@ class SUBJECT_REM_API USRInputLocalPlayerSubsystem : public ULocalPlayerSubsyste
 	
 
 public:
+    virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+
     //현재 적용중인 IMC에 대해 입력 제한을 설정함(캐싱한 IMC를 지웠다 다시 적용하는 방식으로 구현함)
     UFUNCTION(BlueprintCallable)
-	void ApplyInputRestriction();
+	void LockInput();
 
     //현재 적용중인 IMC에 대해 입력 제한을 해제함
     UFUNCTION(BlueprintCallable)
-	void RemoveInputRestriction();
+	void UnlockInput();
 
     //IMC를 교체함
-    UFUNCTION(BlueprintCallable)
-	void ReplaceContext(UInputMappingContext* ReplaceContext, int32 Priority);
+    void ReplaceContexts(const TArray<FIMCEntry>& NewContexts);
 
+    void SetDefaultContexts(const TArray<FIMCEntry>& Contexts);
 
 private:
-
+    UEnhancedInputLocalPlayerSubsystem* GetEnhancedChecked() const;
     //현재 적용중인 IMC을 캐싱한것
-    FIMCEntry CachedIMC;
+    TArray<FIMCEntry> CachedIMCs;
+
+    TArray<FIMCEntry> DefaultContexts;
 };
