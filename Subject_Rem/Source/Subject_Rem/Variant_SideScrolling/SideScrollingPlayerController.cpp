@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 
 #include "SideScrollingPlayerController.h"
@@ -9,15 +9,24 @@
 #include "SideScrollingCharacter.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
+#include "Subsystem/SRInputLocalPlayerSubsystem.h"
 
 void ASideScrollingPlayerController::SetupInputComponent()
 {
-	// add the input mapping context
-	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	if (ULocalPlayer* LP = GetLocalPlayer())
 	{
-		for (UInputMappingContext* CurrentContext : DefaultMappingContexts)
+		if (auto* InputSys = LP->GetSubsystem<USRInputLocalPlayerSubsystem>())
 		{
-			Subsystem->AddMappingContext(CurrentContext, 0);
+			TArray<FIMCEntry> Defaults;
+			for (UInputMappingContext* Ctx : DefaultMappingContexts)
+			{
+				if (Ctx)
+				{
+					Defaults.Emplace(Ctx, /*Priority=*/0);
+				}
+			}
+			// 기본 세트를 등록하고 즉시 적용
+			InputSys->SetDefaultContexts(Defaults);
 		}
 	}
 }

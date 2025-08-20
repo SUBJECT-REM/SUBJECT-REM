@@ -4,6 +4,7 @@
 #include "SRGameplayTags.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "Subsystem/SRInputLocalPlayerSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 
 ASRTutorialManager::ASRTutorialManager()
@@ -42,25 +43,26 @@ void ASRTutorialManager::SetupTutorial(FGameplayTag TutorialID)
 
     OnTutorialStartDelegate.Broadcast(TutorialID);
 
-    if (Info->AllowedInputContexts.Num())
+    if (Info->AllowedInputContexts.Num() > 0)
     {
         if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
         {
-            if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
+            if (USRInputLocalPlayerSubsystem* Subsystem =
+                    ULocalPlayer::GetSubsystem<USRInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
             {
-                //Subsystem->RemoveMappingContext();
-
-                Subsystem->ClearAllMappings(); // 이전 입력 제거
-                UE_LOG(LogTemp, Warning, TEXT("Clear All Mappings "));
+                // 한 번에 교체할 세트 구성
+                TArray<FIMCEntry> StageContexts;
                 for (UInputMappingContext* Context : Info->AllowedInputContexts)
                 {
                     if (Context)
                     {
-                        UE_LOG(LogTemp, Warning, TEXT("Current Input  Mapping Context :%s"), *Context->GetName());
-                        Subsystem->AddMappingContext(Context, 10);
-                   
+                        // 튜토리얼 단계용 우선순위 규칙 (예: 10)
+                        StageContexts.Emplace(Context, /*Priority=*/10);
                     }
                 }
+
+                // 통째로 적용
+                Subsystem->ReplaceContexts(StageContexts);
             }
         }
     }
