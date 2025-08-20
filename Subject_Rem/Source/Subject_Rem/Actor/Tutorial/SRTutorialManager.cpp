@@ -4,6 +4,7 @@
 #include "SRGameplayTags.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "Subsystem/SRInputLocalPlayerSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 
 ASRTutorialManager::ASRTutorialManager()
@@ -46,19 +47,13 @@ void ASRTutorialManager::SetupTutorial(FGameplayTag TutorialID)
     {
         if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
         {
-            if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
+            if (USRInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<USRInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
             {
-                //Subsystem->RemoveMappingContext();
-
-                Subsystem->ClearAllMappings(); // 이전 입력 제거
-                UE_LOG(LogTemp, Warning, TEXT("Clear All Mappings "));
                 for (UInputMappingContext* Context : Info->AllowedInputContexts)
                 {
                     if (Context)
                     {
-                        UE_LOG(LogTemp, Warning, TEXT("Current Input  Mapping Context :%s"), *Context->GetName());
-                        Subsystem->AddMappingContext(Context, 10);
-                   
+                        Subsystem->ReplaceContext(Context, 10);
                     }
                 }
             }
