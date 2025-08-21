@@ -59,7 +59,7 @@ private:
 
 	/*단서들을 보여주는 패널*/
 	UPROPERTY(meta = (BindWidget))
-	UUniformGridPanel* ClueGridPanel;
+	UGridPanel* ClueGridPanel;
 
 	/*단서 조합 패널*/
 	UPROPERTY(meta = (BindWidget))

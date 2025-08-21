@@ -102,6 +102,7 @@ void USRClueWidget::ClueDataMoveToClueCombine(USRSlotWidget* ClickedSlot)
 		if (!Widget->GetIsEnabled())
 		{
 			USRSlotWidget* ClueSlot = Cast<USRSlotWidget>(Widget);
+			UE_LOG(LogTemp, Warning, TEXT("ClueDataMoveToClueCombine"));
 			ClueSlot->SetItemData(ClickedSlot->GetItemData());
 			ClueSlot->SetSlotIcon(ClueSlot->GetItemData().Icon);
 			ClickedSlot->SetSlotIcon(nullptr);

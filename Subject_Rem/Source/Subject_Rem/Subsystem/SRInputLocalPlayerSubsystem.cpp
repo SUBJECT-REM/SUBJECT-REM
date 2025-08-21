@@ -8,7 +8,7 @@
 void USRInputLocalPlayerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-
+	UE_LOG(LogTemp, Warning, TEXT("InputSubSystemInit"));
 	Collection.InitializeDependency(UEnhancedInputLocalPlayerSubsystem::StaticClass());
 }
 
@@ -54,11 +54,12 @@ void USRInputLocalPlayerSubsystem::ReplaceContexts(const TArray<FIMCEntry>& NewC
 	// 통째로 교체
 	EI->ClearAllMappings();
 
-	for (const FIMCEntry& E : NewContexts)
+	for (const FIMCEntry& Context : NewContexts)
 	{
-		if (E.IsValid())
+		if (Context.IsValid())
 		{
-			EI->AddMappingContext(E.Context, E.Priority);
+			EI->AddMappingContext(Context.Context, Context.Priority);
+			CachedIMCs.Add(Context);
 		}
 	}
 }
@@ -74,7 +75,7 @@ void USRInputLocalPlayerSubsystem::SetDefaultContexts(const TArray<FIMCEntry>& C
 	for (FIMCEntry CurrentContext : Contexts)
 	{
 		EnhancedInputSubsystem->AddMappingContext(CurrentContext.Context, CurrentContext.Priority);
-	
+		CachedIMCs.Add(CurrentContext);
 		DefaultContexts.Add(CurrentContext);
 	}
 }

@@ -34,7 +34,7 @@ private:
 	void UpdateItemDescriptionPanel(USRSlotWidget* ClickedSlot);
 	/*아이템들을 보여주는 패널*/
 	UPROPERTY(meta = (BindWidget))
-	UUniformGridPanel* InventoryGridPanel;
+	UGridPanel* InventoryGridPanel;
 
 	/*아이템 이름, 설명을 포함하는 박스패널*/
 	UPROPERTY(meta = (BindWidget))
