@@ -47,6 +47,23 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Styles")
+	FButtonStyle InventoryButtonNormalStyle;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Styles")
+	FButtonStyle InventoryButtonSelectedStyle;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Styles")
+	FButtonStyle ClueButtonNormalStyle;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Styles")
+	FButtonStyle ClueButtonSelectedStyle;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Styles")
+	FButtonStyle ClueMapButtonNormalStyle;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Styles")
+	FButtonStyle ClueMapButtonSelectedStyle;
 private:
 	void ChangeButtonZOrder(UButton* Widget, int8 NewZOrder);
 
@@ -91,10 +108,10 @@ private:
 	USRClueWidgetPresenter* CluePresenter;
 
 	UPROPERTY(meta = (BindWidget))
-	UHorizontalBox* ClueButtonClickInductionBox;
+	UUserWidget* ClueClickPulse;
 
 	UPROPERTY(meta = (BindWidget))
-	UHorizontalBox* ClueMapButtonClickInductionBox;
+	UUserWidget* ClueMapClickPulse;
 	//Presenter에서 처리할라했지만 아직 InvestigationMenu에서는 다른 동작이 없기에 새 Presenter를 만들지 않았음.
 	//추후 게임로직과 연결되는 부분이 점점 생긴다면 Presenter를 만들것같음.
 	UPROPERTY()

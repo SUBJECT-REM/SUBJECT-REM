@@ -29,12 +29,23 @@ public:
 	void RemoveItemInventoryGridPanel(const TArray<FName>& ItemIds);
 protected:
 	virtual void NativeConstruct() override;
+
+
+	/** 인벤토리 슬롯용 버튼 스타일 (에디터에서 세팅) */
+	UPROPERTY(EditDefaultsOnly, Category = "Styles" ,BlueprintReadOnly)
+	FButtonStyle InventorySlotButtonNormalStyle;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Styles", BlueprintReadOnly)
+	FButtonStyle InventorySlotButtonSelectedStyle;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	UGridPanel* InventoryGridPanel;
+
 private:
 	UFUNCTION()
 	void UpdateItemDescriptionPanel(USRSlotWidget* ClickedSlot);
 	/*아이템들을 보여주는 패널*/
-	UPROPERTY(meta = (BindWidget))
-	UGridPanel* InventoryGridPanel;
+
 
 	/*아이템 이름, 설명을 포함하는 박스패널*/
 	UPROPERTY(meta = (BindWidget))

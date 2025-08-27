@@ -6,15 +6,12 @@
 #include"UI/SRSlotDragVisualWidget.h"
 #include "UI/SRDragDropOperation.h"
 #include "Components/Button.h"
+#include "Components/Image.h"
+
 
 void USRSlotWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	if (Button)
-	{
-		DefaultSlotStyle = Button->GetStyle();
-	}
 
 }
 
@@ -39,33 +36,48 @@ FReply USRSlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const
 	return reply.NativeReply;
 }
 
-void USRSlotWidget::SetSlotIcon(UObject* Icon)
+void USRSlotWidget::SetItemIcon(UTexture2D* IconTexture)
 {
-	check(Button)
+	if (!ItemIconImage) return;
 
-		if (Icon == nullptr)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Icon nullptr"));	
-			Button->SetStyle(DefaultSlotStyle);
-		}
+	if (IconTexture)
+	{
+		ItemIconImage->SetBrushFromTexture(IconTexture, true);
+		ItemIconImage->SetVisibility(ESlateVisibility::HitTestInvisible); // 클릭은 버튼이 받도록
+	}
+	else
+	{
+		ItemIconImage->SetBrushFromTexture(nullptr, true);
+		ItemIconImage->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
 
-		else
-		{
-			FButtonStyle ButtonStyle;
-			FSlateBrush NormalStyle;
-			NormalStyle.SetResourceObject(Icon);
-			ButtonStyle.SetNormal(NormalStyle);
+void USRSlotWidget::ApplyButtonStyle(const FButtonStyle& InStyle)
+{
+	if (Button)
+	{
+		Button->SetStyle(InStyle);
+	}
+}
 
-			FSlateBrush HoverStyle;
-			HoverStyle.SetResourceObject(Icon);
-			ButtonStyle.SetHovered(HoverStyle);
+void USRSlotWidget::SetSlotButtonNormalStyle(const FButtonStyle& InStyle)
+{
+	SlotButtonNormalStyle = InStyle;
+}
 
-			FSlateBrush PressStyle;
-			PressStyle.SetResourceObject(Icon);
-			ButtonStyle.SetPressed(PressStyle);
+const FButtonStyle& USRSlotWidget::GetSlotButtonNormalStyle()
+{
+	return SlotButtonNormalStyle;
+}
 
-			Button->SetStyle(ButtonStyle);
-		}
+void USRSlotWidget::SetSlotButtonSelectedStyle(const FButtonStyle& InStyle)
+{
+	SlotButtonSelectedStyle = InStyle;
+}
+
+const FButtonStyle& USRSlotWidget::GetSlotButtonSelectedStyle()
+{
+	return SlotButtonSelectedStyle;
 }
 
 void USRSlotWidget::SetItemData(const FSRItemBaseData& NewData)
@@ -108,7 +120,7 @@ void USRSlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoi
 
 		//빈슬롯으로 세팅해줍니다.
 		SetIsOccupied(false);
-		SetSlotIcon(nullptr);
+		SetItemIcon(nullptr);
 		SetItemData(FSRItemBaseData());
 	}
 
@@ -145,7 +157,7 @@ void USRSlotWidget::SlotDragCancelled(UDragDropOperation* DragDropOper)
 	const FSRItemBaseData SlotItemData = SlotDragDropOper->DraggedSlotItemData;
 
 	SetItemData(SlotItemData);
-	SetSlotIcon(SlotItemData.Icon);
+	SetItemIcon(SlotItemData.Icon);
 	SetIsOccupied(true);
 }
 

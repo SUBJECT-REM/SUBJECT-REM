@@ -12,6 +12,8 @@
 
 void USRInventoryWidget::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	check(InventoryGridPanel)
 		TArray<UWidget*> InventoryGridChild = InventoryGridPanel->GetAllChildren();
 
@@ -23,6 +25,12 @@ void USRInventoryWidget::NativeConstruct()
 			UE_LOG(LogTemp, Warning, TEXT("InvenGridPanel Children Cast cannot be cast to USRSlotWidget"));
 		}
 		check(InvenSlot);
+
+	/*	InvenSlot->ApplyButtonStyle(InventorySlotButtonNormalStyle);
+		InvenSlot->SetItemIcon(nullptr);*/
+
+		InvenSlot->SetSlotButtonNormalStyle(InventorySlotButtonNormalStyle);
+		InvenSlot->SetSlotButtonSelectedStyle(InventorySlotButtonSelectedStyle);
 
 		InvenSlot->SetIsEnabled(true);
 		InvenSlot->OnSlotClickedDelegate.AddDynamic(this, &ThisClass::UpdateItemDescriptionPanel);
@@ -57,7 +65,7 @@ void USRInventoryWidget::AddItemInventoryGridPanel(const FSRItemBaseData& Data)
 			UE_LOG(LogTemp, Warning, TEXT("Updated Inventory Slot Name %s"), *InvenSlot->GetName());
 
 			InvenSlot->SetItemData(Data);
-			InvenSlot->SetSlotIcon(InvenSlot->GetItemData().Icon);
+			InvenSlot->SetItemIcon(InvenSlot->GetItemData().Icon);
 			InvenSlot->SetIsOccupied(true);
 			break;
 		}
@@ -74,7 +82,7 @@ void USRInventoryWidget::RemoveItemInventoryGridPanel(const TArray<FName>& ItemI
 		const FSRItemBaseData& Data = InvenSlot->GetItemData();
 		if (ItemIds.Contains(Data.Id))
 		{
-			InvenSlot->SetSlotIcon(nullptr);
+			InvenSlot->SetItemIcon(nullptr);
 			InvenSlot->SetItemData(FSRItemBaseData());
 			InvenSlot->SetIsOccupied(false);
 		}

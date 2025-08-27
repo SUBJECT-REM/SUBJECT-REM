@@ -13,6 +13,7 @@
 
 class UButton;
 class UDragDropOperation;
+class UImage;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlotClickedSignature, USRSlotWidget*, ClickedSlot);
 
 
@@ -23,16 +24,26 @@ class SUBJECT_REM_API USRSlotWidget : public UUserWidget
 public:
 	FOnSlotClickedSignature OnSlotClickedDelegate;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget),BlueprintReadOnly)
 	UButton* Button;
 
 	/*
 	* 버튼 이미지를 지정합니다.
 	* @param 버튼 이미지 텍스처
 	*/
-	void SetSlotIcon(UObject* Icon);
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	UImage* ItemIconImage;
 
+	UFUNCTION(BlueprintCallable)
+	void SetItemIcon(UTexture2D* IconTexture);
 
+	void ApplyButtonStyle(const FButtonStyle& InStyle);
+
+	void SetSlotButtonNormalStyle(const FButtonStyle& InStyle);
+	const FButtonStyle& GetSlotButtonNormalStyle();
+
+	void SetSlotButtonSelectedStyle(const FButtonStyle& InStyle);
+	const FButtonStyle& GetSlotButtonSelectedStyle();
 	void SetItemData(const FSRItemBaseData& NewData);
 	const FSRItemBaseData& GetItemData() const;
 
@@ -54,8 +65,10 @@ private:
 
 	bool bIsOccupied = false;
 	
-	FButtonStyle DefaultSlotStyle;
-
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> SlotDragVisualWidgetClass;
+
+	FButtonStyle SlotButtonNormalStyle;
+	FButtonStyle SlotButtonSelectedStyle;
+
 };

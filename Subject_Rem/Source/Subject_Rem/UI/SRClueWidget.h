@@ -35,6 +35,14 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+	/*단서들을 보여주는 패널*/
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	UGridPanel* ClueGridPanel;
+
+	/*단서 조합 패널*/
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	UGridPanel* ClueCombineGridPanel;
+
 private:
 
 	/*
@@ -57,13 +65,7 @@ private:
 	UFUNCTION()
 	void OnClickedCombineButton();
 
-	/*단서들을 보여주는 패널*/
-	UPROPERTY(meta = (BindWidget))
-	UGridPanel* ClueGridPanel;
 
-	/*단서 조합 패널*/
-	UPROPERTY(meta = (BindWidget))
-	UGridPanel* ClueCombineGridPanel;
 
 	/*단서 조합 결과*/
 	UPROPERTY(meta = (BindWidget))
@@ -72,6 +74,12 @@ private:
 	/*단서 조합 버튼*/
 	UPROPERTY(meta = (BindWidget))
 	UButton* ClueCombineButton;
-	
+
+	UPROPERTY(EditDefaultsOnly, Category = "Styles")
+	FButtonStyle ClueSlotButtonNormalStyle;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Styles")
+	FButtonStyle ClueSlotButtonSelectedStyle;
+
 	const int VaildCombineItemNum = 2;
 };

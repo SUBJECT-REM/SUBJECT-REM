@@ -11,6 +11,8 @@
 
 void USRClueWidget::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	check(ClueGridPanel)
 	TArray<UWidget*> ClueGridChild = ClueGridPanel->GetAllChildren();
 
@@ -23,6 +25,11 @@ void USRClueWidget::NativeConstruct()
 		}
 		check(ClueSlot);
 
+		//ClueSlot->SetItemIcon(nullptr);
+		//ClueSlot->ApplyButtonStyle(ClueSlotButtonNormalStyle);
+
+		ClueSlot->SetSlotButtonNormalStyle(ClueSlotButtonNormalStyle);
+		ClueSlot->SetSlotButtonSelectedStyle(ClueSlotButtonSelectedStyle);
 		ClueSlot->SetIsEnabled(true);
 	}
 	
@@ -68,7 +75,7 @@ void USRClueWidget::UpdateClueGridWidget(const FSRItemBaseData& Data)
 			UE_LOG(LogTemp, Warning, TEXT("UpdateClueWidget for "));
 
 			ClueSlot->SetItemData(Data);
-			ClueSlot->SetSlotIcon(ClueSlot->GetItemData().Icon);
+			ClueSlot->SetItemIcon(ClueSlot->GetItemData().Icon);
 
 			//버튼을 활성화 합니다.
 			ClueSlot->SetIsOccupied(true);
@@ -104,8 +111,8 @@ void USRClueWidget::ClueDataMoveToClueCombine(USRSlotWidget* ClickedSlot)
 			USRSlotWidget* ClueSlot = Cast<USRSlotWidget>(Widget);
 			UE_LOG(LogTemp, Warning, TEXT("ClueDataMoveToClueCombine"));
 			ClueSlot->SetItemData(ClickedSlot->GetItemData());
-			ClueSlot->SetSlotIcon(ClueSlot->GetItemData().Icon);
-			ClickedSlot->SetSlotIcon(nullptr);
+			ClueSlot->SetItemIcon(ClueSlot->GetItemData().Icon);
+			ClickedSlot->SetItemIcon(nullptr);
 
 			//버튼을 활성화 합니다.
 			ClueSlot->SetIsEnabled(true);
@@ -129,8 +136,8 @@ void USRClueWidget::ClueCombineDataMoveToClue(USRSlotWidget* ClickedSlot)
 		{
 			USRSlotWidget* ClueSlot = Cast<USRSlotWidget>(Widget);
 			ClueSlot->SetItemData(ClickedSlot->GetItemData());
-			ClueSlot->SetSlotIcon(ClueSlot->GetItemData().Icon);
-			ClickedSlot->SetSlotIcon(nullptr);
+			ClueSlot->SetItemIcon(ClueSlot->GetItemData().Icon);
+			ClickedSlot->SetItemIcon(nullptr);
 
 			ClueSlot->SetIsEnabled(true);
 			ClickedSlot->SetIsEnabled(false);
@@ -157,7 +164,7 @@ void USRClueWidget::OnClickedCombineButton()
 		}
 
 		//조합 이후 ClueCombinePanel 아이템들 제거
-		ClueSlot->SetSlotIcon(nullptr);
+		ClueSlot->SetItemIcon(nullptr);
 		ClueSlot->SetItemData(FSRItemBaseData());
 		ClueSlot->SetIsEnabled(false);
 	}
