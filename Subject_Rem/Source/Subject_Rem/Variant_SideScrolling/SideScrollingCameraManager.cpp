@@ -9,24 +9,33 @@
 
 void ASideScrollingCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaTime)
 {
-	// ensure the view target is a pawn
+	//ViewTarget이 Pawn인지 확인
 	APawn* TargetPawn = Cast<APawn>(OutVT.Target);
 
 	// is our target valid?
 	if (IsValid(TargetPawn))
 	{
 		// set the view target FOV and rotation
-		OutVT.POV.Rotation = FRotator(0.0f, -90.0f, 0.0f);
+		//OutVT.POV.Rotation = FRotator(0.0f, -90.0f, 0.0f);
+		OutVT.POV.Rotation = Rotation;
 		OutVT.POV.FOV = 65.0f;
 
-		// cache the current location
+		//현재 타겟 위치와 카메라 위치 저장
 		FVector CurrentActorLocation = OutVT.Target->GetActorLocation();
-
-		// copy the current camera location
 		FVector CurrentCameraLocation = GetCameraLocation();
 
-		// calculate the "zoom distance" - in reality the distance we want to keep to the target
-		float CurrentY = CurrentZoom + CurrentActorLocation.Y;
+		// Y축 위치를 X축 기준으로 계산 (정면 카메라를 위해)
+		float CurrentX, CurrentY;
+
+		if (ShowX)
+		{
+			CurrentX = -(CurrentZoom + CurrentActorLocation.X);
+		}
+		else
+		{
+			CurrentY = CurrentZoom + CurrentActorLocation.Y;
+		}
+		
 
 		// do first-time setup
 		if (bSetup)
@@ -34,10 +43,20 @@ void ASideScrollingCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float De
 			// lower the setup flag
 			bSetup = false;
 			 
-			// initialize the camera viewpoint and return
-			OutVT.POV.Location.X = CurrentActorLocation.X;
-			OutVT.POV.Location.Y = CurrentY;
-			OutVT.POV.Location.Z = CurrentActorLocation.Z + CameraZOffset;
+			if (ShowX)
+			{
+				// initialize the camera viewpoint and return
+				OutVT.POV.Location.X = CurrentX;
+				OutVT.POV.Location.Y = CurrentActorLocation.Y;
+				OutVT.POV.Location.Z = CurrentActorLocation.Z + CameraZOffset;
+			}
+			else
+			{
+				OutVT.POV.Location.X = CurrentActorLocation.X;
+				OutVT.POV.Location.Y = CurrentY;
+				OutVT.POV.Location.Z = CurrentActorLocation.Z + CameraZOffset;
+			}
+
 
 			// save the current camera height
 			CurrentZ = OutVT.POV.Location.Z;
@@ -95,9 +114,17 @@ void ASideScrollingCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float De
 		}
 
 		// clamp the X axis to the min and max camera bounds
-		float CurrentX = FMath::Clamp(CurrentActorLocation.X, CameraXMinBounds, CameraXMaxBounds);
+		if (ShowX)
+		{
+			CurrentY = FMath::Clamp(CurrentActorLocation.Y, CameraYMinBounds, CameraYMaxBounds);
+		}
+		else
+		{
+			CurrentX = FMath::Clamp(CurrentActorLocation.X, CameraXMinBounds, CameraXMaxBounds);
+		}
 
 		// blend towards the new camera location and update the output
+		//FVector TargetCameraLocation(CurrentX, CurrentY, CurrentZ);
 		FVector TargetCameraLocation(CurrentX, CurrentY, CurrentZ);
 
 		OutVT.POV.Location = FMath::VInterpTo(CurrentCameraLocation, TargetCameraLocation, DeltaTime, CameraLocationUpdateSpeed);
