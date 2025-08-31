@@ -20,7 +20,7 @@ void USRDragDropOperation::MoveToSlotData(USRSlotWidget* Drop)
 	Drop->SetItemIcon(DraggedSlotItemData.Icon);
 	Drop->SetIsOccupied(true);
 
-	//드랍, 드래그드 슬롯이 같다면, 
+	//드래그한곳에서 다시 드랍한다면
 	if (Drop == DraggedSlot)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Drop Slot equal DrggedSlot "));

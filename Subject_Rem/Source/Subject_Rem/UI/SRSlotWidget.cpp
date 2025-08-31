@@ -139,7 +139,8 @@ bool USRSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEve
 		USRDragDropOperation* DragDropOper = Cast<USRDragDropOperation>(InOperation);
 
 		check(DragDropOper);
-
+		OnSlotDropedDelegate.Broadcast(this, DragDropOper->DraggedSlot);
+		UE_LOG(LogTemp, Warning, TEXT("Draged : %s, Droped %s"), *DragDropOper->DraggedSlot->GetName(), *this->GetName());
 		DragDropOper->MoveToSlotData(this);
 	}
 

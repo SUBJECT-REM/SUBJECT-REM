@@ -28,6 +28,14 @@ void USRQuickSlotComponent::PressQuickSlot(uint8 QuickSlotNum)
 	UseQuickSlotItem(QuickSlotNum);
 }
 
+void USRQuickSlotComponent::RegisterItem(uint8 Index, FName Id)
+{
+	if (!Slots.IsValidIndex(Index) || Id.IsNone()) return;
+
+	Slots[Index] = Id;
+
+}
+
 
 void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 {

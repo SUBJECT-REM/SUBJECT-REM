@@ -6,8 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "SRQuickSlotComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuickSlotChangedSignature, int32, SlotIndex);
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SUBJECT_REM_API USRQuickSlotComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -18,14 +19,22 @@ public:
 	//퀵 슬롯 입력을 받아옵니다.
 	void PressQuickSlot(uint8 QuickSlotNum);
 
+	void RegisterItem(uint8 Index, FName Id);
+
+	FOnQuickSlotChangedSignature OnQuickSlotChangedDelegate;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
 	//실제 QuickSlot에 있는 아이템을 들고와서 사용합니다.
 	virtual void UseQuickSlotItem(uint8 QuickSlotNum);
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+private:
+	UPROPERTY()
+	TArray<FName> Slots;
 
 		
 };

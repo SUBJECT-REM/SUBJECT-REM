@@ -46,7 +46,11 @@ private:
 	void UpdateItemDescriptionPanel(USRSlotWidget* ClickedSlot);
 	/*아이템들을 보여주는 패널*/
 
+	UFUNCTION()
+	void RegisterItemInQuickSlot(USRSlotWidget* DropedSlot, USRSlotWidget* DraggedSlot);
 
+	UFUNCTION()
+	void UnRegisterItemInQuickSlot(USRSlotWidget* DropedSlot, USRSlotWidget* DraggedSlot);
 	/*아이템 이름, 설명을 포함하는 박스패널*/
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* ItemInfoTextBox;
@@ -59,7 +63,6 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ItemDescription;
 
-	
-	//UPROPERTY(meta = (BindWidget))
-	//UTextBlock* asdsa;
+	UPROPERTY(meta = (BindWidget))
+	UGridPanel* QuickSlotGridPanel;
 };

@@ -7,6 +7,7 @@
 #include "Components/GridPanel.h"
 #include "Components/VerticalBox.h"
 #include "Components/UniformGridPanel.h"
+#include "Component/Character/SRQuickSlotComponent.h"
 
 
 
@@ -15,7 +16,7 @@ void USRInventoryWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	check(InventoryGridPanel)
-		TArray<UWidget*> InventoryGridChild = InventoryGridPanel->GetAllChildren();
+	TArray<UWidget*> InventoryGridChild = InventoryGridPanel->GetAllChildren();
 
 	for (UWidget* Widget : InventoryGridChild)
 	{
@@ -24,16 +25,25 @@ void USRInventoryWidget::NativeConstruct()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("InvenGridPanel Children Cast cannot be cast to USRSlotWidget"));
 		}
-		check(InvenSlot);
-
-	/*	InvenSlot->ApplyButtonStyle(InventorySlotButtonNormalStyle);
-		InvenSlot->SetItemIcon(nullptr);*/
-
 		InvenSlot->SetSlotButtonNormalStyle(InventorySlotButtonNormalStyle);
 		InvenSlot->SetSlotButtonSelectedStyle(InventorySlotButtonSelectedStyle);
 
 		InvenSlot->SetIsEnabled(true);
 		InvenSlot->OnSlotClickedDelegate.AddDynamic(this, &ThisClass::UpdateItemDescriptionPanel);
+		InvenSlot->OnSlotDropedDelegate.AddDynamic(this, &ThisClass::UnRegisterItemInQuickSlot);
+	}
+
+	check(QuickSlotGridPanel)
+	TArray<UWidget*> QuickSlotGridChild = QuickSlotGridPanel->GetAllChildren();
+
+	for (UWidget* Widget : QuickSlotGridChild)
+	{
+		USRSlotWidget* QuickSlot = Cast<USRSlotWidget>(Widget);
+		if (!QuickSlot)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("QuickSlotGridChild Children Cast cannot be cast to USRSlotWidget"));
+		}
+		QuickSlot->OnSlotDropedDelegate.AddDynamic(this, &ThisClass::RegisterItemInQuickSlot);
 	}
 
 	ItemName->SetText(FText::GetEmpty());
@@ -96,4 +106,36 @@ void USRInventoryWidget::UpdateItemDescriptionPanel(USRSlotWidget* ClickedSlot)
 	//Update항목들
 	UpdateItemName(Data.Name);
 	UpdateItemDes(Data.Description);
+}
+
+void USRInventoryWidget::RegisterItemInQuickSlot(USRSlotWidget* DropedSlot, USRSlotWidget* DraggedSlot)
+{	
+	USRQuickSlotComponent* QuickSlotComp = nullptr;
+
+	if (APawn* Pawn = GetOwningPlayerPawn())
+	{
+		AActor* Actor = Cast<AActor>(Pawn);
+		if (Actor)
+		{
+			Actor->FindComponentByClass<USRQuickSlotComponent>();
+		}
+	}
+
+	if (!QuickSlotComp)
+		return;
+
+	if (DraggedSlot->IsChildOf(InventoryGridPanel) && DropedSlot->IsChildOf(QuickSlotGridPanel))
+	{
+		int32 Index = QuickSlotGridPanel->GetChildIndex(DropedSlot);
+		
+		QuickSlotComp->RegisterItem(Index, DropedSlot->GetItemData().Id);
+	}
+}
+
+void USRInventoryWidget::UnRegisterItemInQuickSlot(USRSlotWidget* DropedSlot, USRSlotWidget* DraggedSlot)
+{
+	if (DraggedSlot->IsChildOf(QuickSlotGridPanel) && DropedSlot->IsChildOf(InventoryGridPanel))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UnRegisterItemInQuickSlot"));
+	}
 }

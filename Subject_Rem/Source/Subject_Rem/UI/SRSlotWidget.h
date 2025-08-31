@@ -15,7 +15,7 @@ class UButton;
 class UDragDropOperation;
 class UImage;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlotClickedSignature, USRSlotWidget*, ClickedSlot);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlotDropedSignature, USRSlotWidget*, DropedSlot , USRSlotWidget*, DraggedSlot);
 
 UCLASS(Blueprintable)
 class SUBJECT_REM_API USRSlotWidget : public UUserWidget
@@ -23,7 +23,7 @@ class SUBJECT_REM_API USRSlotWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	FOnSlotClickedSignature OnSlotClickedDelegate;
-
+	FOnSlotDropedSignature  OnSlotDropedDelegate;
 	UPROPERTY(meta = (BindWidget),BlueprintReadOnly)
 	UButton* Button;
 
