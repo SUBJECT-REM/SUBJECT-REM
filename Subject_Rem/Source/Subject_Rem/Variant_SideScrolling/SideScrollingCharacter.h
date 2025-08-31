@@ -171,4 +171,8 @@ public:
 	virtual void QuickSlotNum2();
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	virtual void QuickSlotNum3();
+
+private:
+	UPROPERTY(EditDefaultsOnly)
+	bool MovingY = false;
 };

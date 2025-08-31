@@ -36,12 +36,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Side Scrolling Camera", meta=(ClampMin=0, ClampMax=10000, Units="cm"))
 	float CameraXMaxBounds = 10000.0f;
 
+	/** Minimum camera scrolling bounds in world space */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Side Scrolling Camera", meta = (ClampMin = 0, ClampMax = 10000, Units = "cm"))
+	float CameraYMinBounds = -400.0f;
+	/** Maximum camera scrolling bounds in world space */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Side Scrolling Camera", meta = (ClampMin = 0, ClampMax = 10000, Units = "cm"))
+	float CameraYMaxBounds = 10000.0f;
+
 	//카메라 세로이동(높이) 보간 속도 - 값이 클수록 Target에게 빠르게 감.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Side Scrolling Camera", meta = (ClampMin = 0, ClampMax = 10, Units = "cm"))
 	float ZCameraLocationUpdateSpeed = 2.0f;
 	//카메라 이동 보간 속도 - 값이 클수록 Target에게 빠르게 감.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Side Scrolling Camera", meta = (ClampMin = 0, ClampMax = 10, Units = "cm"))
 	float CameraLocationUpdateSpeed = 2.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Side Scrolling Camera")
+	FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
 
 
 protected:
@@ -50,4 +60,8 @@ protected:
 	float CurrentZ = 0.0f;
 	/** First-time update camera setup flag */
 	bool bSetup = true;
+
+	//X축에서 카메라를 비추는가?
+	UPROPERTY(EditDefaultsOnly)
+	bool ShowX = false;
 };

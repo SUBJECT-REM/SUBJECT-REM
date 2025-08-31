@@ -46,7 +46,7 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.0f;
 	//걷기 상태에서 감속률 - 값이 높을수록 빨리 멈춤
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.0f;
-	GetCharacterMovement()->bIgnoreBaseRotation = true;
+	GetCharacterMovement()->bIgnoreBaseRotation = true;      
 
 	GetCharacterMovement()->PerchRadiusThreshold = 15.0f;
 	GetCharacterMovement()->LedgeCheckThreshold = 6.0f;
@@ -59,8 +59,8 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 750.0f, 0.0f);
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	GetCharacterMovement()->SetPlaneConstraintNormal(FVector(0.0f, 1.0f, 0.0f));
-	GetCharacterMovement()->bConstrainToPlane = true;
+	//GetCharacterMovement()->SetPlaneConstraintNormal(FVector(0.0f, 1.0f, 0.0f));
+	//GetCharacterMovement()->bConstrainToPlane = true;
 
 
 	// enable double jump - 1단 점프하려면 1로 수정
@@ -160,11 +160,16 @@ void ASideScrollingCharacter::DoMove(float Forward)
 	ActionValueY = Forward;
 
 	// figure out the movement direction
-	const FVector MoveDir = FVector(1.0f, Forward > 0.0f ? 0.1f : -0.1f, 0.0f);
-
-	// apply the movement input
-	AddMovementInput(MoveDir, Forward);
-	
+	if (MovingY)
+	{
+		const FVector MoveDir = FVector(0.0f, 1.0f, 0.0f);
+		AddMovementInput(MoveDir, Forward);
+	}
+	else
+	{
+		const FVector MoveDir = FVector(1.0f, Forward > 0.0f ? 0.1f : -0.1f, 0.0f);
+		AddMovementInput(MoveDir, Forward);
+	}
 }
 
 void ASideScrollingCharacter::DoDrop(float Value)
