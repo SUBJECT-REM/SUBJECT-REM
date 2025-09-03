@@ -65,11 +65,11 @@ struct FSRItemBaseData
 
 	/*인벤토리, 단서조합 ... UI에 들어갈 아이콘*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* Icon;
+	TSoftObjectPtr<UTexture2D> Icon;
 
 	/*아이템 메시 데이터*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* Mesh;
+	TSoftObjectPtr<UStaticMesh> Mesh;
 };
 
 USTRUCT(BlueprintType)

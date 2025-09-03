@@ -17,7 +17,7 @@ class SUBJECT_REM_API USRSlotDragVisualWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	void SetDragVisualImage(UTexture2D* Icon);
+	void SetDragVisualImage(TSoftObjectPtr<UTexture2D> Icon);
 private:
 
 	UPROPERTY(meta=(BindWidget))

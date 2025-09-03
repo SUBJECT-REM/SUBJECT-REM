@@ -22,7 +22,7 @@ class SUBJECT_REM_API USRClueCombineResultWidget : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetClueMapImage(UTexture2D* Icon);
+	void SetClueMapImage(TSoftObjectPtr<UTexture2D> Icon);
 
 	UFUNCTION(BlueprintCallable)
 	void SetClueMapDes(FName Text);

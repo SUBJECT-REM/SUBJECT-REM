@@ -4,9 +4,8 @@
 #include "UI/SRSlotDragVisualWidget.h"
 #include "Components/Image.h"
 
-void USRSlotDragVisualWidget::SetDragVisualImage(UTexture2D* Icon)
+void USRSlotDragVisualWidget::SetDragVisualImage(TSoftObjectPtr<UTexture2D> Icon)
 {
 	check(Icon);
-
-	DragVisualImage->SetBrushFromTexture(Icon);
+	DragVisualImage->SetBrushFromSoftTexture(Icon);
 }
