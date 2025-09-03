@@ -128,6 +128,7 @@ void USRInventoryWidget::RegisterItemInQuickSlot(USRSlotWidget* DropedSlot, USRS
 	if (DraggedSlot->IsChildOf(InventoryGridPanel) && DropedSlot->IsChildOf(QuickSlotGridPanel))
 	{
 		int32 Index = QuickSlotGridPanel->GetChildIndex(DropedSlot);
+
 		UE_LOG(LogTemp, Warning, TEXT("RegistItem Requset to quick slot %d, %s"),Index, *DropedSlot->GetItemData().Id.ToString());
 
 		QuickSlotComp->RegisterItem(Index, DropedSlot->GetItemData().Id);

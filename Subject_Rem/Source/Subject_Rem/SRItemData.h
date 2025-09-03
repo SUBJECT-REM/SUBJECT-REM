@@ -122,3 +122,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bResult;
 };
+
+USTRUCT(BlueprintType)
+struct FSRConsumeData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	//사용시 즉시 감소하는 스트레스 감소량
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ImmediateStessDecrease;
+};

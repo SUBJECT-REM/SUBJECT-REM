@@ -31,22 +31,41 @@ void USRQuickSlotComponent::PressQuickSlot(uint8 QuickSlotNum)
 
 void USRQuickSlotComponent::RegisterItem(uint8 Index, FName Id)
 {
-	if (!Slots.IsValidIndex(Index) || Id.IsNone())
+	if (!Slots.IsValidIndex(Index) || Id.IsNone() || !ItemDataTable)
+	{
+		return;
+	}
+
+	FString FindQuickItemContext;
+	FSRItemData* FindData = ItemDataTable->FindRow<FSRItemData>(Id, FindQuickItemContext);
+	
+	if (!FindData)
+	{
+		return;
+	}
+	
+	//SubDT 가져오기
+	const FDataTableRowHandle& Handle = FindData->ItemDataTable;
+	if (Handle.IsNull() || !Handle.DataTable)
+	{
+		return;
+	}
+
+	//SubDT가 ConsumeData가 아니라면 return;
+	const UDataTable* SubDT = Handle.DataTable;
+	if (SubDT->GetRowStruct() != FSRConsumeData::StaticStruct())
+	{
+		return;
+	}
+
+	const FSRConsumeData* ConsumeRow = SubDT->FindRow<FSRConsumeData>(Handle.RowName, FindQuickItemContext);
+	if (!ConsumeRow)
 	{
 		return;
 	}
 
 	Slots[Index] = Id;
-
-	if (ItemDataTable)
-	{
-		FString FindQuickItemContext;
-		FSRItemData* FindData = ItemDataTable->FindRow<FSRItemData>(Id, FindQuickItemContext);
-		if (FindData)
-		{
-			OnQuickSlotChangedDelegate.Broadcast(Index, FindData->BaseInfo.Icon);
-		}
-	}
+	OnQuickSlotChangedDelegate.Broadcast(Index, FindData->BaseInfo.Icon);
 }
 
 void USRQuickSlotComponent::UnRegisterItem(uint8 Index)
