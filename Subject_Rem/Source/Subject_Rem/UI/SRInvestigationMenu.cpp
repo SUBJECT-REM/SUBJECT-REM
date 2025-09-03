@@ -73,6 +73,8 @@ void USRInvestigationMenu::OpenInventory()
 	InventoryButton->SetStyle(InventoryButtonSelectedStyle);
 	ClueButton->SetStyle(ClueButtonNormalStyle);
 	ClueMapButton->SetStyle(ClueMapButtonNormalStyle);
+
+	PlayAnimation(OpenInventoryAnim);
 }
 
 void USRInvestigationMenu::OpenClue()
@@ -87,6 +89,9 @@ void USRInvestigationMenu::OpenClue()
 	InventoryButton->SetStyle(InventoryButtonNormalStyle);
 	ClueButton->SetStyle(ClueButtonSelectedStyle);
 	ClueMapButton->SetStyle(ClueMapButtonNormalStyle);
+
+	PlayAnimation(OpenClueAnim);
+	
 }
 
 void USRInvestigationMenu::OpenClueMap()
@@ -102,10 +107,14 @@ void USRInvestigationMenu::OpenClueMap()
 	InventoryButton->SetStyle(InventoryButtonNormalStyle);
 	ClueButton->SetStyle(ClueButtonNormalStyle);
 	ClueMapButton->SetStyle(ClueMapButtonSelectedStyle);
+
+	PlayAnimation(OpenClueMapAnim);
 }
 
 void USRInvestigationMenu::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	InventoryButton->OnClicked.AddDynamic(this, &ThisClass::OpenInventory);
 	ClueButton->OnClicked.AddDynamic(this, &ThisClass::OpenClue);
 	ClueMapButton->OnClicked.AddDynamic(this, &ThisClass::OpenClueMap);
