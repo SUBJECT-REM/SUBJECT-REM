@@ -22,11 +22,9 @@ class SUBJECT_REM_API USRQuickSlotWidget : public UUserWidget
 private:
 	
 	UFUNCTION()
-	void OnSlotChange(int32 Index);
+	void OnSlotChange(int32 Index, TSoftObjectPtr<UTexture2D> Icon);
 
 	UPROPERTY(meta = (BindWidget))
 	UGridPanel* QuickSlotGridPanel;
 
-	UPROPERTY()
-	UDataTable* AllItemsDataTable;
 };

@@ -6,7 +6,10 @@
 #include "Components/ActorComponent.h"
 #include "SRQuickSlotComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuickSlotChangedSignature, int32, SlotIndex);
+class UTextrue2D;
+class UDataTable;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnQuickSlotChangedSignature, int32, SlotIndex,  TSoftObjectPtr<UTexture2D> , Icon);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SUBJECT_REM_API USRQuickSlotComponent : public UActorComponent
@@ -20,6 +23,10 @@ public:
 	void PressQuickSlot(uint8 QuickSlotNum);
 
 	void RegisterItem(uint8 Index, FName Id);
+
+	void UnRegisterItem(uint8 Index);
+
+	FName GetItemIdBySlotIndex(uint8 Index);
 
 	FOnQuickSlotChangedSignature OnQuickSlotChangedDelegate;
 protected:
@@ -36,5 +43,6 @@ private:
 	UPROPERTY()
 	TArray<FName> Slots;
 
-		
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* ItemDataTable;
 };

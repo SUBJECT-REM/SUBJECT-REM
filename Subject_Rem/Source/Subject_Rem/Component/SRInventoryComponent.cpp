@@ -64,7 +64,6 @@ void USRInventoryComponent::AddItem(const USRItem* Item)
 
 	AddItemData(ItemData);
 	InventoryItems.Add(Item);
-
 }
 
 void USRInventoryComponent::RemoveItems(const TArray<FName>& ItemIds)

@@ -3,7 +3,7 @@
 
 #include "Component/Character/SRQuickSlotComponent.h"
 #include "Subsystem/SRStressLocalPlayerSubsystem.h"
-
+#include "SRItemData.h"
 // Sets default values for this component's properties
 USRQuickSlotComponent::USRQuickSlotComponent()
 {
@@ -12,6 +12,7 @@ USRQuickSlotComponent::USRQuickSlotComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
+	Slots.Init(NAME_None, 3);
 }
 
 // Called when the game starts
@@ -30,10 +31,40 @@ void USRQuickSlotComponent::PressQuickSlot(uint8 QuickSlotNum)
 
 void USRQuickSlotComponent::RegisterItem(uint8 Index, FName Id)
 {
-	if (!Slots.IsValidIndex(Index) || Id.IsNone()) return;
+	if (!Slots.IsValidIndex(Index) || Id.IsNone())
+	{
+		return;
+	}
 
 	Slots[Index] = Id;
 
+	if (ItemDataTable)
+	{
+		FString FindQuickItemContext;
+		FSRItemData* FindData = ItemDataTable->FindRow<FSRItemData>(Id, FindQuickItemContext);
+		if (FindData)
+		{
+			OnQuickSlotChangedDelegate.Broadcast(Index, FindData->BaseInfo.Icon);
+		}
+	}
+}
+
+void USRQuickSlotComponent::UnRegisterItem(uint8 Index)
+{
+	if (!Slots.IsValidIndex(Index))
+		return;
+
+	Slots[Index] = NAME_None;
+
+	OnQuickSlotChangedDelegate.Broadcast(Index, nullptr);
+}
+
+FName USRQuickSlotComponent::GetItemIdBySlotIndex(uint8 Index)
+{
+	if (!Slots[Index].IsNone())
+		return Slots[Index];
+
+	return NAME_None;
 }
 
 

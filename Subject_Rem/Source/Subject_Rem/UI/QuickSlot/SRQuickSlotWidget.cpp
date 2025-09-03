@@ -12,6 +12,7 @@
 void USRQuickSlotWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
 	if (APawn* Pawn = GetOwningPlayerPawn())
 	{
 		AActor* Actor = Cast<AActor>(Pawn);
@@ -20,38 +21,25 @@ void USRQuickSlotWidget::NativeConstruct()
 			USRQuickSlotComponent* QuickSlotComp = Actor->FindComponentByClass<USRQuickSlotComponent>();
 			if (QuickSlotComp)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("QuickSlot Widget Bind To Player QuickSlotComp"));
 				QuickSlotComp->OnQuickSlotChangedDelegate.AddDynamic(this, &ThisClass::OnSlotChange);
 			}
 		}
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("QuickSlot Widget PlayerPawn nullptr"));
+	}
 	
 }
 
-void USRQuickSlotWidget::OnSlotChange(int32 Index)
+void USRQuickSlotWidget::OnSlotChange(int32 Index, TSoftObjectPtr<UTexture2D> Icon)
 {
-	USRQuickSlotComponent* QuickSlotComp = nullptr;
 	UWidget* Child = QuickSlotGridPanel->GetChildAt(Index);
 
 	USRSlotWidget* QuickSlot = Cast<USRSlotWidget>(Child);
 
-	if (APawn* Pawn = GetOwningPlayerPawn())
-	{
-		AActor* Actor = Cast<AActor>(Pawn);
-		if (Actor)
-		{
-			QuickSlotComp = Actor->FindComponentByClass<USRQuickSlotComponent>();
-		}
-	}
+	QuickSlot->SetItemIcon(Icon);
 
-	//Index에 해당하는 ID를 받아옴
-	if (QuickSlotComp)
-	{
-		//QuickSlotComp->
-	}
-
-	//DataTable에서 ID에 따른 Image , ... 받아옴
-	
-
-	//갱신
-
+	UE_LOG(LogTemp, Warning, TEXT("OnQuickSlotChange %d"), Index);
 }

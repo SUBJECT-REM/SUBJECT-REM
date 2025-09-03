@@ -35,7 +35,7 @@ public:
 	UImage* ItemIconImage;
 
 	UFUNCTION(BlueprintCallable)
-	void SetItemIcon(UTexture2D* IconTexture);
+	void SetItemIcon(TSoftObjectPtr<UTexture2D> IconTexture);
 
 	void ApplyButtonStyle(const FButtonStyle& InStyle);
 

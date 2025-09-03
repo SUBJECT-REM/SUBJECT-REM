@@ -36,19 +36,19 @@ FReply USRSlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const
 	return reply.NativeReply;
 }
 
-void USRSlotWidget::SetItemIcon(UTexture2D* IconTexture)
+void USRSlotWidget::SetItemIcon(TSoftObjectPtr<UTexture2D> IconTexture)
 {
 	if (!ItemIconImage) return;
-
-	if (IconTexture)
+	
+	if(IconTexture)
 	{
-		ItemIconImage->SetBrushFromTexture(IconTexture, true);
-		ItemIconImage->SetVisibility(ESlateVisibility::HitTestInvisible); // 클릭은 버튼이 받도록
+		ItemIconImage->SetBrushFromSoftTexture(IconTexture, true);
+		ItemIconImage->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 	else
 	{
-		ItemIconImage->SetBrushFromTexture(nullptr, true);
-		ItemIconImage->SetVisibility(ESlateVisibility::Hidden);
+		ItemIconImage->SetBrushFromSoftTexture(nullptr, true);
+		ItemIconImage->SetVisibility(ESlateVisibility::Hidden); 
 	}
 }
 
@@ -113,10 +113,10 @@ void USRSlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoi
 
 		DragPreview->SetDragVisualImage(ItemData.Icon);
 
-		OutOperation = DragDropOper;
 		DragDropOper->DefaultDragVisual = DragPreview;
 		DragDropOper->DraggedSlot = this;
 		DragDropOper->DraggedSlotItemData = ItemData;
+		OutOperation = DragDropOper;
 
 		//빈슬롯으로 세팅해줍니다.
 		SetIsOccupied(false);
@@ -139,9 +139,12 @@ bool USRSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEve
 		USRDragDropOperation* DragDropOper = Cast<USRDragDropOperation>(InOperation);
 
 		check(DragDropOper);
-		OnSlotDropedDelegate.Broadcast(this, DragDropOper->DraggedSlot);
-		UE_LOG(LogTemp, Warning, TEXT("Draged : %s, Droped %s"), *DragDropOper->DraggedSlot->GetName(), *this->GetName());
 		DragDropOper->MoveToSlotData(this);
+
+		OnSlotDropedDelegate.Broadcast(this, DragDropOper->DraggedSlot);
+
+
+		UE_LOG(LogTemp, Warning, TEXT("Draged : %s, Droped %s"), *DragDropOper->DraggedSlot->GetName(), *this->GetName());
 	}
 
 	return true;

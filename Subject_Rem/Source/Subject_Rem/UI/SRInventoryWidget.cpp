@@ -109,7 +109,7 @@ void USRInventoryWidget::UpdateItemDescriptionPanel(USRSlotWidget* ClickedSlot)
 }
 
 void USRInventoryWidget::RegisterItemInQuickSlot(USRSlotWidget* DropedSlot, USRSlotWidget* DraggedSlot)
-{	
+{
 	USRQuickSlotComponent* QuickSlotComp = nullptr;
 
 	if (APawn* Pawn = GetOwningPlayerPawn())
@@ -117,25 +117,40 @@ void USRInventoryWidget::RegisterItemInQuickSlot(USRSlotWidget* DropedSlot, USRS
 		AActor* Actor = Cast<AActor>(Pawn);
 		if (Actor)
 		{
-			Actor->FindComponentByClass<USRQuickSlotComponent>();
+			QuickSlotComp= Actor->FindComponentByClass<USRQuickSlotComponent>();
 		}
 	}
 
 	if (!QuickSlotComp)
+	{
 		return;
-
+	}
 	if (DraggedSlot->IsChildOf(InventoryGridPanel) && DropedSlot->IsChildOf(QuickSlotGridPanel))
 	{
 		int32 Index = QuickSlotGridPanel->GetChildIndex(DropedSlot);
-		
+		UE_LOG(LogTemp, Warning, TEXT("RegistItem Requset to quick slot %d, %s"),Index, *DropedSlot->GetItemData().Id.ToString());
+
 		QuickSlotComp->RegisterItem(Index, DropedSlot->GetItemData().Id);
 	}
 }
 
 void USRInventoryWidget::UnRegisterItemInQuickSlot(USRSlotWidget* DropedSlot, USRSlotWidget* DraggedSlot)
 {
+	USRQuickSlotComponent* QuickSlotComp = nullptr;
+
+	if (APawn* Pawn = GetOwningPlayerPawn())
+	{
+		AActor* Actor = Cast<AActor>(Pawn);
+		if (Actor)
+		{
+			QuickSlotComp = Actor->FindComponentByClass<USRQuickSlotComponent>();
+		}
+	}
+
 	if (DraggedSlot->IsChildOf(QuickSlotGridPanel) && DropedSlot->IsChildOf(InventoryGridPanel))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UnRegisterItemInQuickSlot"));
+		int32 Index = QuickSlotGridPanel->GetChildIndex(DraggedSlot);
+
+		QuickSlotComp->UnRegisterItem(Index);
 	}
 }
