@@ -12,6 +12,7 @@
  */
 class USRInventoryComponent;
 class USRInventoryWidget;
+class USRQuickSlotComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateInventoryWidgetSignature, const FSRItemBaseData&, Data);
 
@@ -31,9 +32,16 @@ private:
 	UFUNCTION()
 	void RequsetRemoveInventoryWidget(const TArray<FName>& ItemIds);
 
+	UFUNCTION()
+	void RequestUpdateQuickslotInInventory(int32 SlotIndex, TSoftObjectPtr<UTexture2D> Icon);
+
 	UPROPERTY()
 	USRInventoryComponent* InvenComp;
 
 	UPROPERTY()
+	USRQuickSlotComponent* QuickSlotComp;
+
+	UPROPERTY()
 	USRInventoryWidget* InventoryWidget;
+
 };

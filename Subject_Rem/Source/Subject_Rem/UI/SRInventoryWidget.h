@@ -16,6 +16,21 @@ class USRSlotWidget;
 class UVerticalBox;
 class UUniformGridPanel;
 
+USTRUCT()
+struct FSlotStyle
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	TSoftObjectPtr<UTexture2D> SlotImageNormal;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSoftObjectPtr<UTexture2D> SlotImageHover;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSoftObjectPtr<UTexture2D> SlotImageClicked;
+};
+
 UCLASS()
 class SUBJECT_REM_API USRInventoryWidget : public UUserWidget
 {
@@ -27,6 +42,8 @@ public:
 
 	void AddItemInventoryGridPanel(const FSRItemBaseData& Data);
 	void RemoveItemInventoryGridPanel(const TArray<FName>& ItemIds);
+
+	void UpdateQuickSlotGridPanel(int8 Index, TSoftObjectPtr<UTexture2D> Icon);
 protected:
 	virtual void NativeConstruct() override;
 
@@ -65,4 +82,16 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UGridPanel* QuickSlotGridPanel;
+
+	UPROPERTY(EditDefaultsOnly)
+	FSlotStyle InventorySlotImage;
+
+	UPROPERTY(EditDefaultsOnly)
+	FSlotStyle QuickSlotImage;
+
+	//UPROPERTY(EditDefaultsOnly)
+	//TSoftObjectPtr<UTexture2D> InventorySlotImageClicked;
+
+
+
 };

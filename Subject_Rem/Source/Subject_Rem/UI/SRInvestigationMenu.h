@@ -24,14 +24,17 @@ class USRClueWidgetPresenter;
 class UHorizontalBox;
 class ASRTutorialManager;
 
+
+
 UCLASS(Blueprintable)
 class SUBJECT_REM_API USRInvestigationMenu : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
+
 	UFUNCTION(BlueprintCallable)
-	void InitInvestigationMenuWidget(UObject* DataSource);
+	void InitInvestigationMenuWidget(UActorComponent* DataSourceComp);
 
 	void OpenOnlyWidget(UUserWidget* WantOpenWidget);
 
@@ -43,6 +46,19 @@ public:
 
 	UFUNCTION()
 	void OpenClueMap();
+
+	//Open Widget Animation
+	UFUNCTION(BlueprintCallable)
+	void ShowWidget();
+
+	//Close Widget Animation
+	UFUNCTION(BlueprintCallable)
+	void HideWidget();
+
+	UFUNCTION()
+	void HideWidgetAnimFinished();
+
+
 
 protected:
 	virtual void NativeConstruct() override;
@@ -122,6 +138,13 @@ private:
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* OpenClueMapAnim;
 
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* OpenMenu;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* CloseMenu;
+
+	FWidgetAnimationDynamicEvent CloseAnimFinishedDelegate;
 
 	//Presenter에서 처리할라했지만 아직 InvestigationMenu에서는 다른 동작이 없기에 새 Presenter를 만들지 않았음.
 	//추후 게임로직과 연결되는 부분이 점점 생긴다면 Presenter를 만들것같음.

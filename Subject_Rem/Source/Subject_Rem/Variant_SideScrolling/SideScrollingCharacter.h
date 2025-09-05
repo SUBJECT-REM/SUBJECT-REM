@@ -10,6 +10,9 @@ class UCameraComponent;
 class USRQuickSlotComponent;
 class USRMouseInputComponent;
 class UInputAction;
+class USRInventoryComponent;
+class USRTutorialComponent;
+class USRInvestigationMenu;
 
 struct FInputActionValue;
 
@@ -22,12 +25,16 @@ class ASideScrollingCharacter : public ACharacter
 	GENERATED_BODY()
 protected:
 	/** Player camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Camera", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components | Camera", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* Camera;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "QuickSlot", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components | QuickSlot", meta = (AllowPrivateAccess = "true"))
 	USRQuickSlotComponent* QuickSlotComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MouseInput", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components | MouseInput", meta = (AllowPrivateAccess = "true"))
 	USRMouseInputComponent* MouseInputComponent;
+	UPROPERTY(EditDefaultsOnly, Category="Components | InventoryComponent")
+	USRInventoryComponent* InventoryComponent;
+	UPROPERTY(EditDefaultsOnly, Category = "Components | TutorialComponent")
+	USRTutorialComponent* TutorialComponent;
 
 protected:
 
@@ -57,6 +64,9 @@ protected:
 	UInputAction* UseItemNum2Acton;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* UseItemNum3Acton;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* ToggleInvestigationMenuAction;
 
 	/** Last captured horizontal movement input value */
 	float ActionValueY = 0.0f;
@@ -115,4 +125,15 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly)
 	bool MovingY = false;
+
+	UFUNCTION(BlueprintCallable)
+	void CreateInvestigationMenu();
+
+	UFUNCTION(BlueprintCallable)
+	void ToggleInvestigationMenu();
+
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<UUserWidget> InvestigationWidgetClass;
+
+	TObjectPtr<USRInvestigationMenu> InvestigationWidget;
 };

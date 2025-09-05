@@ -40,6 +40,4 @@ void USRQuickSlotWidget::OnSlotChange(int32 Index, TSoftObjectPtr<UTexture2D> Ic
 	USRSlotWidget* QuickSlot = Cast<USRSlotWidget>(Child);
 
 	QuickSlot->SetItemIcon(Icon);
-
-	UE_LOG(LogTemp, Warning, TEXT("OnQuickSlotChange %d"), Index);
 }

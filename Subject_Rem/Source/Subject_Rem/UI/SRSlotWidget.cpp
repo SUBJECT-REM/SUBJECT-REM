@@ -32,23 +32,25 @@ FReply USRSlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const
 		reply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
 	}
 
-
 	return reply.NativeReply;
 }
 
 void USRSlotWidget::SetItemIcon(TSoftObjectPtr<UTexture2D> IconTexture)
 {
-	if (!ItemIconImage) return;
+	if (!ItemIconImage)
+		return;
 	
-	if(IconTexture)
+	if(!IconTexture.IsNull())
 	{
 		ItemIconImage->SetBrushFromSoftTexture(IconTexture, true);
 		ItemIconImage->SetVisibility(ESlateVisibility::HitTestInvisible);
+		UE_LOG(LogTemp, Warning, TEXT("SetTexture Icon %s"), *GetName());
 	}
 	else
 	{
 		ItemIconImage->SetBrushFromSoftTexture(nullptr, true);
 		ItemIconImage->SetVisibility(ESlateVisibility::Hidden); 
+
 	}
 }
 

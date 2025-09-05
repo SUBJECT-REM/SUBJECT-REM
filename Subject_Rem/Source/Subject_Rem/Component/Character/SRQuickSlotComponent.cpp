@@ -13,6 +13,7 @@ USRQuickSlotComponent::USRQuickSlotComponent()
 
 	// ...
 	Slots.Init(NAME_None, 3);
+	SlotIcons.Init(nullptr, 3); 
 }
 
 // Called when the game starts
@@ -21,6 +22,10 @@ void USRQuickSlotComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+	for (int i = 0; i < StartQuickItemDatas.Num(); i++)
+	{
+		RegisterItem(i, StartQuickItemDatas[i].RowName);
+	}
 	
 }
 
@@ -33,6 +38,7 @@ void USRQuickSlotComponent::RegisterItem(uint8 Index, FName Id)
 {
 	if (!Slots.IsValidIndex(Index) || Id.IsNone() || !ItemDataTable)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Slots Index or Id is not vaild : QuickSlotComp, RegisterItem"));
 		return;
 	}
 
@@ -41,6 +47,7 @@ void USRQuickSlotComponent::RegisterItem(uint8 Index, FName Id)
 	
 	if (!FindData)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ItemDataTable FindRow is not vaild : QuickSlotComp, RegisterItem"));
 		return;
 	}
 	
@@ -48,6 +55,7 @@ void USRQuickSlotComponent::RegisterItem(uint8 Index, FName Id)
 	const FDataTableRowHandle& Handle = FindData->ItemDataTable;
 	if (Handle.IsNull() || !Handle.DataTable)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("FindRow - FindData->ItemDataTable  is not vaild : QuickSlotComp, RegisterItem"));
 		return;
 	}
 
@@ -55,16 +63,20 @@ void USRQuickSlotComponent::RegisterItem(uint8 Index, FName Id)
 	const UDataTable* SubDT = Handle.DataTable;
 	if (SubDT->GetRowStruct() != FSRConsumeData::StaticStruct())
 	{
+
+		UE_LOG(LogTemp, Warning, TEXT("FindRow DataTable is not SRConsumeData : QuickSlotComp, RegisterItem"));
 		return;
 	}
 
 	const FSRConsumeData* ConsumeRow = SubDT->FindRow<FSRConsumeData>(Handle.RowName, FindQuickItemContext);
 	if (!ConsumeRow)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ConsumeDatTable FindRow is not vaild : QuickSlotComp, RegisterItem"));
 		return;
 	}
 
 	Slots[Index] = Id;
+	SlotIcons[Index] = FindData->BaseInfo.Icon; 
 	OnQuickSlotChangedDelegate.Broadcast(Index, FindData->BaseInfo.Icon);
 }
 
@@ -74,33 +86,43 @@ void USRQuickSlotComponent::UnRegisterItem(uint8 Index)
 		return;
 
 	Slots[Index] = NAME_None;
+	SlotIcons[Index] = nullptr;
 
 	OnQuickSlotChangedDelegate.Broadcast(Index, nullptr);
 }
 
 FName USRQuickSlotComponent::GetItemIdBySlotIndex(uint8 Index)
 {
-	if (!Slots[Index].IsNone())
-		return Slots[Index];
+	return (SlotIcons.IsValidIndex(Index)) ? Slots[Index] : NAME_None;
+}
 
-	return NAME_None;
+TSoftObjectPtr<UTexture2D> USRQuickSlotComponent::GetSlotIconByIndex(int32 Index) const
+{
+	return (SlotIcons.IsValidIndex(Index)) ? SlotIcons[Index] : nullptr;
+}
+
+void USRQuickSlotComponent::GetQuickslotSnapshot(TArray<TSoftObjectPtr<UTexture2D>>& OutIcons) const
+{
+	OutIcons = SlotIcons; // 한 번에 복사해서 반환
 }
 
 
 void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 {
-	UE_LOG(LogTemp, Log, TEXT("UseQuickSlot : %d"), QuickSlotNum);
 
+	UnRegisterItem(QuickSlotNum - 1);
 	//Test - 필요하면 아래 if - else 문 삭제해도 됩니다.
 	if (QuickSlotNum == 1)
 	{
-		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
+		/*if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
 		{
 			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
 			{
 				StressSubsystem->ChangeStressAmount(1.0f);
 			}
-		}
+		}*/
+
+
 	}
 	else if (QuickSlotNum == 2)
 	{
@@ -125,13 +147,9 @@ void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 	//Test 끝
 }
 
-
-// Called every frame
-void USRQuickSlotComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+TSoftObjectPtr<UTexture2D> USRQuickSlotComponent::ResolveIconByItemId(FName Id) const
 {
-	//생성자에서 비활성화했습니다.
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	return TSoftObjectPtr<UTexture2D>();
 }
 

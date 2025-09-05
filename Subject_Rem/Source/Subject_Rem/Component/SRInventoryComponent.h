@@ -66,8 +66,13 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* AllItemsDataTable;
+	
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* ClueCombineRuleDataTable;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FDataTableRowHandle> StartingItemDatas;
+
 
 	UPROPERTY()
 	USRItemPickupResultPresenter* ItemPickupPresenter;

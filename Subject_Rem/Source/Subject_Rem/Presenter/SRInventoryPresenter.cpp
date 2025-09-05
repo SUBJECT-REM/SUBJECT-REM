@@ -3,6 +3,7 @@
 
 #include "Presenter/SRInventoryPresenter.h"
 #include "Component/SRInventoryComponent.h"
+#include "Component/Character/SRQuickSlotComponent.h"
 #include "UI/SRInventoryWidget.h"
 
 void USRInventoryPresenter::Init(UActorComponent* InitComponent, UUserWidget* InitWidget)
@@ -26,6 +27,27 @@ void USRInventoryPresenter::Init(UActorComponent* InitComponent, UUserWidget* In
 		UE_LOG(LogTemp, Warning, TEXT("InitWidget Cast cannot be cast to ClueWidget"));
 		return;
 	}
+
+	//Find QuickSlotComp 
+	if (AActor* Owner = InvenComp->GetOwner())
+	{
+		QuickSlotComp = Owner->FindComponentByClass<USRQuickSlotComponent>();
+		if (QuickSlotComp)
+		{
+			QuickSlotComp->OnQuickSlotChangedDelegate.AddDynamic(this, &ThisClass::RequestUpdateQuickslotInInventory);
+			
+			TArray<TSoftObjectPtr<UTexture2D>> Icons;
+			QuickSlotComp->GetQuickslotSnapshot(Icons);
+			for (int32 i = 0; i < Icons.Num(); ++i)
+			{
+				InventoryWidget->UpdateQuickSlotGridPanel(i, Icons[i]);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("USRQuickSlotComponent not found on %s"), *Owner->GetName());
+		}
+	}
 }
 
 void USRInventoryPresenter::RequestAddInventoryWidget(const FSRItemBaseData& Data)
@@ -38,4 +60,9 @@ void USRInventoryPresenter::RequsetRemoveInventoryWidget(const TArray<FName>& It
 	InventoryWidget->RemoveItemInventoryGridPanel(ItemIds);
 	InventoryWidget->UpdateItemName(NAME_None);
 	InventoryWidget->UpdateItemDes(NAME_None);
+}
+
+void USRInventoryPresenter::RequestUpdateQuickslotInInventory(int32 SlotIndex, TSoftObjectPtr<UTexture2D> Icon)
+{
+	InventoryWidget->UpdateQuickSlotGridPanel(SlotIndex, Icon);
 }

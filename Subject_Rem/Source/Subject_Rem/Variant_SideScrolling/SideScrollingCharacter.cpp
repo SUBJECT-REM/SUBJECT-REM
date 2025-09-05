@@ -16,6 +16,9 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "TimerManager.h"
 #include "Subsystem/SRStressLocalPlayerSubsystem.h"
+#include "Blueprint/UserWidget.h"
+#include "UI/SRInvestigationMenu.h"
+#include "Component/SRInventoryComponent.h"
 
 ASideScrollingCharacter::ASideScrollingCharacter()
 {
@@ -27,7 +30,7 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 	Camera->SetRelativeLocationAndRotation(FVector(0.0f, 300.0f, 0.0f), FRotator(0.0f, -90.0f, 0.0f));
 	QuickSlotComponent = CreateDefaultSubobject<USRQuickSlotComponent>(TEXT("QuickSlotComponent"));
 	MouseInputComponent = CreateDefaultSubobject<USRMouseInputComponent>(TEXT("MouseInputComponent"));
-
+	InventoryComponent = CreateDefaultSubobject<USRInventoryComponent>(TEXT("InventoryComponent"));
 	// configure the collision capsule
 	GetCapsuleComponent()->SetCapsuleSize(35.0f, 90.0f);
 
@@ -70,6 +73,8 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 void ASideScrollingCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CreateInvestigationMenu();
 }
 
 void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -92,6 +97,11 @@ void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* P
 		EnhancedInputComponent->BindAction(UseItemNum1Actor, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::QuickSlotNum1);
 		EnhancedInputComponent->BindAction(UseItemNum2Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::QuickSlotNum2);
 		EnhancedInputComponent->BindAction(UseItemNum3Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::QuickSlotNum3);
+
+		//OpenInvenstigation
+		EnhancedInputComponent->BindAction(ToggleInvestigationMenuAction, ETriggerEvent::Started, this, &ASideScrollingCharacter::ToggleInvestigationMenu);
+
+
 	}
 }
 
@@ -152,4 +162,38 @@ void ASideScrollingCharacter::QuickSlotNum3()
 {
 	check(QuickSlotComponent);
 	QuickSlotComponent->PressQuickSlot(3);
-} 
+}
+
+void ASideScrollingCharacter::CreateInvestigationMenu()
+{
+	
+	if (InvestigationWidgetClass && InventoryComponent)
+	{
+		InvestigationWidget = CreateWidget<USRInvestigationMenu>(GetWorld(), InvestigationWidgetClass);
+		InvestigationWidget->AddToViewport();
+		InvestigationWidget->InitInvestigationMenuWidget(InventoryComponent);
+
+	}
+}
+
+void ASideScrollingCharacter::ToggleInvestigationMenu()
+{
+	if (!InvestigationWidget)
+	{
+		CreateInvestigationMenu();
+	}
+	
+	if (InvestigationWidget)
+	{
+		if (InvestigationWidget->GetVisibility() != ESlateVisibility::Visible)
+		{
+			InvestigationWidget->ShowWidget();
+
+		}
+		else
+		{
+			InvestigationWidget->HideWidget();
+		}
+	}
+	
+}
