@@ -58,32 +58,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* UseItemNum3Acton;
 
-	/** Max distance that interactive objects can be triggered */
-	UPROPERTY(EditAnywhere, Category="Side Scrolling")
-	float InteractionRadius = 200.0f;
-
-
-	/** Impulse to manually push physics objects while we're in midair */
-	UPROPERTY(EditAnywhere, Category="Side Scrolling")
-	float JumpPushImpulse = 600.0f;
-
-	/** Collision object type to use for soft collision traces (dropping down floors) */
-	UPROPERTY(EditAnywhere, Category="Side Scrolling")
-	TEnumAsByte<ECollisionChannel> SoftCollisionObjectType;
-
-	/** Distance to trace down during soft collision checks */
-	UPROPERTY(EditAnywhere, Category="Side Scrolling")
-	float SoftCollisionTraceDistance = 1000.0f;
-
 	/** Last captured horizontal movement input value */
 	float ActionValueY = 0.0f;
 
 	/** Last captured platform drop axis value */
 	float DropValue = 0.0f;
-
-
-	/** If true, this character has already double jumped */
-	bool bHasDoubleJumped = false;
 
 	/** If true, this character is moving along the side scrolling axis */
 	bool bMovingHorizontally = false;
@@ -122,39 +101,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoMove(float Forward);
 
-	/** Handles drop inputs from either controls or UI interfaces */
-	UFUNCTION(BlueprintCallable, Category="Input")
-	virtual void DoDrop(float Value);
-
-	/** Handles jump pressed inputs from either controls or UI interfaces */
-	UFUNCTION(BlueprintCallable, Category="Input")
-	virtual void DoJumpStart();
-
-	/** Handles jump pressed inputs from either controls or UI interfaces */
-	UFUNCTION(BlueprintCallable, Category="Input")
-	virtual void DoJumpEnd();
-
-	/**ISideScrollingInteractable Class와 상호작용하는 기능이다.*/
-	UFUNCTION(BlueprintCallable, Category="Input")
-	virtual void DoInteract();
-
-protected:
-	/** Handles advanced jump logic */
-	void MultiJump();
-	/** Checks for soft collision with platforms */
-	void CheckForSoftCollision();
-
 public:
 
 	/** Sets the soft collision response. True passes, False blocks */
 	void SetSoftCollision(bool bEnabled);
 
 public:
-
-	/** Returns true if the character has just double jumped */
-	UFUNCTION(BlueprintPure, Category="Side Scrolling")
-	bool HasDoubleJumped() const;
-
 	//MousePress Section
 public:
 	UFUNCTION(BlueprintCallable, Category = "Input")
