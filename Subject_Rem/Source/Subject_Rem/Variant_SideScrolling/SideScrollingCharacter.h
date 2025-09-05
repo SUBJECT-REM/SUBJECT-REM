@@ -78,22 +78,12 @@ protected:
 	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/** Collision handling */
-	virtual void NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 
-	/** Landing handling */
-	virtual void Landed(const FHitResult& Hit) override;
 
 protected:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-
-	/** Called for drop from platform input */
-	void Drop(const FInputActionValue& Value);
-
-	/** Called for drop from platform input release */
-	void DropReleased(const FInputActionValue& Value);
 
 public:
 
@@ -103,8 +93,6 @@ public:
 
 public:
 
-	/** Sets the soft collision response. True passes, False blocks */
-	void SetSoftCollision(bool bEnabled);
 
 public:
 	//MousePress Section
