@@ -16,6 +16,9 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "TimerManager.h"
 #include "Subsystem/SRStressLocalPlayerSubsystem.h"
+#include "Blueprint/UserWidget.h"
+#include "UI/SRInvestigationMenu.h"
+#include "Component/SRInventoryComponent.h"
 
 ASideScrollingCharacter::ASideScrollingCharacter()
 {
@@ -27,7 +30,7 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 	Camera->SetRelativeLocationAndRotation(FVector(0.0f, 300.0f, 0.0f), FRotator(0.0f, -90.0f, 0.0f));
 	QuickSlotComponent = CreateDefaultSubobject<USRQuickSlotComponent>(TEXT("QuickSlotComponent"));
 	MouseInputComponent = CreateDefaultSubobject<USRMouseInputComponent>(TEXT("MouseInputComponent"));
-
+	InventoryComponent = CreateDefaultSubobject<USRInventoryComponent>(TEXT("InventoryComponent"));
 	// configure the collision capsule
 	GetCapsuleComponent()->SetCapsuleSize(35.0f, 90.0f);
 
@@ -70,6 +73,8 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 void ASideScrollingCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CreateInvestigationMenu();
 }
 
 void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -79,19 +84,10 @@ void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ASideScrollingCharacter::DoJumpStart);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ASideScrollingCharacter::DoJumpEnd);
 
-		// Interacting
-		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::DoInteract);
 
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::Move);
-
-		// Dropping from platform
-		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::Drop);
-		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Completed, this, &ASideScrollingCharacter::DropReleased);
 
 		//Mouse Action
 		EnhancedInputComponent->BindAction(OnMousePressAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::OnClickMouse);
@@ -101,38 +97,14 @@ void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* P
 		EnhancedInputComponent->BindAction(UseItemNum1Actor, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::QuickSlotNum1);
 		EnhancedInputComponent->BindAction(UseItemNum2Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::QuickSlotNum2);
 		EnhancedInputComponent->BindAction(UseItemNum3Acton, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::QuickSlotNum3);
+
+		//OpenInvenstigation
+		EnhancedInputComponent->BindAction(ToggleInvestigationMenuAction, ETriggerEvent::Started, this, &ASideScrollingCharacter::ToggleInvestigationMenu);
+
+
 	}
 }
 
-void ASideScrollingCharacter::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
-{
-	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-
-	// 캐릭터가 떨어지고 있는 중이 아니라면 return
-	if (!GetCharacterMovement()->IsFalling())
-	{
-		return;
-	}
-
-	// ensure the colliding component is valid
-	if (OtherComp)
-	{
-		// ensure the component is movable and simulating physics
-		if (OtherComp->Mobility == EComponentMobility::Movable && OtherComp->IsSimulatingPhysics())
-		{
-			const FVector PushDir = FVector(ActionValueY > 0.0f ? 1.0f : -1.0f, 0.0f, 0.0f);
-
-			// push the component away
-			OtherComp->AddImpulse(PushDir * JumpPushImpulse, NAME_None, true);
-		}
-	}
-}
-
-void ASideScrollingCharacter::Landed(const FHitResult& Hit)
-{
-	// reset the double jump
-	bHasDoubleJumped = false;
-}
 
 void ASideScrollingCharacter::Move(const FInputActionValue& Value)
 {
@@ -140,18 +112,6 @@ void ASideScrollingCharacter::Move(const FInputActionValue& Value)
 
 	// route the input
 	DoMove(MoveVector.Y);
-}
-
-void ASideScrollingCharacter::Drop(const FInputActionValue& Value)
-{
-	// route the input	
-	DoDrop(Value.Get<float>());
-}
-
-void ASideScrollingCharacter::DropReleased(const FInputActionValue& Value)
-{
-	// reset the input
-	DoDrop(0.0f);
 }
 
 void ASideScrollingCharacter::DoMove(float Forward)
@@ -170,123 +130,6 @@ void ASideScrollingCharacter::DoMove(float Forward)
 		const FVector MoveDir = FVector(1.0f, Forward > 0.0f ? 0.1f : -0.1f, 0.0f);
 		AddMovementInput(MoveDir, Forward);
 	}
-}
-
-void ASideScrollingCharacter::DoDrop(float Value)
-{
-	// save the movement value
-	DropValue = Value;
-}
-
-void ASideScrollingCharacter::DoJumpStart()
-{
-	// handle advanced jump behaviors
-	MultiJump();
-}
-
-void ASideScrollingCharacter::DoJumpEnd()
-{
-	StopJumping();
-}
-
-void ASideScrollingCharacter::DoInteract()
-{
-	// do a sphere trace to look for interactive objects
-	FHitResult OutHit;
-
-	//현재 위치에서 팡의 방향으로 SphereTrace를 한다.
-	const FVector Start = GetActorLocation();
-	const FVector End = Start + FVector(100.0f, 0.0f, 0.0f);
-
-	FCollisionShape ColSphere;
-	ColSphere.SetSphere(InteractionRadius);
-
-	FCollisionObjectQueryParams ObjectParams;
-	ObjectParams.AddObjectTypesToQuery(ECC_Pawn);
-	ObjectParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-
-	if (GetWorld()->SweepSingleByObjectType(OutHit, Start, End, FQuat::Identity, ObjectParams, ColSphere, QueryParams))
-	{
-		// have we hit an interactable?
-		if (ISideScrollingInteractable* Interactable = Cast<ISideScrollingInteractable>(OutHit.GetActor()))
-		{
-			// interact
-			Interactable->Interaction(this);
-		}
-	}
-}
-
-void ASideScrollingCharacter::MultiJump()
-{
-	// Platform아래로 떨어지고 싶어 하는지?
-	if (DropValue > 0.0f)
-	{
-		//발 아래 Platform의 ObjectType이 SoftCollision이면 Platform아래로 내려갈 수 있다.
-		CheckForSoftCollision();
-		return;
-	}
-
-	// reset the drop value
-	DropValue = 0.0f;
-
-	// 떨어지는 중이 아니라면 Jump를 수행한다.
-	if (!GetCharacterMovement()->IsFalling())
-	{
-		Jump();
-		return;
-	}
-
-	//일단 기본 템플릿 테스트를 위해서 남김 - 삭제 예정
-	if (!bHasDoubleJumped)
-	{
-		// raise the double jump flag
-		bHasDoubleJumped = true;
-
-		// let the CMC handle jump
-		Jump();
-	}
-}
-
-void ASideScrollingCharacter::CheckForSoftCollision()
-{
-	// reset the drop value
-	DropValue = 0.0f;
-
-	// trace down 
-	FHitResult OutHit;
-
-	const FVector Start = GetActorLocation();
-	const FVector End = Start + (FVector::DownVector * SoftCollisionTraceDistance);
-
-	//아래를 뚫고 내려가고 싶으면 위의 Mesh가 SoftCollisionObjectType이어야한다.
-	FCollisionObjectQueryParams ObjectParams;
-	ObjectParams.AddObjectTypesToQuery(SoftCollisionObjectType);
-
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-
-	GetWorld()->LineTraceSingleByObjectType(OutHit, Start, End, ObjectParams, QueryParams);
-
-	// Trace 결과가 SofrCollision이 맞는가?
-	if (OutHit.GetActor())
-	{
-		// drop through the floor
-		SetSoftCollision(true);
-	}
-}
-
-void ASideScrollingCharacter::SetSoftCollision(bool bEnabled)
-{
-	// enable or disable collision response to the soft collision channel
-	GetCapsuleComponent()->SetCollisionResponseToChannel(SoftCollisionObjectType, bEnabled ? ECR_Ignore : ECR_Block);
-}
-
-bool ASideScrollingCharacter::HasDoubleJumped() const
-{
-	return bHasDoubleJumped;
 }
 
 void ASideScrollingCharacter::OnClickMouse(const FInputActionValue& Value)
@@ -319,4 +162,38 @@ void ASideScrollingCharacter::QuickSlotNum3()
 {
 	check(QuickSlotComponent);
 	QuickSlotComponent->PressQuickSlot(3);
-} 
+}
+
+void ASideScrollingCharacter::CreateInvestigationMenu()
+{
+	
+	if (InvestigationWidgetClass && InventoryComponent)
+	{
+		InvestigationWidget = CreateWidget<USRInvestigationMenu>(GetWorld(), InvestigationWidgetClass);
+		InvestigationWidget->AddToViewport();
+		InvestigationWidget->InitInvestigationMenuWidget(InventoryComponent);
+
+	}
+}
+
+void ASideScrollingCharacter::ToggleInvestigationMenu()
+{
+	if (!InvestigationWidget)
+	{
+		CreateInvestigationMenu();
+	}
+	
+	if (InvestigationWidget)
+	{
+		if (InvestigationWidget->GetVisibility() != ESlateVisibility::Visible)
+		{
+			InvestigationWidget->ShowWidget();
+
+		}
+		else
+		{
+			InvestigationWidget->HideWidget();
+		}
+	}
+	
+}

@@ -14,31 +14,29 @@
 #include "Presenter/SRInventoryPresenter.h"
 #include "Kismet/GameplayStatics.h"
 #include "SRGameplayTags.h"
+#include "Animation/WidgetAnimation.h"
 
 
 
 
-void USRInvestigationMenu::InitInvestigationMenuWidget(UObject* DataSource)
+void USRInvestigationMenu::InitInvestigationMenuWidget(UActorComponent* DataSourceComp)
 {
-	check(DataSource);
+	check(DataSourceComp);
 
-	UActorComponent* Comp =Cast<UActorComponent>(DataSource);
-
-	check(Comp);
 	if (!InvenPresenter)
 	{
-		InvenPresenter = NewObject<USRInventoryPresenter>(GetWorld());
+		InvenPresenter = NewObject<USRInventoryPresenter>(this);
 	}
 	if (!CluePresenter)
 	{
-		CluePresenter = NewObject<USRClueWidgetPresenter>(GetWorld());
+		CluePresenter = NewObject<USRClueWidgetPresenter>(this);
 	}
 
 	check(InvenPresenter);
 	check(CluePresenter);
 
-	InvenPresenter->Init(Comp, InventoryWidget);
-	CluePresenter->Init(Comp, ClueWidget);
+	InvenPresenter->Init(DataSourceComp, InventoryWidget);
+	CluePresenter->Init(DataSourceComp, ClueWidget);
 
 	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRTutorialManager::StaticClass());
 	if (FoundActor)
@@ -111,6 +109,23 @@ void USRInvestigationMenu::OpenClueMap()
 	PlayAnimation(OpenClueMapAnim);
 }
 
+void USRInvestigationMenu::ShowWidget()
+{
+	SetVisibility(ESlateVisibility::Visible);
+
+	PlayAnimation(OpenMenu);
+}
+
+void USRInvestigationMenu::HideWidget()
+{
+	PlayAnimation(CloseMenu);
+}
+
+void USRInvestigationMenu::HideWidgetAnimFinished()
+{
+	SetVisibility(ESlateVisibility::Collapsed);
+}
+
 void USRInvestigationMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -123,6 +138,10 @@ void USRInvestigationMenu::NativeConstruct()
 
 	ClueClickPulse->SetVisibility(ESlateVisibility::Hidden);
 	ClueMapClickPulse->SetVisibility(ESlateVisibility::Hidden);
+
+
+	CloseAnimFinishedDelegate.BindDynamic(this, &ThisClass::HideWidgetAnimFinished);
+	BindToAnimationFinished(CloseMenu, CloseAnimFinishedDelegate);
 }
 
 void USRInvestigationMenu::ChangeButtonZOrder(UButton* Widget,int8 NewZOrder)

@@ -25,6 +25,7 @@ void USRInventoryWidget::NativeConstruct()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("InvenGridPanel Children Cast cannot be cast to USRSlotWidget"));
 		}
+		InvenSlot->SetItemIcon(nullptr);
 		InvenSlot->SetSlotButtonNormalStyle(InventorySlotButtonNormalStyle);
 		InvenSlot->SetSlotButtonSelectedStyle(InventorySlotButtonSelectedStyle);
 
@@ -43,12 +44,14 @@ void USRInventoryWidget::NativeConstruct()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("QuickSlotGridChild Children Cast cannot be cast to USRSlotWidget"));
 		}
+		QuickSlot->SetItemIcon(nullptr);
 		QuickSlot->OnSlotDropedDelegate.AddDynamic(this, &ThisClass::RegisterItemInQuickSlot);
 	}
 
 	ItemName->SetText(FText::GetEmpty());
 	ItemDescription->SetText(FText::GetEmpty());
 	ItemInfoTextBox->SetVisibility(ESlateVisibility::Hidden);
+
 }
 
 void USRInventoryWidget::UpdateItemName(FName Name)
@@ -97,6 +100,20 @@ void USRInventoryWidget::RemoveItemInventoryGridPanel(const TArray<FName>& ItemI
 			InvenSlot->SetIsOccupied(false);
 		}
 	}
+}
+
+void USRInventoryWidget::UpdateQuickSlotGridPanel(int8 Index, TSoftObjectPtr<UTexture2D> Icon)
+{
+	UWidget* FindWidget = QuickSlotGridPanel->GetChildAt(Index);
+	if (!FindWidget)
+		return;
+
+	USRSlotWidget* QuickSlot = Cast<USRSlotWidget>(FindWidget);
+	if (!QuickSlot)
+		return;
+
+	QuickSlot->SetIsEnabled(true);
+	QuickSlot->SetItemIcon(Icon);
 }
 
 void USRInventoryWidget::UpdateItemDescriptionPanel(USRSlotWidget* ClickedSlot)

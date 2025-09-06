@@ -28,6 +28,12 @@ public:
 
 	FName GetItemIdBySlotIndex(uint8 Index);
 
+	UFUNCTION(BlueprintCallable)
+	TSoftObjectPtr<UTexture2D> GetSlotIconByIndex(int32 Index) const;
+
+	UFUNCTION(BlueprintCallable)
+	void GetQuickslotSnapshot(TArray<TSoftObjectPtr<UTexture2D>>& OutIcons) const;
+
 	FOnQuickSlotChangedSignature OnQuickSlotChangedDelegate;
 protected:
 	// Called when the game starts
@@ -36,8 +42,6 @@ protected:
 	//실제 QuickSlot에 있는 아이템을 들고와서 사용합니다.
 	virtual void UseQuickSlotItem(uint8 QuickSlotNum);
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 	UPROPERTY()
@@ -45,4 +49,14 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* ItemDataTable;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FDataTableRowHandle> StartQuickItemDatas;
+
+	UPROPERTY() 
+	TArray<TSoftObjectPtr<UTexture2D>> SlotIcons; // 아이콘 캐시
+
+	TSoftObjectPtr<UTexture2D> ResolveIconByItemId(FName Id) const; // DT에서 찾아 반환
+
+
 };

@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -20,25 +20,9 @@ class ASideScrollingGameMode : public AGameModeBase
 	
 protected:
 
-	/** Class of UI widget to spawn when the game starts */
-	UPROPERTY(EditAnywhere, Category="UI")
-	TSubclassOf<USideScrollingUI> UserInterfaceClass;
-
-	/** User interface widget for the game */
-	UPROPERTY(BlueprintReadOnly, Category="UI")
-	TObjectPtr<USideScrollingUI> UserInterface;
-
-	/** Number of pickups collected by the player */
-	UPROPERTY(BlueprintReadOnly, Category="Picups")
-	int32 PickupsCollected = 0;
-
-protected:
-
 	/** Initialization */
 	virtual void BeginPlay() override;
 
 public:
 
-	/** Receives an interaction event from another actor */
-	virtual void ProcessPickup();
 };
