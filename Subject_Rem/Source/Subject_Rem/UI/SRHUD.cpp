@@ -13,5 +13,6 @@ void ASRHUD::BeginPlay()
 		UUserWidget* NewUIController = CreateWidget<UUserWidget>(GetWorld(), UIControllerInfo.UIControllerClass);
 
 		NewUIController->AddToViewport(UIControllerInfo.ZOrder);
+		AddedViewportWidgets.Add(NewUIController);
 	}
 }
