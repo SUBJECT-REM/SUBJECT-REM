@@ -60,7 +60,10 @@ void ASRRoomTitleTrrigerActor::OnBoxCollisionBeginOverlap(UPrimitiveComponent* O
 	
 	if (bTriggerOnce)
 	{
-		BoxCollision->SetActive(false);
+		BoxCollision->SetGenerateOverlapEvents(false);
+		BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		BoxCollision->OnComponentBeginOverlap.RemoveDynamic(
+			this, &ThisClass::OnBoxCollisionBeginOverlap);
 	}
 	
 }
