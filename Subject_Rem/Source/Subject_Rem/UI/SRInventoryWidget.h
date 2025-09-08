@@ -15,6 +15,7 @@ class UTextBlock;
 class USRSlotWidget;
 class UVerticalBox;
 class UUniformGridPanel;
+class USRRotateItemPreviewWidget;
 
 USTRUCT()
 struct FSlotStyle
@@ -39,6 +40,7 @@ class SUBJECT_REM_API USRInventoryWidget : public UUserWidget
 public:
 	void UpdateItemName(FName Name);
 	void UpdateItemDes(FName Des);
+	void UpdateItemPreview(TSoftObjectPtr<UStaticMesh> Mesh);
 
 	void AddItemInventoryGridPanel(const FSRItemBaseData& Data);
 	void RemoveItemInventoryGridPanel(const TArray<FName>& ItemIds);
@@ -79,6 +81,11 @@ private:
 	/*아이템 설명란*/
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ItemDescription;
+
+	/*아이템 Preview*/
+	UPROPERTY(meta = (BindWidget))
+	USRRotateItemPreviewWidget* ItemPreview;
+
 
 	UPROPERTY(meta = (BindWidget))
 	UGridPanel* QuickSlotGridPanel;

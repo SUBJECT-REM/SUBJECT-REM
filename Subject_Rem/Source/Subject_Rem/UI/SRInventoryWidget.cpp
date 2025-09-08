@@ -3,6 +3,7 @@
 
 #include "UI/SRInventoryWidget.h"
 #include "UI/SRSlotWidget.h"
+#include "UI/SRRotateItemPreviewWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/GridPanel.h"
 #include "Components/VerticalBox.h"
@@ -64,6 +65,11 @@ void USRInventoryWidget::UpdateItemDes(FName Des)
 	ItemDescription->SetText(FText::FromName(Des));
 }
 
+void USRInventoryWidget::UpdateItemPreview(TSoftObjectPtr<UStaticMesh> Mesh)
+{
+	ItemPreview->SetItemPreviewMesh(Mesh);
+}
+
 void USRInventoryWidget::AddItemInventoryGridPanel(const FSRItemBaseData& Data)
 {
 	TArray<UWidget*> Child = InventoryGridPanel->GetAllChildren();
@@ -118,11 +124,13 @@ void USRInventoryWidget::UpdateQuickSlotGridPanel(int8 Index, TSoftObjectPtr<UTe
 
 void USRInventoryWidget::UpdateItemDescriptionPanel(USRSlotWidget* ClickedSlot)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Clicked Slot NAme :%s "), *ClickedSlot->GetName());
 	const FSRItemBaseData& Data = ClickedSlot->GetItemData();
 	ItemInfoTextBox->SetVisibility(ESlateVisibility::Visible);
 	//Update항목들
 	UpdateItemName(Data.Name);
 	UpdateItemDes(Data.Description);
+	UpdateItemPreview(Data.Mesh);
 }
 
 void USRInventoryWidget::RegisterItemInQuickSlot(USRSlotWidget* DropedSlot, USRSlotWidget* DraggedSlot)
