@@ -11,7 +11,7 @@
  */
 class UImage;
 class UTextBlock;
-
+class USRRotateItemPreviewWidget;
 UCLASS()
 class SUBJECT_REM_API USRItemPickupResultWidget : public UUserWidget
 {
@@ -29,7 +29,7 @@ private:
 	void HandleVisibilityChange(ESlateVisibility NewVisibility);
 
 	UPROPERTY(meta = (BindWidget))
-	UImage* ItemImage;
+	USRRotateItemPreviewWidget* ItemPreview;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ItemDes;
