@@ -34,7 +34,8 @@ void USRItemPickupResultPresenter::ShowItemPickWidget(const FSRItemBaseData& Sho
 		}
 		check(ItemPickupResultWidget);
 	}
-	
+
+	ItemPickupResultWidget->SetItemPreview(ShownItemData.Mesh);
 	ItemPickupResultWidget->SetItemName(ShownItemData.Name);
 	ItemPickupResultWidget->SetItemDes(ShownItemData.Description);
 

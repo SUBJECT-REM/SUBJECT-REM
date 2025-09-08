@@ -2,7 +2,12 @@
 
 
 #include "UI/SRItemPickupResultWidget.h"
+#include "UI/SRRotateItemPreviewWidget.h"
+#include "Actor/SmoothRotateACtor/SRItemPreview.h"
+#include "Component/SRRotateableStaticMeshComponent.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/StaticMesh.h"
 
 
 void USRItemPickupResultWidget::NativeConstruct()
@@ -16,6 +21,28 @@ void USRItemPickupResultWidget::NativeConstruct()
 		PC->SetInputMode(InputMode);
 	}
 
+	ItemPreview->SetWidth(ItemPreviewWidgetWidth);
+	ItemPreview->SetHeight(ItemPreviewWidgetHeight);
+}
+
+void USRItemPickupResultWidget::SetItemPreview(TSoftObjectPtr<UStaticMesh> Mesh)
+{
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASRItemPreview::StaticClass(), FoundActors);
+
+	if (FoundActors.Num() > 0)
+	{
+		ASRItemPreview* PreviewActor = Cast<ASRItemPreview>(FoundActors[0]);
+		if (PreviewActor)
+		{
+			PreviewActor->ReplaceStaticMesh(Mesh.LoadSynchronous());
+		}
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASRItemPreview not found"));
+	}
 }
 
 void USRItemPickupResultWidget::SetItemDes(FName Text)

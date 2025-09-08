@@ -20,8 +20,13 @@ class SUBJECT_REM_API USRItemPickupResultWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
+	void SetItemPreview(TSoftObjectPtr<UStaticMesh> Mesh);
 	void SetItemDes(FName Text);
 	void SetItemName(FName Text);
+
+protected:
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	USRRotateItemPreviewWidget* ItemPreview;
 private:
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
@@ -29,12 +34,14 @@ private:
 	void HandleVisibilityChange(ESlateVisibility NewVisibility);
 
 	UPROPERTY(meta = (BindWidget))
-	USRRotateItemPreviewWidget* ItemPreview;
-
-	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ItemDes;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ItemName;
 
+	UPROPERTY(EditDefaultsOnly, Category = "ItemPreview")
+	float ItemPreviewWidgetHeight;
+
+	UPROPERTY(EditDefaultsOnly, Category = "ItemPreview")
+	float ItemPreviewWidgetWidth;
 };
