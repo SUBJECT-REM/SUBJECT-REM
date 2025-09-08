@@ -33,6 +33,7 @@ void USRInventoryComponent::AddItemData(const FSRItemData& Data)
 	AddInventoryDataDelegate.Broadcast(Data.BaseInfo);
 }
 
+//TODO : PickUp 관련 따로 분리
 void USRInventoryComponent::EnsureItemPickupPresenter()
 {
 	if (!ItemPickupPresenter)
@@ -56,7 +57,7 @@ void USRInventoryComponent::AddItem(const USRItem* Item)
 	{
 
 	}
-	//Useable아이템이 아니라면. ClueData입니다.
+	//Useable아이템이 아니라면. ClueData입니다, Device일수도있음.
 	else
 	{
 		AddClueData(ItemData.BaseInfo);

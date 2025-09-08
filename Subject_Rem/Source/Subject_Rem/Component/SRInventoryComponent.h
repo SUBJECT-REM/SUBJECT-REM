@@ -12,6 +12,7 @@ class UDataTable;
 class USRItem;
 class USRItemPickupResultPresenter;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddDeviceDataSignature, const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddClueDatasSignatue,const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddInventoryDataSignature, const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRemoveInventoryDataSignature, const TArray<FName>&, RemovedItemIds);
