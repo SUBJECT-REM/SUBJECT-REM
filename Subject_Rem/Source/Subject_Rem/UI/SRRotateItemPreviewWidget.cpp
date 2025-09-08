@@ -5,6 +5,19 @@
 #include "Component/SRRotateableStaticMeshComponent.h"
 //#include "Actor/SmoothRotateActor/SRSmoothRotateActor.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/SizeBox.h"
+#include "Components/ScaleBox.h"
+
+
+void USRRotateItemPreviewWidget::SetHeight(float NewHeight)
+{
+	SizeBox->SetHeightOverride(NewHeight);
+}
+
+void USRRotateItemPreviewWidget::SetWidth(float NewWidth)
+{
+	SizeBox->SetWidthOverride(NewWidth);
+}
 
 void USRRotateItemPreviewWidget::NativeConstruct()
 {

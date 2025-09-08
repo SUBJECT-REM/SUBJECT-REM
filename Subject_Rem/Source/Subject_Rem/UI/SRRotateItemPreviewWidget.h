@@ -9,11 +9,16 @@
 class UImage;
 class ASRSmoothRotateActor;
 class USRRotateableStaticMeshComponent;
+class USizeBox;
+class UScaleBox;
 
 UCLASS()
 class SUBJECT_REM_API USRRotateItemPreviewWidget : public UUserWidget
 {
 	GENERATED_BODY()
+public:
+	void SetHeight(float NewHeight);
+	void SetWidth(float NewWidth);
 protected:	
 	//위젯이 켜질 때
 	virtual void NativeConstruct() override;
@@ -38,6 +43,12 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* PreviewImage;
+
+	UPROPERTY(meta=(BindWidget))
+	USizeBox* SizeBox;
+
+	UPROPERTY(meta = (BindWidget))
+	UScaleBox* ScaleBox;
 
 private: 
 	void GetTargetActorFromLevel();
