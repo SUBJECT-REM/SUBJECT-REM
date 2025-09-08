@@ -26,7 +26,9 @@ public:
 
 	void ShowRoomTitleWidget();
 private:
-	void CollapseWidget();
+	void PlayHideWidgetAnim();
+
+	void HideWidgetAnimFinished();
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* RoomTitleImage;
@@ -41,4 +43,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	float PendingVisibleSeconds=3.f;
+
+	FWidgetAnimationDynamicEvent CloseAnimFinishedDelegate;
 };
