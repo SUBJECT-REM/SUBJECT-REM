@@ -72,8 +72,16 @@ public:
     //UPROPERTY(BlueprintAssignable, Category = "Tutorial")
     //FTutorialStepChanged  OnTutorialStepChanged;
 
+    UPROPERTY(BlueprintAssignable)
     FTutorialStartedSignature OnTutorialStartDelegate;
+
+    UPROPERTY(BlueprintAssignable)
     FTutorialCompletedSignature OnTutorialCompleteDelegate;
+
+    /** 모든 튜토리얼 단계 데이터 */
+    UPROPERTY(EditAnywhere, Category = "Tutorial|Data")
+    TArray<FTutorialInfo> TutorialInfos;
+
 protected:
     virtual void BeginPlay() override;
 
@@ -98,8 +106,6 @@ protected:
     UPROPERTY()
     TMap<FGameplayTag, int32> ObjectiveProgress;
 
-    /** 모든 튜토리얼 단계 데이터 */
-    UPROPERTY(EditDefaultsOnly, Category = "Tutorial|Data")
-    TArray<FTutorialInfo> TutorialInfos;
+ 
 
 };

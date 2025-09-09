@@ -19,6 +19,9 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/SRInvestigationMenu.h"
 #include "Component/SRInventoryComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Actor/Tutorial/SRTutorialManager.h"
+#include "SRGameplayTags.h"
 
 ASideScrollingCharacter::ASideScrollingCharacter()
 {
@@ -64,10 +67,6 @@ ASideScrollingCharacter::ASideScrollingCharacter()
 
 	//GetCharacterMovement()->SetPlaneConstraintNormal(FVector(0.0f, 1.0f, 0.0f));
 	//GetCharacterMovement()->bConstrainToPlane = true;
-
-
-	// enable double jump - 1단 점프하려면 1로 수정
-	JumpMaxCount = 2;
 }
 
 void ASideScrollingCharacter::BeginPlay()
@@ -75,6 +74,12 @@ void ASideScrollingCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CreateInvestigationMenu();
+
+	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRTutorialManager::StaticClass());
+	if (FoundActor)
+	{
+		CachedTutorialMgr = Cast<ASRTutorialManager>(FoundActor);
+	}
 }
 
 void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -87,6 +92,7 @@ void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* P
 
 
 		// Moving
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Started, this, &ASideScrollingCharacter::MoveStart);
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASideScrollingCharacter::Move);
 
 		//Mouse Action
@@ -100,8 +106,6 @@ void ASideScrollingCharacter::SetupPlayerInputComponent(class UInputComponent* P
 
 		//OpenInvenstigation
 		EnhancedInputComponent->BindAction(ToggleInvestigationMenuAction, ETriggerEvent::Started, this, &ASideScrollingCharacter::ToggleInvestigationMenu);
-
-
 	}
 }
 
@@ -112,6 +116,16 @@ void ASideScrollingCharacter::Move(const FInputActionValue& Value)
 
 	// route the input
 	DoMove(MoveVector.Y);
+
+
+}
+
+void ASideScrollingCharacter::MoveStart(const FInputActionValue& Value)
+{
+	if (CachedTutorialMgr.IsValid())
+	{
+		CachedTutorialMgr->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_Move);
+	}
 }
 
 void ASideScrollingCharacter::DoMove(float Forward)
@@ -172,7 +186,6 @@ void ASideScrollingCharacter::CreateInvestigationMenu()
 		InvestigationWidget = CreateWidget<USRInvestigationMenu>(GetWorld(), InvestigationWidgetClass);
 		InvestigationWidget->AddToViewport();
 		InvestigationWidget->InitInvestigationMenuWidget(InventoryComponent);
-
 	}
 }
 
@@ -182,17 +195,28 @@ void ASideScrollingCharacter::ToggleInvestigationMenu()
 	{
 		CreateInvestigationMenu();
 	}
-	
+
 	if (InvestigationWidget)
 	{
 		if (InvestigationWidget->GetVisibility() != ESlateVisibility::Visible)
 		{
 			InvestigationWidget->ShowWidget();
-
+			if (CachedTutorialMgr.IsValid())
+			{
+				CachedTutorialMgr->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_OepnInvenstigation);
+			}
+			if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+			{
+				PC->SetInputMode(FInputModeUIOnly());
+			}
 		}
 		else
 		{
 			InvestigationWidget->HideWidget();
+			if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+			{
+				PC->SetInputMode(FInputModeGameAndUI());
+			}
 		}
 	}
 	

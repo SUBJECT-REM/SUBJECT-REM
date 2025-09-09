@@ -13,7 +13,7 @@ class UInputAction;
 class USRInventoryComponent;
 class USRTutorialComponent;
 class USRInvestigationMenu;
-
+class ASRTutorialManager;
 struct FInputActionValue;
 
 /**
@@ -95,6 +95,7 @@ protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
+	void MoveStart(const FInputActionValue& Value);
 public:
 
 	/** Handles move inputs from either controls or UI interfaces */
@@ -136,4 +137,6 @@ private:
 	TSubclassOf<UUserWidget> InvestigationWidgetClass;
 
 	TObjectPtr<USRInvestigationMenu> InvestigationWidget;
+
+	TWeakObjectPtr<ASRTutorialManager> CachedTutorialMgr;
 };
