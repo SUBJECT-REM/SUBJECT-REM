@@ -60,10 +60,10 @@ struct FSRItemBaseData
 	FName Name;
 
 	/*아이템 설명*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (MultiLine = true))
 	FText Description;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (MultiLine = true))
 	FText PickupDescription;
 
 	/*인벤토리, 단서조합 ... UI에 들어갈 아이콘*/
@@ -88,7 +88,6 @@ USTRUCT(BlueprintType)
 struct FSRItemData : public FTableRowBase
 {
 	GENERATED_BODY()
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSRItemBaseData BaseInfo;
 
@@ -118,9 +117,23 @@ struct FSRClueMapData : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	/*ClueMap Id, 이름, 설명, 아이콘 ,메시*/
+	/*아이템 구분 Id */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FSRItemBaseData BaseInfo;
+	FName Id;
+
+	/*아이템 이름*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName Name;
+
+	/*아이템 설명*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (MultiLine = true))
+	FText Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<UTexture2D> LeftIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<UTexture2D> RightIcon;
 
 	/*단서 조합 후 즉시 증가하는 스트레스 증가량 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

@@ -92,8 +92,7 @@ void USRClueMapWidget::FindCombinedClueResultWidget(FName CombinedClueID)
 void USRClueMapWidget::HandleCombinedClue(const FSRClueMapData& Data)
 {
       //여기서 Broadcast로 들어온 Data에서 FName을 추출한다.
-      FSRItemBaseData CombinedClueBaseInfo= Data.BaseInfo;
-      FName CombinedClueID = CombinedClueBaseInfo.Id;
+      FName CombinedClueID = Data.Id;
 
       UE_LOG(LogTemp, Warning, TEXT("CombinedClueID: %s"), *CombinedClueID.ToString());
       FindCombinedClueResultWidget(CombinedClueID);

@@ -117,7 +117,10 @@ void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
 			}
 
 			FSRClueMapData* FindClueMapResult = ClueMapDataTable->FindRow<FSRClueMapData>(ClueCombineResultRowName, ClueMapContext);
+
 			//bResult -> true 진실, false 면 거짓.
+			if (!FindClueMapResult)
+				return;
 			if (FindClueMapResult->bResult)
 			{
 				ClueMapDatas.Add(*FindClueMapResult);

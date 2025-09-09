@@ -22,7 +22,7 @@ class SUBJECT_REM_API USRClueCombineResultWidget : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetClueMapImage(TSoftObjectPtr<UTexture2D> Icon);
+	void SetClueMapImage(TSoftObjectPtr<UTexture2D> LeftIcon, TSoftObjectPtr<UTexture2D> RightIcon);
 
 	UFUNCTION(BlueprintCallable)
 	void SetClueMapDes(FText Text);
@@ -37,7 +37,10 @@ private:
 	void OnClickedCloseButton();
 
 	UPROPERTY(meta = (BindWidget))
-	UImage* ClueMapImage;
+	UImage* ClueLeftImage;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* ClueRightImage;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ClueMapDes;

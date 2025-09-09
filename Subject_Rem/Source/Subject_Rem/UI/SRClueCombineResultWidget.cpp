@@ -7,9 +7,10 @@
 #include "Components/Button.h"
 #include "Engine/Texture2D.h"
 
-void USRClueCombineResultWidget::SetClueMapImage(TSoftObjectPtr<UTexture2D> Icon)
+void USRClueCombineResultWidget::SetClueMapImage(TSoftObjectPtr<UTexture2D> LeftIcon, TSoftObjectPtr<UTexture2D> RightIcon)
 {
-	ClueMapImage->SetBrushFromSoftTexture(Icon);	
+	ClueLeftImage->SetBrushFromSoftTexture(LeftIcon);
+	ClueRightImage->SetBrushFromSoftTexture(RightIcon);
 }
 
 void USRClueCombineResultWidget::SetClueMapDes(FText Text)
@@ -25,8 +26,8 @@ void USRClueCombineResultWidget::SetClueMapName(FName Text)
 void USRClueCombineResultWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	ClueMapImage->SetVisibility(ESlateVisibility::HitTestInvisible);
-
+	ClueLeftImage->SetVisibility(ESlateVisibility::HitTestInvisible);
+	ClueRightImage->SetVisibility(ESlateVisibility::HitTestInvisible);;
 	CloseButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedCloseButton);
 }
 
