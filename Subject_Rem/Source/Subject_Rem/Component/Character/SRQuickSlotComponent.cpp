@@ -130,6 +130,7 @@ void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 		{
 			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
 			{
+				UE_LOG(LogTemp, Warning, TEXT("Quick 2"));
 				StressSubsystem->ChangeStressAmount(-1.0f);
 			}
 		}
@@ -140,6 +141,7 @@ void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 		{
 			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
 			{
+				UE_LOG(LogTemp, Warning, TEXT("Quick 3"));
 				StressSubsystem->ChangeStressByTime(5.0f, 1.0f);
 			}
 		}
