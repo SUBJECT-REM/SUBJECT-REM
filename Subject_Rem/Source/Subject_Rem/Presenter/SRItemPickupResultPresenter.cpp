@@ -6,7 +6,8 @@
 #include "UI/SRItemPickupResultWidget.h"
 #include "SRItemData.h"
 #include "Blueprint/UserWidget.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "Actor/SRCaptionManagerActor.h"
 
 void USRItemPickupResultPresenter::Init(UActorComponent* InitComponent, UUserWidget* InitWidget)
 {
@@ -21,24 +22,35 @@ void USRItemPickupResultPresenter::Init(UActorComponent* InitComponent, UUserWid
 	check(InvenComp);
 
 	InvenComp->AddInventoryDataDelegate.AddDynamic(this, &ThisClass::ShowItemPickWidget);
+
 }
 
 void USRItemPickupResultPresenter::ShowItemPickWidget(const FSRItemBaseData& ShownItemData)
 {
+	//TODO 위젯생성은 HUD에 위임하기 
 	if (!ItemPickupResultWidget)
 	{
 		//ItemPickupResultWidget에서는 Space입력시 닫아야함. 여기서 필요시 PlayerController를 넘겨줘야할거같음.
 		if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
 		{
 			ItemPickupResultWidget = CreateWidget<USRItemPickupResultWidget>(PC, ItemPickUpResultWidgetClass);
+			// Presenter에서 바인딩할 때
+			if (!ItemPickupResultWidget->OnClosedDelegate.IsAlreadyBound(this, &ThisClass::HandleWidgetClose))
+			{
+				ItemPickupResultWidget->OnClosedDelegate.AddDynamic(this, &ThisClass::HandleWidgetClose);
+				
+				ChashedCaptionManager = Cast<ASRCaptionManagerActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ASRCaptionManagerActor::StaticClass()));
+
+				
+			}
 		}
 		check(ItemPickupResultWidget);
 	}
-
+	CashedCaptionDataRow = ShownItemData.PickupCaptionRow;
 	ItemPickupResultWidget->SetItemPreview(ShownItemData.Mesh);
 	ItemPickupResultWidget->SetItemName(ShownItemData.Name);
-	ItemPickupResultWidget->SetItemDes(ShownItemData.Description);
-
+	ItemPickupResultWidget->SetItemDes(ShownItemData.PickupDescription);
+	UE_LOG(LogTemp, Warning, TEXT("PickupResultWidget Item Name  : %s"), *ShownItemData.Name.ToString());
 	if (!ItemPickupResultWidget->IsInViewport())
 	{
 		ItemPickupResultWidget->AddToViewport(10);
@@ -67,5 +79,11 @@ void USRItemPickupResultPresenter::HandleWidgetVisibilityChanged(ESlateVisibilit
 		}
 	}
 }
+
+void USRItemPickupResultPresenter::HandleWidgetClose()
+{
+	ChashedCaptionManager->RequestCaptionShowing(CashedCaptionDataRow.RowName);
+}
+
 
 

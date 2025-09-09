@@ -11,6 +11,9 @@
  */
 class USRInventoryComponent;
 class USRItemPickupResultWidget;
+class ASRCaptionManagerActor;
+
+
 UCLASS(Blueprinttype, Blueprintable)
 class SUBJECT_REM_API USRItemPickupResultPresenter : public USRPresenter
 {
@@ -24,6 +27,11 @@ public:
 
 	UFUNCTION()
 	void HandleWidgetVisibilityChanged(ESlateVisibility NewVisibility);
+	
+	UFUNCTION()
+	void HandleWidgetClose();
+protected:
+
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> ItemPickUpResultWidgetClass;
@@ -32,4 +40,8 @@ private:
 	USRInventoryComponent* InvenComp;
 
 	USRItemPickupResultWidget* ItemPickupResultWidget;
+
+	TWeakObjectPtr<ASRCaptionManagerActor> ChashedCaptionManager;
+
+	FDataTableRowHandle CashedCaptionDataRow;
 };
