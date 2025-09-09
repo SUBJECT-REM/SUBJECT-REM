@@ -53,7 +53,7 @@ void USRClueWidgetPresenter::RequestCombineClue(TArray<FName> ClueIds)
 
 void USRClueWidgetPresenter::RequsetUpdateClueCombineResultWidget(const FSRClueMapData& Data)
 {
-	ClueWidget->UpdateClueCombineResultWidget(Data.BaseInfo);
+	ClueWidget->UpdateClueCombineResultWidget(Data);
 }
 
 void USRClueWidgetPresenter::HandleCombineClueTutorial(TArray<FName> ClueIds)
