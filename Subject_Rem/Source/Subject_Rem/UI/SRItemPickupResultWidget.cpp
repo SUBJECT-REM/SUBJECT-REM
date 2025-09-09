@@ -30,14 +30,18 @@ void USRItemPickupResultWidget::SetItemPreview(TSoftObjectPtr<UStaticMesh> Mesh)
 	ItemPreview->SetItemPreviewMesh(Mesh);
 }
 
-void USRItemPickupResultWidget::SetItemDes(FName Text)
+void USRItemPickupResultWidget::SetItemDes(FText Text)
 {
-	ItemDes->SetText(FText::FromName(Text));
+	ItemDes->SetText(Text);
+	ItemDes->InvalidateLayoutAndVolatility();
+	ItemDes->ForceLayoutPrepass();
 }
 
 void USRItemPickupResultWidget::SetItemName(FName Text)
 {
 	ItemName->SetText(FText::FromName(Text));
+	ItemName->InvalidateLayoutAndVolatility();
+	ItemName->ForceLayoutPrepass();
 }
 
 FReply USRItemPickupResultWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
@@ -71,6 +75,7 @@ void USRItemPickupResultWidget::HandleVisibilityChange(ESlateVisibility NewVisib
 			FInputModeGameAndUI InputMode;
 			PC->SetInputMode(InputMode);
 			PC->bShowMouseCursor = false;
+			OnClosedDelegate.Broadcast();
 			break;
 		}
 

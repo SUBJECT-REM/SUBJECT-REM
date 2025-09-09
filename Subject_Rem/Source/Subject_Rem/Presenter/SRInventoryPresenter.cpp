@@ -59,7 +59,7 @@ void USRInventoryPresenter::RequsetRemoveInventoryWidget(const TArray<FName>& It
 {
 	InventoryWidget->RemoveItemInventoryGridPanel(ItemIds);
 	InventoryWidget->UpdateItemName(NAME_None);
-	InventoryWidget->UpdateItemDes(NAME_None);
+	InventoryWidget->UpdateItemDes(FText());
 }
 
 void USRInventoryPresenter::RequestUpdateQuickslotInInventory(int32 SlotIndex, TSoftObjectPtr<UTexture2D> Icon)

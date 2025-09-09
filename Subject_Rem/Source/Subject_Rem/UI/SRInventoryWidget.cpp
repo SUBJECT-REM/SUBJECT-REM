@@ -57,12 +57,18 @@ void USRInventoryWidget::NativeConstruct()
 
 void USRInventoryWidget::UpdateItemName(FName Name)
 {
+	UE_LOG(LogTemp, Warning, TEXT("UpdateItemName : %s "), *Name.ToString());
 	ItemName->SetText(FText::FromName(Name));
+	ItemName->InvalidateLayoutAndVolatility();
+	ItemName->ForceLayoutPrepass();
 }
 
-void USRInventoryWidget::UpdateItemDes(FName Des)
+void USRInventoryWidget::UpdateItemDes(FText Des)
 {
-	ItemDescription->SetText(FText::FromName(Des));
+	UE_LOG(LogTemp, Warning, TEXT("UpdateItemDes : %s "), *Des.ToString());
+	ItemDescription->SetText(Des);
+	ItemDescription->InvalidateLayoutAndVolatility();
+	ItemDescription->ForceLayoutPrepass();
 }
 
 void USRInventoryWidget::UpdateItemPreview(TSoftObjectPtr<UStaticMesh> Mesh)

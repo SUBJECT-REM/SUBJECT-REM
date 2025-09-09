@@ -61,7 +61,10 @@ struct FSRItemBaseData
 
 	/*아이템 설명*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName Description;
+	FText Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText PickupDescription;
 
 	/*인벤토리, 단서조합 ... UI에 들어갈 아이콘*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -70,6 +73,15 @@ struct FSRItemBaseData
 	/*아이템 메시 데이터*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UStaticMesh> Mesh;
+
+	// 자막 사용 여부
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Caption")
+	bool bShowPickupCaption = false;
+
+	// 자막 DT(있을 때만 노출)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Caption",
+			  meta = (EditCondition = "bShowPickupCaption"))
+	FDataTableRowHandle PickupCaptionRow;
 };
 
 USTRUCT(BlueprintType)

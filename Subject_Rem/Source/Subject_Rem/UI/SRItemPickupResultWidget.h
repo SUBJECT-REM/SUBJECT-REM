@@ -12,6 +12,9 @@
 class UImage;
 class UTextBlock;
 class USRRotateItemPreviewWidget;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPickupResultClosed);
+
 UCLASS()
 class SUBJECT_REM_API USRItemPickupResultWidget : public UUserWidget
 {
@@ -21,9 +24,10 @@ public:
 	virtual void NativeConstruct() override;
 
 	void SetItemPreview(TSoftObjectPtr<UStaticMesh> Mesh);
-	void SetItemDes(FName Text);
+	void SetItemDes(FText Text);
 	void SetItemName(FName Text);
 
+	FPickupResultClosed OnClosedDelegate;
 protected:
 	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
 	USRRotateItemPreviewWidget* ItemPreview;

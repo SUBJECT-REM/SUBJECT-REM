@@ -38,8 +38,13 @@ class SUBJECT_REM_API USRInventoryWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UFUNCTION()
 	void UpdateItemName(FName Name);
-	void UpdateItemDes(FName Des);
+
+	UFUNCTION()
+	void UpdateItemDes(FText Des);
+
+	UFUNCTION()
 	void UpdateItemPreview(TSoftObjectPtr<UStaticMesh> Mesh);
 
 	void AddItemInventoryGridPanel(const FSRItemBaseData& Data);

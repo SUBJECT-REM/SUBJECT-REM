@@ -28,6 +28,7 @@ public:
 private:
 	void PlayHideWidgetAnim();
 
+	UFUNCTION()
 	void HideWidgetAnimFinished();
 
 	UPROPERTY(meta = (BindWidget))

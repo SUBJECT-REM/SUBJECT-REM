@@ -12,9 +12,9 @@ void USRClueCombineResultWidget::SetClueMapImage(TSoftObjectPtr<UTexture2D> Icon
 	ClueMapImage->SetBrushFromSoftTexture(Icon);	
 }
 
-void USRClueCombineResultWidget::SetClueMapDes(FName Text)
+void USRClueCombineResultWidget::SetClueMapDes(FText Text)
 {
-	ClueMapDes->SetText(FText::FromName(Text));
+	ClueMapDes->SetText(Text);
 }
 
 void USRClueCombineResultWidget::SetClueMapName(FName Text)

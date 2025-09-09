@@ -25,7 +25,7 @@ public:
 	void SetClueMapImage(TSoftObjectPtr<UTexture2D> Icon);
 
 	UFUNCTION(BlueprintCallable)
-	void SetClueMapDes(FName Text);
+	void SetClueMapDes(FText Text);
 
 	UFUNCTION(BlueprintCallable)
 	void SetClueMapName(FName Text);
