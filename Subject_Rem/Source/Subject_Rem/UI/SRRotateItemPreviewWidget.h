@@ -19,6 +19,9 @@ class SUBJECT_REM_API USRRotateItemPreviewWidget : public UUserWidget
 public:
 	void SetHeight(float NewHeight);
 	void SetWidth(float NewWidth);
+
+	void SetItemPreviewMesh(TSoftObjectPtr<UStaticMesh> Mesh);
+
 protected:	
 	//위젯이 켜질 때
 	virtual void NativeConstruct() override;

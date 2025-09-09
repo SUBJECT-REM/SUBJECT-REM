@@ -19,6 +19,26 @@ void USRRotateItemPreviewWidget::SetWidth(float NewWidth)
 	SizeBox->SetWidthOverride(NewWidth);
 }
 
+void USRRotateItemPreviewWidget::SetItemPreviewMesh(TSoftObjectPtr<UStaticMesh> Mesh)
+{
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASRItemPreview::StaticClass(), FoundActors);
+
+	if (FoundActors.Num() > 0)
+	{
+		ASRItemPreview* PreviewActor = Cast<ASRItemPreview>(FoundActors[0]);
+		if (PreviewActor)
+		{
+			PreviewActor->ReplaceStaticMesh(Mesh.LoadSynchronous());
+		}
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ASRItemPreview not found"));
+	}
+}
+
 void USRRotateItemPreviewWidget::NativeConstruct()
 {
 	UE_LOG(LogTemp, Log, TEXT("NativeConstruct"));

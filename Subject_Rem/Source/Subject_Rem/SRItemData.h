@@ -133,3 +133,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ImmediateStessDecrease;
 };
+
+USTRUCT(BlueprintType)
+struct FSRDeviceItemData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	uint8 DeviceCombineSlotNum;
+
+
+};
