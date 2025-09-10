@@ -11,6 +11,7 @@
 class UDataTable;
 class USRItem;
 class USRItemPickupResultPresenter;
+class USRStressLocalPlayerSubsystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddDeviceDataSignature, const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddClueDatasSignatue,const FSRItemBaseData&, Data);
@@ -80,6 +81,8 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<USRItemPickupResultPresenter> ItemPickupPresenterClass;
+
+	TWeakObjectPtr<USRStressLocalPlayerSubsystem> CashedStressSubsystem;
 	const int first = 0;
 	const int second = 1;
 };

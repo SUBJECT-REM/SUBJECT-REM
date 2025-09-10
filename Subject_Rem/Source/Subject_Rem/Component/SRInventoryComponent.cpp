@@ -5,7 +5,7 @@
 #include "SRItem.h"
 #include "Interface/UseableInterface.h"
 #include "Presenter/SRItemPickupResultPresenter.h"
-
+#include "Subsystem/SRStressLocalPlayerSubsystem.h"
 
 // Sets default values for this component's properties
 USRInventoryComponent::USRInventoryComponent()
@@ -21,6 +21,20 @@ void USRInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	EnsureItemPickupPresenter();
+
+	APawn* OwnerPawn = Cast<APawn>(GetOwner());
+	if (!OwnerPawn) return;
+
+	if (OwnerPawn->IsLocallyControlled())
+	{
+		if (APlayerController* PC = Cast<APlayerController>(OwnerPawn->GetController()))
+		{
+			if (ULocalPlayer* LP = PC->GetLocalPlayer())
+			{
+				CashedStressSubsystem = LP->GetSubsystem<USRStressLocalPlayerSubsystem>();
+			}
+		}
+	}
 }
 
 void USRInventoryComponent::AddClueData(const FSRItemBaseData& Data)
@@ -123,7 +137,7 @@ void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
 				return;
 			if (FindClueMapResult->bResult)
 			{
-				ClueMapDatas.Add(*FindClueMapResult);
+				ClueMapDatas.Add(*FindClueMapResult);				
 			}
 		
 			RemoveItems(ClueIds);

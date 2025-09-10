@@ -17,6 +17,11 @@ void USRStressLocalPlayerSubsystem::ChangeStressAmount(const float ChangeValue)
 
 void USRStressLocalPlayerSubsystem::ChangeStressByTime(const float ChangeValue, const float Time)
 {
+	//둘중 하나라도 0이 들어오면 ClearStressTimer;
+	if (ChangeValue == 0.f || Time == 0.f)
+	{
+		ClearStressTimer();
+	}
 	//UE_LOG(LogTemp, Log, TEXT("Change Stress By Time"));
 	GetWorld()->GetTimerManager().SetTimer(ChangeStressTimerHandler, [this, ChangeValue, Time]()
 	{

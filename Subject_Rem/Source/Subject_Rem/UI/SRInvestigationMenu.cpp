@@ -15,6 +15,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "SRGameplayTags.h"
 #include "Animation/WidgetAnimation.h"
+#include "Actor/SRCaptionManagerActor.h"
 
 
 
@@ -114,6 +115,8 @@ void USRInvestigationMenu::ShowWidget()
 	SetVisibility(ESlateVisibility::Visible);
 
 	PlayAnimation(OpenMenu);
+	CaptionManager->NotifyInvestigationToggle(true);
+
 }
 
 void USRInvestigationMenu::HideWidget()
@@ -124,6 +127,10 @@ void USRInvestigationMenu::HideWidget()
 void USRInvestigationMenu::HideWidgetAnimFinished()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
+	if (CaptionManager.IsValid())
+	{
+		CaptionManager->NotifyInvestigationToggle(false);
+	}
 }
 
 void USRInvestigationMenu::NativeConstruct()
@@ -142,6 +149,14 @@ void USRInvestigationMenu::NativeConstruct()
 
 	CloseAnimFinishedDelegate.BindDynamic(this, &ThisClass::HideWidgetAnimFinished);
 	BindToAnimationFinished(CloseMenu, CloseAnimFinishedDelegate);
+
+	//GetCaptionManager();
+	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRCaptionManagerActor::StaticClass());
+	if (FoundActor)
+	{
+		CaptionManager = Cast<ASRCaptionManagerActor>(FoundActor);
+	}
+
 }
 
 void USRInvestigationMenu::ChangeButtonZOrder(UButton* Widget,int8 NewZOrder)

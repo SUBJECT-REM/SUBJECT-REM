@@ -4,6 +4,7 @@
 #include "UI/SRHUD.h"
 #include "Blueprint/UserWidget.h"
 
+
 void ASRHUD::BeginPlay()
 {
 	Super::BeginPlay();

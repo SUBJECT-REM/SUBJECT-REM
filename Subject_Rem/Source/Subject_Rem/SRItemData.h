@@ -146,6 +146,14 @@ public:
 	/*진실, 거짓단서 유무*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bResult;
+
+	// 자막 사용 여부
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Caption")
+	bool bShowCaption = false;
+
+	// 자막 DT(있을 때만 노출)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Caption", meta = (EditCondition = "bShowPickupCaption"))
+	FDataTableRowHandle CaptionRow;
 };
 
 USTRUCT(BlueprintType)
@@ -157,6 +165,10 @@ public:
 	//사용시 즉시 감소하는 스트레스 감소량
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ImmediateStessDecrease;
+
+	//주기적으로 증가하는 스트레스 증가 캔슬
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bPeriodicStressIncreaseCancle = true;
 };
 
 USTRUCT(BlueprintType)

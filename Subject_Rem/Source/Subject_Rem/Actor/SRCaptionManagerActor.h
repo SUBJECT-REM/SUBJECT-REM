@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "SRItemData.h"
 #include "SRCaptionManagerActor.generated.h"
 
 USTRUCT(BlueprintType)
@@ -28,14 +29,35 @@ public:
 	// Sets default values for this actor's properties
 	ASRCaptionManagerActor();
 
+	void NotifyInvestigationToggle(bool bOpen);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnCaptionFinished(FName RowName);
+
+	UFUNCTION(BlueprintCallable)
+	void EnqueueFromClue(const FSRClueMapData& Data);
+
 	UFUNCTION(BlueprintCallable)
 	void RequestCaptionShowing(const FName& RowName);
 
 	UPROPERTY(BlueprintAssignable)
 	FCaptionRequestedSignature CaptionRequestedDelegate;
+
+	UPROPERTY(BlueprintReadOnly)
+	FSRClueMapData Current;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+private:
+	void TryRunNext();
+	void ApplyStree();
+	void PlayCaption();
+
+	UPROPERTY(Transient)
+	TArray<FSRClueMapData> PendingQueue;
+
+	bool bInvestigationOpen = false;
+	
 
 };

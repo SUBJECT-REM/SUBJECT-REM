@@ -23,7 +23,7 @@ class USRInventoryPresenter;
 class USRClueWidgetPresenter;
 class UHorizontalBox;
 class ASRTutorialManager;
-
+class ASRCaptionManagerActor;
 
 
 UCLASS(Blueprintable)
@@ -151,4 +151,6 @@ private:
 	UPROPERTY()
 	ASRTutorialManager* TutorialManager;
 
+	UPROPERTY()
+	TWeakObjectPtr<ASRCaptionManagerActor> CaptionManager;
 };

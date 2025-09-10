@@ -28,15 +28,15 @@ public:
 	template<class T>
 	T* GetWidgetOfClass(TSubclassOf<UUserWidget> ExactClass);
 
-	//필요시 부모와 같은 모든 widget 반환 함수 작성
 
+	UPROPERTY(BlueprintReadOnly)
+	TArray<UUserWidget*> AddedViewportWidgets;
 private:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TArray<FUIControllerInfo> UIControllerInfos;
 
-	TArray<UUserWidget*> AddedViewportWidgets;
 };
 
 template<class T>

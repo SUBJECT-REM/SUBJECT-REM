@@ -7,8 +7,8 @@
 #include "Component/SRInventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Actor/Tutorial/SRTutorialManager.h"
+#include "Actor/SRCaptionManagerActor.h"
 #include "SRGameplayTags.h"
-
 
 void USRClueWidgetPresenter::Init(UActorComponent* InitComponent, UUserWidget* InitWidget)
 {
@@ -54,6 +54,19 @@ void USRClueWidgetPresenter::RequestCombineClue(TArray<FName> ClueIds)
 void USRClueWidgetPresenter::RequsetUpdateClueCombineResultWidget(const FSRClueMapData& Data)
 {
 	ClueWidget->UpdateClueCombineResultWidget(Data);
+
+	//GetCaptionManager();
+	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRCaptionManagerActor::StaticClass());
+	if (FoundActor)
+	{
+		 CaptionManager = Cast<ASRCaptionManagerActor>(FoundActor);
+	}
+
+	if (CaptionManager.IsValid())
+	{
+		CaptionManager->EnqueueFromClue(Data);
+	}
+
 }
 
 void USRClueWidgetPresenter::HandleCombineClueTutorial(TArray<FName> ClueIds)

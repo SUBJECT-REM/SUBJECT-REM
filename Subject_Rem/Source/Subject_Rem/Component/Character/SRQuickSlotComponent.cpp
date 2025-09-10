@@ -93,7 +93,48 @@ void USRQuickSlotComponent::UnRegisterItem(uint8 Index)
 
 FName USRQuickSlotComponent::GetItemIdBySlotIndex(uint8 Index)
 {
-	return (SlotIcons.IsValidIndex(Index)) ? Slots[Index] : NAME_None;
+	return (Slots.IsValidIndex(Index)) ? Slots[Index] : NAME_None;
+}
+
+const FSRConsumeData* USRQuickSlotComponent::ResolveConsumeDataByItemId(FName ItemId) const
+{
+	if (!ItemDataTable || ItemId.IsNone())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[QuickSlot] Invalid ItemDataTable or ItemId"));
+		return nullptr;
+	}
+
+	FString Ctx;
+	const FSRItemData* Item = ItemDataTable->FindRow<FSRItemData>(ItemId, Ctx);
+	if (!Item)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[QuickSlot] Item '%s' not found in ItemDataTable"), *ItemId.ToString());
+		return nullptr;
+	}
+
+	const FDataTableRowHandle& SubHandle = Item->ItemDataTable;
+	if (SubHandle.IsNull() || !SubHandle.DataTable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[QuickSlot] Item '%s' has null sub DT"), *ItemId.ToString());
+		return nullptr;
+	}
+
+	// Consume 전용 테이블인지 구조 확인
+	if (SubHandle.DataTable->GetRowStruct() != FSRConsumeData::StaticStruct())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[QuickSlot] Item '%s' sub DT is not FSRConsumeData"), *ItemId.ToString());
+		return nullptr;
+	}
+
+	const FSRConsumeData* Consume = SubHandle.DataTable->FindRow<FSRConsumeData>(SubHandle.RowName, Ctx);
+	if (!Consume)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[QuickSlot] Consume row '%s' not found"), *SubHandle.RowName.ToString());
+		return nullptr;
+	}
+
+	return Consume;
+\
 }
 
 TSoftObjectPtr<UTexture2D> USRQuickSlotComponent::GetSlotIconByIndex(int32 Index) const
@@ -109,43 +150,67 @@ void USRQuickSlotComponent::GetQuickslotSnapshot(TArray<TSoftObjectPtr<UTexture2
 
 void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 {
+	if (QuickSlotNum == 0) 
+		return;
 
-	UnRegisterItem(QuickSlotNum - 1);
-	//Test - 필요하면 아래 if - else 문 삭제해도 됩니다.
-	if (QuickSlotNum == 1)
+	uint8 Index = QuickSlotNum - 1;
+	
+	if (!Slots.IsValidIndex(Index)) 
+		return;
+
+	const FName ItemId = GetItemIdBySlotIndex(Index);
+	if (ItemId.IsNone())
 	{
-		/*if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
-		{
-			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
-			{
-				StressSubsystem->ChangeStressAmount(1.0f);
-			}
-		}*/
-
-
+		UE_LOG(LogTemp, Warning, TEXT("[QuickSlot] Empty slot %d"), Index);
+		return;
 	}
-	else if (QuickSlotNum == 2)
+	const FSRConsumeData* Consume = ResolveConsumeDataByItemId(ItemId);
+	if (!Consume)
 	{
-		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
-		{
-			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Quick 2"));
-				StressSubsystem->ChangeStressAmount(-1.0f);
-			}
-		}
+		UE_LOG(LogTemp, Warning, TEXT("[QuickSlot] Not a consumable or missing consume data: %s"), *ItemId.ToString());
+		return;
 	}
-	else if (QuickSlotNum == 3)
+
+	// 스트레스 적용 (즉시 감소)
+	if (ULocalPlayer* LP = GetWorld()->GetFirstLocalPlayerFromController())
 	{
-		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
+		if (USRStressLocalPlayerSubsystem* StressSS = LP->GetSubsystem<USRStressLocalPlayerSubsystem>())
 		{
-			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
+		
+			StressSS->ChangeStressAmount(Consume->ImmediateStessDecrease);
+			
+			if (Consume->bPeriodicStressIncreaseCancle)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Quick 3"));
-				StressSubsystem->ChangeStressByTime(5.0f, 1.0f);
+				StressSS->ClearStressTimer();
 			}
 		}
 	}
+
+
+	// 사용 후 슬롯 비우기 + UI 반영
+	UnRegisterItem(Index);
+	//if (QuickSlotNum == 2)
+	//{
+	//	if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
+	//	{
+	//		if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
+	//		{
+	//			UE_LOG(LogTemp, Warning, TEXT("Quick 2"));
+	//			StressSubsystem->ChangeStressAmount(+1.0f);
+	//		}
+	//	}
+	//}
+	//else if (QuickSlotNum == 3)
+	//{
+	//	if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
+	//	{
+	//		if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
+	//		{
+	//			UE_LOG(LogTemp, Warning, TEXT("Quick 3"));
+	//			StressSubsystem->ChangeStressByTime(5.0f, 1.0f);
+	//		}
+	//	}
+	//}
 	//Test 끝
 }
 

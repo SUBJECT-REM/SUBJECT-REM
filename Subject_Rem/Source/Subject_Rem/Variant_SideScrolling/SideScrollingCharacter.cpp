@@ -207,7 +207,7 @@ void ASideScrollingCharacter::ToggleInvestigationMenu()
 			}
 			if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
 			{
-				PC->SetInputMode(FInputModeUIOnly());
+				PC->SetInputMode(FInputModeGameAndUI());
 			}
 		}
 		else
