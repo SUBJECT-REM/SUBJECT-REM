@@ -11,7 +11,7 @@ void USRStressLocalPlayerSubsystem::ChangeStressAmount(const float ChangeValue)
 	{
 		ClearStressTimer();
 	}
-
+	UE_LOG(LogTemp, Warning, TEXT("StressAmount  :%f"), StressAmount);
 	OnStressChangeDelegate.Broadcast(StressAmount);
 }
 

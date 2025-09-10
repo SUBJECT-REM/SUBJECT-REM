@@ -39,7 +39,6 @@ void ASRCaptionManagerActor::OnCaptionFinished_Implementation(FName RowName)
 {
 	//자막 끝났으니 스트레스 적용
 	ApplyStree();
-
 	Current = FSRClueMapData{};
 
 }
@@ -69,12 +68,14 @@ void ASRCaptionManagerActor::RequestCaptionShowing(const FName& RowName)
 
 void ASRCaptionManagerActor::ApplyStree()
 {
+	if (Current.ImmediateStessIncrease == 0.f)
+		return;
+	
 	if (ULocalPlayer* LP = GetWorld()->GetFirstLocalPlayerFromController())
 	{
         if (auto* SS = LP->GetSubsystem<USRStressLocalPlayerSubsystem>())
         {
 			SS->ChangeStressAmount(Current.ImmediateStessIncrease);
-
 			SS->ChangeStressByTime(Current.PeriodicStressIncrease.Amount, Current.PeriodicStressIncrease.Interval);
 
         }

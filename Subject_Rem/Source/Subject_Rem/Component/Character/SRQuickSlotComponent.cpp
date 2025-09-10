@@ -150,6 +150,43 @@ void USRQuickSlotComponent::GetQuickslotSnapshot(TArray<TSoftObjectPtr<UTexture2
 
 void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 {
+	////Test
+	if (QuickSlotNum == 2)
+	{
+		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
+		{
+			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Quick 2"));
+				StressSubsystem->ClearStressTimer();
+				StressSubsystem->ChangeStressAmount(-20.0f);
+			}
+		}
+	}
+	else if (QuickSlotNum == 3)
+	{
+		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
+		{
+			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Quick 3"));
+				StressSubsystem->ChangeStressAmount(+20.f);
+			}
+		}
+	}
+	else if (QuickSlotNum == 1)
+	{
+		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
+		{
+			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Quick 3"));
+				StressSubsystem->ChangeStressByTime(5.f,5.f);
+			}
+		}
+	}
+
+
 	if (QuickSlotNum == 0) 
 		return;
 
@@ -176,41 +213,21 @@ void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 	{
 		if (USRStressLocalPlayerSubsystem* StressSS = LP->GetSubsystem<USRStressLocalPlayerSubsystem>())
 		{
-		
-			StressSS->ChangeStressAmount(Consume->ImmediateStessDecrease);
-			
 			if (Consume->bPeriodicStressIncreaseCancle)
 			{
 				StressSS->ClearStressTimer();
 			}
+			UE_LOG(LogTemp, Warning, TEXT("Consume Decrease %f"), Consume->ImmediateStessDecrease);
+			StressSS->ChangeStressAmount(Consume->ImmediateStessDecrease);
+			
+
 		}
 	}
 
 
 	// 사용 후 슬롯 비우기 + UI 반영
 	UnRegisterItem(Index);
-	//if (QuickSlotNum == 2)
-	//{
-	//	if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
-	//	{
-	//		if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
-	//		{
-	//			UE_LOG(LogTemp, Warning, TEXT("Quick 2"));
-	//			StressSubsystem->ChangeStressAmount(+1.0f);
-	//		}
-	//	}
-	//}
-	//else if (QuickSlotNum == 3)
-	//{
-	//	if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
-	//	{
-	//		if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
-	//		{
-	//			UE_LOG(LogTemp, Warning, TEXT("Quick 3"));
-	//			StressSubsystem->ChangeStressByTime(5.0f, 1.0f);
-	//		}
-	//	}
-	//}
+	
 	//Test 끝
 }
 
