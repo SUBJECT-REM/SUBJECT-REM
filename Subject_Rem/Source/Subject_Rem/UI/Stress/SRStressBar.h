@@ -30,6 +30,9 @@ private:
 	//Tick에서 발동됩니다.
 	UFUNCTION(BlueprintCallable)
 	void StressChangePreviewColorChange(float InDeltaTime);
+
+	void StopStressChange();
+
 	bool bIsPendingLerp = false;
 	float PendingLerpTime = 0.f;
 	float PendingLerpDuration = 0.f;

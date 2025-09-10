@@ -22,14 +22,17 @@ void USRStressBar::NativeConstruct()
 
             StressSubsystem->OnStressChangeDelegate.AddUObject(this, &ThisClass::UpdateStressProgressBar);
             StressSubsystem->OnStressChangeByTimeDelegate.AddUObject(this, &ThisClass::OnStressWillChangeSoon);
+            StressSubsystem->OnStopStressChangeDelegate.AddUObject(this, &ThisClass::StopStressChange);
       }
 }
 
 void USRStressBar::UpdateStressProgressBar(float StressAmount)
 {
-      //UE_LOG(LogTemp, Warning, TEXT("Stress Bar Update"));
+      UE_LOG(LogTemp, Warning, TEXT("Stress Bar Update"));
 
       StackedStressBar->SetPercent(StressSubsystem->GetStressPercent());
+      StressPreviewBar->SetFillColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+      StressPreviewBar->SetPercent(0.0f);
 }
 
 void USRStressBar::OnStressWillChangeSoon(float ChangeValue, float DelayTime)
@@ -71,5 +74,12 @@ void USRStressBar::StressChangePreviewColorChange(float InDeltaTime)
       {
             bIsPendingLerp = false;
       }
+}
+
+void USRStressBar::StopStressChange()
+{
+      UE_LOG(LogTemp, Warning, TEXT("StopStressChange"));
+
+      bIsPendingLerp = false;
 }
 

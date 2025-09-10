@@ -13,6 +13,7 @@ void USRStressLocalPlayerSubsystem::ChangeStressAmount(const float ChangeValue)
 	}
 	UE_LOG(LogTemp, Warning, TEXT("StressAmount  :%f"), StressAmount);
 	OnStressChangeDelegate.Broadcast(StressAmount);
+	OnStopStressChangeDelegate.Broadcast();
 }
 
 void USRStressLocalPlayerSubsystem::ChangeStressByTime(const float ChangeValue, const float Time)
@@ -34,6 +35,7 @@ void USRStressLocalPlayerSubsystem::ChangeStressByTime(const float ChangeValue, 
 
 void USRStressLocalPlayerSubsystem::ClearStressTimer()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Clear Stress Timer "));
 	GetWorld()->GetTimerManager().ClearTimer(ChangeStressTimerHandler);
 }
 

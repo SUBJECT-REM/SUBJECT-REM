@@ -153,6 +153,7 @@ void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 	////Test
 	if (QuickSlotNum == 2)
 	{
+		//즉시 감소
 		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
 		{
 			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
@@ -160,11 +161,13 @@ void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 				UE_LOG(LogTemp, Warning, TEXT("Quick 2"));
 				StressSubsystem->ClearStressTimer();
 				StressSubsystem->ChangeStressAmount(-20.0f);
+
 			}
 		}
 	}
 	else if (QuickSlotNum == 3)
 	{
+		//즉시 증가.
 		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
 		{
 			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
@@ -176,11 +179,12 @@ void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 	}
 	else if (QuickSlotNum == 1)
 	{
+		//일정 시간 증가.
 		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
 		{
 			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Quick 3"));
+				UE_LOG(LogTemp, Warning, TEXT("Quick 1"));
 				StressSubsystem->ChangeStressByTime(5.f,5.f);
 			}
 		}
