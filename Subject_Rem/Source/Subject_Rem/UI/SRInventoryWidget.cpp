@@ -8,6 +8,7 @@
 #include "Components/GridPanel.h"
 #include "Components/VerticalBox.h"
 #include "Components/UniformGridPanel.h"
+#include "Components/Image.h"
 #include "Component/Character/SRQuickSlotComponent.h"
 
 
@@ -48,7 +49,7 @@ void USRInventoryWidget::NativeConstruct()
 		QuickSlot->SetItemIcon(nullptr);
 		QuickSlot->OnSlotDropedDelegate.AddDynamic(this, &ThisClass::RegisterItemInQuickSlot);
 	}
-
+	ItemObserveImage->SetVisibility(ESlateVisibility::Hidden);
 	ItemName->SetText(FText::GetEmpty());
 	ItemDescription->SetText(FText::GetEmpty());
 	ItemInfoTextBox->SetVisibility(ESlateVisibility::Hidden);
@@ -132,6 +133,7 @@ void USRInventoryWidget::UpdateItemDescriptionPanel(USRSlotWidget* ClickedSlot)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Clicked Slot NAme :%s "), *ClickedSlot->GetName());
 	const FSRItemBaseData& Data = ClickedSlot->GetItemData();
+	ItemObserveImage->SetVisibility(ESlateVisibility::Visible);
 	ItemInfoTextBox->SetVisibility(ESlateVisibility::Visible);
 	//Update항목들
 	UpdateItemName(Data.Name);

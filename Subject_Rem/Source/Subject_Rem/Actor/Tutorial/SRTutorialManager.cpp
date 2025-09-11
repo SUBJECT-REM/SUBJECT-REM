@@ -88,7 +88,7 @@ void ASRTutorialManager::NotifyObjectiveCompleted(FGameplayTag CompletedTag)
     if (Count >= Info->RequiredCount)
     {
         UE_LOG(LogTemp, Log, TEXT("Objective Fully Completed: %s"), *CompletedTag.ToString());
-
+        
         OnTutorialCompleteDelegate.Broadcast(CurrentTutorialID);
         // 다음 튜토리얼로 진행
         if (Info->NextTutorial.IsValid())

@@ -25,9 +25,11 @@ public:
 	//Descrtion을 위한 Button
 	UPROPERTY(meta = (BindWidget))
 	UButton* CombinedClueButton;
-	//Button Image;
+	//Button Image; 
 	UPROPERTY(meta = (BindWidget))
-	UImage* CombinedClueImage;
+	UImage* LeftClueImage;
+	UPROPERTY(meta = (BindWidget))
+	UImage* RightClueImage;
 
 	//진실 단서인지 여기서 결정해도 됌.이 아니라 결정할 필요가 없다.
 	//그냥 결국 Description에 설명이 나오고

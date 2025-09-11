@@ -44,7 +44,10 @@ void USRInvestigationMenu::InitInvestigationMenuWidget(UActorComponent* DataSour
 	{
 		 TutorialManager = Cast<ASRTutorialManager>(FoundActor);
 	}
-
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Tutorial Manager not vaild"));
+	}
 	if (TutorialManager)
 	{
 		TutorialManager->OnTutorialStartDelegate.AddDynamic(this, &ThisClass::OnTutorialStart);

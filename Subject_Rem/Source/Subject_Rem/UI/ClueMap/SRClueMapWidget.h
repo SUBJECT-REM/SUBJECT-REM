@@ -23,12 +23,14 @@ public:
 	virtual void NativeDestruct() override;
 
 	//조합된 Clue들은 해당 Canvas 아래에 넣으면 됩니다.
-	UPROPERTY(meta = (BindWidget))
-	UCanvasPanel* ClueMapCanvas;
+	//UPROPERTY(meta = (BindWidget))
+	//UCanvasPanel* ClueMapCanvas;
+
+	//UPROPERTY(meta = (BindWidget))
+	//UCanvasPanel* ClueLinkLineCanvas;
 
 	UPROPERTY(meta = (BindWidget))
-	UCanvasPanel* ClueLinkLineCanvas;
-
+	UCanvasPanel* RootCanvasPanel;
 protected:
 	bool bIsInitialized = false;
 

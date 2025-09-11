@@ -38,13 +38,13 @@ void USRClueMapWidget::NativeDestruct()
 
 void USRClueMapWidget::FindCombinedResultWidgets()
 {
-      check(ClueMapCanvas);
+      check(RootCanvasPanel);
 
-      const int32 ChildCount = ClueMapCanvas->GetChildrenCount();
+      const int32 ChildCount = RootCanvasPanel->GetChildrenCount();
       for (int32 i = 0; i < ChildCount; ++i)
       {
             //찾은 Widget이 USRClueMapCombinedResultWidget인지 확인한다.
-            if (USRClueMapCombinedResultWidget* CombinedResultWidget = Cast<USRClueMapCombinedResultWidget>(ClueMapCanvas->GetChildAt(i)))
+            if (USRClueMapCombinedResultWidget* CombinedResultWidget = Cast<USRClueMapCombinedResultWidget>(RootCanvasPanel->GetChildAt(i)))
             {
                   //UE_LOG(LogTemp, Warning, TEXT("Found ClueMapCombined ID : %s"), *CombinedResultWidget->CombinedClueID.ToString());
                   CombinedClueWidgets.Add(CombinedResultWidget->CombinedClueID, CombinedResultWidget);
@@ -60,13 +60,13 @@ void USRClueMapWidget::FindCombinedResultWidgets()
 
 void USRClueMapWidget::FindTrueClueLinkWidgets()
 {
-      check(ClueLinkLineCanvas);
+      check(RootCanvasPanel);
 
-      const int32 ChildCount = ClueLinkLineCanvas->GetChildrenCount();
+      const int32 ChildCount = RootCanvasPanel->GetChildrenCount();
       for (int32 i = 0; i < ChildCount; ++i)
       {
             //찾은 Widget이 USRClueMapCombinedResultWidget인지 확인한다.
-            if (USRTrueClueLinkWidget* TrueClueLinkWidget = Cast<USRTrueClueLinkWidget>(ClueLinkLineCanvas->GetChildAt(i)))
+            if (USRTrueClueLinkWidget* TrueClueLinkWidget = Cast<USRTrueClueLinkWidget>(RootCanvasPanel->GetChildAt(i)))
             {
                   TrueClueLinkWidgets.Add(TrueClueLinkWidget);
             }
