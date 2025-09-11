@@ -130,6 +130,12 @@ public:
 	FText Description;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName LeftIconItemName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName RightIconItemName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UTexture2D> LeftIcon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

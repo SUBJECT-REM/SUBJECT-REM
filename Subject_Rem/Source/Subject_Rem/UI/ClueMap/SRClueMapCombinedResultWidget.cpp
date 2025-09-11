@@ -2,8 +2,9 @@
 
 
 #include "UI/ClueMap/SRClueMapCombinedResultWidget.h"
+#include "Engine/DataTable.h"
 #include "Components/Image.h"
-#include "SRItem.h"
+#include "Components/Button.h"
 
 void USRClueMapCombinedResultWidget::NativeConstruct()
 {
@@ -29,4 +30,19 @@ void USRClueMapCombinedResultWidget::NativeConstruct()
       //            CombinedClueImage->SetBrush(Brush);
       //      }
       //}
+      CombinedClueButton->OnClicked.AddDynamic(this, &ThisClass::OnCobminedClueButtonClicked);
+}
+
+void USRClueMapCombinedResultWidget::OnCobminedClueButtonClicked()
+{
+    //Id를 통해 ClueMapData를 가져옴
+    FString Ctx;
+    FSRClueMapData* FoundRow = ClueDataTable->FindRow<FSRClueMapData>(CombinedClueID, Ctx);
+
+    if(FoundRow)
+    {
+        ClueMapCombinedResultClickedDelegate.Broadcast(*FoundRow);
+    }
+
+    //델리게이트로 넘김 
 }

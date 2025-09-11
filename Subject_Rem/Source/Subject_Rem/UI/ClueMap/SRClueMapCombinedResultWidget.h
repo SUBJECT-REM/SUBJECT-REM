@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "SRItem.h"
 #include "SRClueMapCombinedResultWidget.generated.h"
 
 class UButton;
 class UImage;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FClueMapCombinedResultClickedSignature, const FSRClueMapData&, Data);
 
 UCLASS()
 class SUBJECT_REM_API USRClueMapCombinedResultWidget : public UUserWidget
@@ -31,6 +34,8 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UImage* RightClueImage;
 
+	FClueMapCombinedResultClickedSignature ClueMapCombinedResultClickedDelegate;
+
 	//진실 단서인지 여기서 결정해도 됌.이 아니라 결정할 필요가 없다.
 	//그냥 결국 Description에 설명이 나오고
 	//진실 단서는 연결을 하는 것이니까. - 이 Widget에 연결과 관련해서만 수정하면 된다.
@@ -44,5 +49,6 @@ public:
 private:
 	bool bIsFoundCombinedClue = false;
 
-	
+	UFUNCTION()
+	void OnCobminedClueButtonClicked();
 };

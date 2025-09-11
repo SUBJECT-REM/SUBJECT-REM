@@ -67,9 +67,9 @@ void USRInvestigationMenu::OpenOnlyWidget(UUserWidget* WantOpenWidget)
 
 void USRInvestigationMenu::OpenInventory()
 {
-	ChangeButtonZOrder(InventoryButton, 0);
-	ChangeButtonZOrder(ClueMapButton, 2);
-	ChangeButtonZOrder(ClueButton, 2);
+	ChangeButtonZOrder(InventoryButton, -1);
+	ChangeButtonZOrder(ClueMapButton, 0);
+	ChangeButtonZOrder(ClueButton, 0);
 	OpenOnlyWidget(InventoryWidget);
 
 	InventoryButton->SetStyle(InventoryButtonSelectedStyle);
@@ -81,9 +81,9 @@ void USRInvestigationMenu::OpenInventory()
 
 void USRInvestigationMenu::OpenClue()
 {
-	ChangeButtonZOrder(ClueButton, 0);
-	ChangeButtonZOrder(InventoryButton, 2);
-	ChangeButtonZOrder(ClueMapButton, 2);
+	ChangeButtonZOrder(ClueButton, -1);
+	ChangeButtonZOrder(InventoryButton, 0);
+	ChangeButtonZOrder(ClueMapButton, 0);
 	OpenOnlyWidget(ClueWidget);
 
 	NotifyClueButtonClick();
@@ -98,9 +98,9 @@ void USRInvestigationMenu::OpenClue()
 
 void USRInvestigationMenu::OpenClueMap()
 {
-	ChangeButtonZOrder(ClueMapButton, 0);
-	ChangeButtonZOrder(InventoryButton, 2);
-	ChangeButtonZOrder(ClueButton, 2);
+	ChangeButtonZOrder(ClueMapButton, -1);
+	ChangeButtonZOrder(InventoryButton, 0);
+	ChangeButtonZOrder(ClueButton, 0);
 	//아직 ClueMap이 없습니다.
 	OpenOnlyWidget(ClueMapWidget);
 
