@@ -118,8 +118,10 @@ void USRInvestigationMenu::ShowWidget()
 	SetVisibility(ESlateVisibility::Visible);
 
 	PlayAnimation(OpenMenu);
-	CaptionManager->NotifyInvestigationToggle(true);
-
+	if (CaptionManager.IsValid())
+	{
+		CaptionManager->NotifyInvestigationToggle(true);
+	}
 }
 
 void USRInvestigationMenu::HideWidget()
