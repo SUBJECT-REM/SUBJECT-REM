@@ -13,6 +13,7 @@
 class USRInventoryComponent;
 class USRClueWidget;
 class ASRTutorialManager;
+class ASRCaptionManagerActor;
 
 UCLASS(BlueprintType, Blueprintable)
 class SUBJECT_REM_API USRClueWidgetPresenter : public USRPresenter
@@ -48,4 +49,6 @@ private:
 
 	UPROPERTY()
 	ASRTutorialManager* TutorialManager;
+
+	TWeakObjectPtr<ASRCaptionManagerActor> CaptionManager;
 };

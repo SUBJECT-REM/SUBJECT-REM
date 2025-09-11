@@ -6,6 +6,7 @@
 #include "Subsystems/LocalPlayerSubsystem.h"
 #include "SRStressLocalPlayerSubsystem.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnStopStressChangeDelegate)
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnStressChangeDelegate, const float)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStressChangeByTimeDelegate, const float, const float)
 
@@ -45,6 +46,7 @@ public:
 
 	FOnStressChangeDelegate OnStressChangeDelegate;
 	FOnStressChangeByTimeDelegate OnStressChangeByTimeDelegate;
+	FOnStopStressChangeDelegate OnStopStressChangeDelegate;
 
 private:
 	/* 로컬 플레이어의 현재 스트레스 */

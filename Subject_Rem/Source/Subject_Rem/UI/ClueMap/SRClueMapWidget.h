@@ -11,6 +11,9 @@ class UCanvasPanel;
 class USRInventoryComponent;
 class USRClueMapCombinedResultWidget;
 class USRTrueClueLinkWidget;
+class UProgressBar;
+class URichTextBlock;
+class USRCluemapCombinedDesWidget;
 
 UCLASS()
 class SUBJECT_REM_API USRClueMapWidget : public UUserWidget
@@ -23,12 +26,23 @@ public:
 	virtual void NativeDestruct() override;
 
 	//조합된 Clue들은 해당 Canvas 아래에 넣으면 됩니다.
-	UPROPERTY(meta = (BindWidget))
-	UCanvasPanel* ClueMapCanvas;
+	//UPROPERTY(meta = (BindWidget))
+	//UCanvasPanel* ClueMapCanvas;
+
+	//UPROPERTY(meta = (BindWidget))
+	//UCanvasPanel* ClueLinkLineCanvas;
 
 	UPROPERTY(meta = (BindWidget))
-	UCanvasPanel* ClueLinkLineCanvas;
+	UCanvasPanel* RootCanvasPanel;
 
+	UPROPERTY(meta=(BindWidget))
+	UProgressBar* ClueMapProgressBar;
+
+	UPROPERTY(meta = (BindWidget))
+	URichTextBlock* PercentTextBlock;
+
+	UPROPERTY(meta = (BindWidget))
+	USRCluemapCombinedDesWidget* ClueMapCombinedDesWidget;
 protected:
 	bool bIsInitialized = false;
 
@@ -41,7 +55,8 @@ protected:
 	//최초에 한번만 실행하며 CombinedClueWidget을 찾습니다.
 	void FindCombinedResultWidgets();
 
-	void FindCombinedClueResultWidget(FName CombinedClueName);
+	USRClueMapCombinedResultWidget* FindCombinedClueResultWidget(FName CombinedClueName);
+
 	UFUNCTION()
 	void HandleCombinedClue(const FSRClueMapData& Data);
 
@@ -61,6 +76,19 @@ protected:
 	//진실단서끼리 연결하는 LineWidget을 보이도록 합니다.
 	void DrawTrueClueLinkLine();
 
+	void UpdateClueMapProgressBar(float NewPercent);
+	void UpdatePercentTextBlock(float NewPercent);
 private:
 	USRInventoryComponent* InventoryComponent;
+
+	//TODO: DatTable에서 TrueClueMap 개수 개져와서 설정하기.
+
+	UFUNCTION()
+	void UpdateClueMapCombinedResultDescriptionWidget(const FSRClueMapData& Data);
+
+	UPROPERTY(EditDefaultsOnly)
+	int32  MaxTrueClueMapNum = 12;
+
+	float GetProgressRatio() const; // 추가
+
 };

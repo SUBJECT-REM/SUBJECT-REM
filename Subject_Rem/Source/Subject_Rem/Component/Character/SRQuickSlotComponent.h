@@ -8,6 +8,7 @@
 
 class UTextrue2D;
 class UDataTable;
+struct FSRConsumeData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnQuickSlotChangedSignature, int32, SlotIndex,  TSoftObjectPtr<UTexture2D> , Icon);
 
@@ -27,6 +28,8 @@ public:
 	void UnRegisterItem(uint8 Index);
 
 	FName GetItemIdBySlotIndex(uint8 Index);
+
+	const FSRConsumeData* ResolveConsumeDataByItemId(FName ItemId) const;
 
 	UFUNCTION(BlueprintCallable)
 	TSoftObjectPtr<UTexture2D> GetSlotIconByIndex(int32 Index) const;

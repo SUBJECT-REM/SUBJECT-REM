@@ -16,6 +16,7 @@ class USRSlotWidget;
 class UVerticalBox;
 class UUniformGridPanel;
 class USRRotateItemPreviewWidget;
+class UImage;
 
 USTRUCT()
 struct FSlotStyle
@@ -91,6 +92,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	USRRotateItemPreviewWidget* ItemPreview;
 
+	UPROPERTY(meta = (BindWidget))
+	UImage* ItemObserveImage;
 
 	UPROPERTY(meta = (BindWidget))
 	UGridPanel* QuickSlotGridPanel;

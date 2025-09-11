@@ -44,11 +44,11 @@ struct FTutorialInfo
  * 목표 달성 시 다음 단계로 자동 전환하는 클래스
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTutorialStartedSignature, FGameplayTag, ObjectiveTag);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTutorialCompletedSignature, FGameplayTag, ObjectiveTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTutorialCompletedSignature, FGameplayTag, CompleteId);
 
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTutorialStepChanged, FGameplayTag, NewTutorialID);
-
+//TODO: TutorialManager가 아니라, GameFlowManager로 수정하고, 기능을 좀 많이 바꿔야할듯.플레이어의 행동 + 자막의 완료 시각이 플로우랑 많이 연관됨
 UCLASS()
 class SUBJECT_REM_API ASRTutorialManager : public AActor
 {
