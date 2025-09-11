@@ -26,6 +26,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
 	USceneComponent* SceneComponent;
 	UPROPERTY(EditAnywhere)
 	USceneCaptureComponent2D* SceneCaptureComponent2D;
