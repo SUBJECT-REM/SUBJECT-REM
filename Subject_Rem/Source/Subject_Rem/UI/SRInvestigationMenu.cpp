@@ -215,6 +215,7 @@ void USRInvestigationMenu::OnTutorialComplete(FGameplayTag Tag)
 		//InventoryButton->SetVisibility(ESlateVisibility::Visible);
 		//ClueButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
+	//test et
 }
 
 void USRInvestigationMenu::NotifyClueButtonClick()
