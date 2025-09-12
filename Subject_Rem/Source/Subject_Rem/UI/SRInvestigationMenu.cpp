@@ -186,16 +186,16 @@ void USRInvestigationMenu::OnTutorialStart(FGameplayTag Tag)
 	UE_LOG(LogTemp, Warning, TEXT("Menu OnTutorialStart Tag Name : %s"), *Tag.ToString());
 	if (Tag == SRGameplayTags::Tutorial_ID_ClickClueButton)
 	{
-		//ClueButton을 클릭하도록 하고 다른 UI클릭은 못하도록합니다.
+		////ClueButton을 클릭하도록 하고 다른 UI클릭은 못하도록합니다.
 		ClueClickPulse->SetVisibility(ESlateVisibility::Visible);
-		InventoryButton->SetVisibility(ESlateVisibility::HitTestInvisible);
-		ClueMapButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+		//InventoryButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+		//ClueMapButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 	else if (Tag == SRGameplayTags::Tutorial_ID_ClickClueMapButton)
 	{
 		ClueMapClickPulse->SetVisibility(ESlateVisibility::Visible);
-		InventoryButton->SetVisibility(ESlateVisibility::HitTestInvisible);
-		ClueButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+		//InventoryButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+		//ClueButton->SetVisibility(ESlateVisibility::HitTestInvisible);*/
 	}
 
 }
@@ -206,14 +206,14 @@ void USRInvestigationMenu::OnTutorialComplete(FGameplayTag Tag)
 	{
 		//다른 입력을 다시 활성화하도록함.
 		ClueClickPulse->SetVisibility(ESlateVisibility::Hidden);
-		InventoryButton->SetVisibility(ESlateVisibility::Visible);
-		ClueMapButton->SetVisibility(ESlateVisibility::Visible);
+	/*	InventoryButton->SetVisibility(ESlateVisibility::Visible);
+		ClueMapButton->SetVisibility(ESlateVisibility::Visible);*/
 	}
 	else if (Tag == SRGameplayTags::Tutorial_ID_ClickClueMapButton)
 	{
 		ClueMapClickPulse->SetVisibility(ESlateVisibility::Hidden);
-		InventoryButton->SetVisibility(ESlateVisibility::Visible);
-		ClueButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+		//InventoryButton->SetVisibility(ESlateVisibility::Visible);
+		//ClueButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 }
 

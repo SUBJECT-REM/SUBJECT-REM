@@ -19,6 +19,8 @@ class SUBJECT_REM_API USRClueMapCombinedResultWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
+	void UpdateLeftRightClueImage(TSoftObjectPtr<UTexture2D> Left, TSoftObjectPtr<UTexture2D> Right);
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 	UDataTable* ClueDataTable;
 	//해당 ClueID로 어떤 Clue인지 확인합니다.

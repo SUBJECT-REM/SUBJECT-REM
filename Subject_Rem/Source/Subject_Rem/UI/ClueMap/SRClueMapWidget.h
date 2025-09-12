@@ -52,11 +52,12 @@ protected:
 	void UnbindInventoryDelegate();
 
 	//CombineClue
-	//최초에 한번만 실행하며 CombinedClueWidget을 찾습니다.
+	//최초에 한번만 실행하며 CombinedClueWidget, LinkWidget
 	void FindCombinedResultWidgets();
+	void FindTrueClueLinkWidgets();
 
 	USRClueMapCombinedResultWidget* FindCombinedClueResultWidget(FName CombinedClueName);
-
+	void HandleTrueClueLinkWidget(FName CombinedClueName);
 	UFUNCTION()
 	void HandleCombinedClue(const FSRClueMapData& Data);
 
@@ -64,17 +65,11 @@ protected:
 
 	//Widget들만 모아서 미리 찾아 Array에 넣는 Array
 	TMap<FName, USRClueMapCombinedResultWidget*> CombinedClueWidgets;
-	//FName으로 찾아 해당 조합된 USRClueMapCombinedResultWidget를 얻습니다. - 진실, 거짓 상관없이 다 담습니다.
-	TMap<FName, USRClueMapCombinedResultWidget*> FoundCombinedClueWidgets;
 	//진실 단서만 담습니다.
 	TArray<FName> TrueClues;
 
-	//TrueClue Link
-	//최초에 한번만 실행하며 SRTrueClueLinkWidget을 찾습니다.
-	void FindTrueClueLinkWidgets();
-	TArray<USRTrueClueLinkWidget*> TrueClueLinkWidgets;
-	//진실단서끼리 연결하는 LineWidget을 보이도록 합니다.
-	void DrawTrueClueLinkLine();
+
+	TMap<FName,USRTrueClueLinkWidget*> TrueClueLinkWidgets;
 
 	void UpdateClueMapProgressBar(float NewPercent);
 	void UpdatePercentTextBlock(float NewPercent);
