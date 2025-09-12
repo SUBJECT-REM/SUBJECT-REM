@@ -40,7 +40,7 @@ void ASRTutorialManager::SetupTutorial(FGameplayTag TutorialID)
 
     CurrentTutorialID = Info->ID;
     CurrentObjectiveTag = Info->ObjectivesTag;
-
+    UE_LOG(LogTemp, Warning, TEXT("TutorialStart : ASRTutorialManager, Tag ID : %s"), *TutorialID.ToString());
     OnTutorialStartDelegate.Broadcast(TutorialID);
 
     if (Info->AllowedInputContexts.Num() > 0)
