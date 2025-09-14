@@ -29,6 +29,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetClueMapName(FName Text);
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	UButton* CloseButton;
 protected:
 	virtual void NativeConstruct() override;
 
@@ -48,6 +51,5 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ClueMapName;
 
-	UPROPERTY(meta=(BindWidget))
-	UButton* CloseButton;
+
 };

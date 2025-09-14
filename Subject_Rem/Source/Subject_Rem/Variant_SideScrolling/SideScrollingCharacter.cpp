@@ -201,16 +201,13 @@ void ASideScrollingCharacter::ToggleInvestigationMenu()
 		if (InvestigationWidget->GetVisibility() != ESlateVisibility::Visible)
 		{
 			InvestigationWidget->ShowWidget();
-			/*if (CachedTutorialMgr.IsValid())
+
+		/*	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
 			{
-				CachedTutorialMgr->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_OepnInvenstigation);
-			}*/
-			if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
-			{
-				PC->SetInputMode(FInputModeGameAndUI());
+				PC->SetInputMode(FInputModeUIOnly());
 				PC->SetShowMouseCursor(true);
-			}
-		}
+			}*/
+		}/*
 		else
 		{
 			InvestigationWidget->HideWidget();
@@ -219,7 +216,7 @@ void ASideScrollingCharacter::ToggleInvestigationMenu()
 				PC->SetInputMode(FInputModeGameAndUI());
 				PC->SetShowMouseCursor(false);
 			}
-		}
+		}*/
 	}
 	
 }

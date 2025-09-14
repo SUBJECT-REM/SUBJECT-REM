@@ -29,34 +29,36 @@ public:
 	// Sets default values for this actor's properties
 	ASRCaptionManagerActor();
 
+	void NotifyPickupResultToggle(bool bOpen);
 	void NotifyInvestigationToggle(bool bOpen);
+
+	UFUNCTION(BlueprintCallable)
+	void PlayCaptionImmediateNext(const FName& RowName, bool bIgnorePauses = false);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnCaptionFinished(FName RowName);
 
 	UFUNCTION(BlueprintCallable)
-	void EnqueueFromClue(const FSRClueMapData& Data);
-
-	UFUNCTION(BlueprintCallable)
-	void RequestCaptionShowing(const FName& RowName);
+	void EnqueueCaption(const FName& RowName);
 
 	UPROPERTY(BlueprintAssignable)
 	FCaptionRequestedSignature CaptionRequestedDelegate;
 
 	UPROPERTY(BlueprintReadOnly)
-	FSRClueMapData Current;
+	FName Current;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 private:
 	void TryRunNext();
-	void ApplyStree();
+	//void ApplyStree();
 	void PlayCaption();
 
 	UPROPERTY(Transient)
-	TArray<FSRClueMapData> PendingQueue;
+	TArray<FName> PendingQueue;
 
+	bool bPickupResultOpen = false;
 	bool bInvestigationOpen = false;
 	
 

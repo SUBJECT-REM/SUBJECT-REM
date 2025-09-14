@@ -148,3 +148,42 @@ void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
 		}
 	}
 }
+
+void USRInventoryComponent::FlushStressFromClueMaps()
+{
+
+	// ClueMapDatas 에 누적된 결과들을 한 번에 반영
+	if (ClueMapDatas.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ClueMapDatasNum 0"));
+		return;
+	}
+	float ImmediateSum = 0.f;
+	struct FPeriodic { float Amount = 0.f; float Interval = 0.f; };
+	TArray<FPeriodic> Periodics;
+
+	for (const FSRClueMapData& Data : ClueMapDatas)
+	{
+		if (!Data.bResult) continue; // 거짓 결과는 무시
+		ImmediateSum += Data.ImmediateStessIncrease; // (필드명 오타 유지시 그대로 사용)
+
+		if (Data.PeriodicStressIncrease.Amount != 0.f &&
+			Data.PeriodicStressIncrease.Interval > 0.f)
+		{
+			Periodics.Add({ Data.PeriodicStressIncrease.Amount,
+							Data.PeriodicStressIncrease.Interval });
+		}
+	}
+
+	if (ImmediateSum != 0.f)
+	{
+		CashedStressSubsystem->ChangeStressAmount(ImmediateSum);
+	}
+	for (const auto& P : Periodics)
+	{
+		CashedStressSubsystem->ChangeStressByTime(P.Amount, P.Interval);
+	}
+
+	// 같은 조합 결과가 다음에 또 중복 적용되지 않도록 초기화
+	ClueMapDatas.Reset();
+}

@@ -64,7 +64,10 @@ void USRClueWidgetPresenter::RequsetUpdateClueCombineResultWidget(const FSRClueM
 
 	if (CaptionManager.IsValid())
 	{
-		CaptionManager->EnqueueFromClue(Data);
+		if (Data.bShowCaption)
+		{
+			CaptionManager->EnqueueCaption(Data.CaptionRow.RowName);
+		}
 	}
 
 }

@@ -36,6 +36,8 @@ public:
 	UFUNCTION()
 	void CombineClue(TArray<FName> ClueIds);
 
+	void FlushStressFromClueMaps();
+
 	/*Clue 변경에 대한 델리게이트*/
 	FAddClueDatasSignatue AddClueDatasDelegate;
 
@@ -65,6 +67,7 @@ private:
 	//아이템 줍기시 나타낼 위젯에 대한 Presenter를 생성 및 초기화합니다.
 	//아이템 줍을 시점 및 데이터와 밀접하여 InventoryComp에 넣어놨음.
 	void EnsureItemPickupPresenter();
+
 
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* AllItemsDataTable;

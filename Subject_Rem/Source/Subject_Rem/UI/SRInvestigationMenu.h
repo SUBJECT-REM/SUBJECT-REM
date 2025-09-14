@@ -24,7 +24,7 @@ class USRClueWidgetPresenter;
 class UHorizontalBox;
 class ASRTutorialManager;
 class ASRCaptionManagerActor;
-
+class USRInventoryComponent;
 
 UCLASS(Blueprintable)
 class SUBJECT_REM_API USRInvestigationMenu : public UUserWidget
@@ -96,6 +96,8 @@ private:
 
 	void NotifyClueMapButtonClick();
 
+	virtual FReply NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 	UPROPERTY(meta = (BindWidget))
 	UButton* InventoryButton;
 	
@@ -153,4 +155,7 @@ private:
 
 	UPROPERTY()
 	TWeakObjectPtr<ASRCaptionManagerActor> CaptionManager;
+
+	UPROPERTY()
+	USRInventoryComponent* Invencomp;
 };

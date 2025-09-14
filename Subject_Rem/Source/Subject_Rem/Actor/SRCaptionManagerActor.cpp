@@ -12,40 +12,67 @@ ASRCaptionManagerActor::ASRCaptionManagerActor()
 
 }
 
+void ASRCaptionManagerActor::NotifyPickupResultToggle(bool bOpen)
+{
+	bPickupResultOpen = bOpen;
+	TryRunNext(); // 닫힐 때 재개
+}
+
 void ASRCaptionManagerActor::NotifyInvestigationToggle(bool bOpen)
 {
 	bInvestigationOpen = bOpen;
 
-	if (!bInvestigationOpen)
+	TryRunNext();
+}
+
+void ASRCaptionManagerActor::PlayCaptionImmediateNext(const FName& RowName, bool bIgnorePauses)
+{
+	if (RowName.IsNone()) return;
+
+	// Investigation / Pickup 위젯 열림 중이면 즉시는 막고, 맨 앞에 올려둔 뒤 대기
+	if (!bIgnorePauses && (bInvestigationOpen || bPickupResultOpen))
 	{
-		TryRunNext();
+		PendingQueue.Insert(RowName, 0);
+		return;
 	}
+
+	if (Current.IsNone())
+	{
+		// 아무것도 재생 중이 아니면 바로 재생
+		Current = RowName;
+		PlayCaption();
+		return;
+	}
+
+	// 현재 재생 중이면: 새 Row를 맨 앞에 꽂고, 현 재생을 즉시 종료 → 곧바로 새 Row 재생
+	PendingQueue.Insert(RowName, 0);
+
+	// 안전한 “즉시 스킵”: Finish 호출 → Current 비우고 TryRunNext()로 이어짐
+	OnCaptionFinished(Current);
 }
 
 void ASRCaptionManagerActor::PlayCaption()
 {
 	// 자막 Row가 비어 있으면 바로 “끝났다” 처리
-	if (Current.CaptionRow.RowName.IsNone())
+	if (Current.IsNone())
 	{
 		OnCaptionFinished(NAME_None);
 		return;
 	}
 
 	// 위젯/프레젠터가 이 델리게이트를 받아 실제 재생
-	CaptionRequestedDelegate.Broadcast(Current.CaptionRow.RowName);
+	CaptionRequestedDelegate.Broadcast(Current);
 }
 
 void ASRCaptionManagerActor::OnCaptionFinished_Implementation(FName RowName)
 {
-	//자막 끝났으니 스트레스 적용
-	ApplyStree();
-	Current = FSRClueMapData{};
-
+	Current = RowName;
+	TryRunNext();
 }
 
 void ASRCaptionManagerActor::TryRunNext()
 {
-	if ( bInvestigationOpen || PendingQueue.Num() == 0)
+	if (bInvestigationOpen || bPickupResultOpen || !Current.IsNone() || PendingQueue.Num() == 0)
 		return;
 
 	Current = PendingQueue[0];
@@ -54,33 +81,29 @@ void ASRCaptionManagerActor::TryRunNext()
 	PlayCaption();
 }
 
-void ASRCaptionManagerActor::EnqueueFromClue(const FSRClueMapData& Data)
+void ASRCaptionManagerActor::EnqueueCaption(const FName& Data)
 {
-	PendingQueue.Add({ Data });          
-	if (!bInvestigationOpen)            
-		TryRunNext();
+	if (Data.IsNone()) return;
+	PendingQueue.Add(Data);
+	TryRunNext();
+
 }
 
-void ASRCaptionManagerActor::RequestCaptionShowing(const FName& RowName)
-{
-	CaptionRequestedDelegate.Broadcast(RowName);
-}
-
-void ASRCaptionManagerActor::ApplyStree()
-{
-	if (Current.ImmediateStessIncrease == 0.f)
-		return;
-	
-	if (ULocalPlayer* LP = GetWorld()->GetFirstLocalPlayerFromController())
-	{
-        if (auto* SS = LP->GetSubsystem<USRStressLocalPlayerSubsystem>())
-        {
-			SS->ChangeStressAmount(Current.ImmediateStessIncrease);
-			SS->ChangeStressByTime(Current.PeriodicStressIncrease.Amount, Current.PeriodicStressIncrease.Interval);
-
-        }
-	}
-}
+//void ASRCaptionManagerActor::ApplyStree()
+//{
+//	if (Current.ImmediateStessIncrease == 0.f)
+//		return;
+//	
+//	if (ULocalPlayer* LP = GetWorld()->GetFirstLocalPlayerFromController())
+//	{
+//        if (auto* SS = LP->GetSubsystem<USRStressLocalPlayerSubsystem>())
+//        {
+//			SS->ChangeStressAmount(Current.ImmediateStessIncrease);
+//			SS->ChangeStressByTime(Current.PeriodicStressIncrease.Amount, Current.PeriodicStressIncrease.Interval);
+//
+//        }
+//	}
+//}
 
 // Called when the game starts or when spawned
 void ASRCaptionManagerActor::BeginPlay()

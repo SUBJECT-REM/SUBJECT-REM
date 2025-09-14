@@ -16,7 +16,7 @@
 #include "SRGameplayTags.h"
 #include "Animation/WidgetAnimation.h"
 #include "Actor/SRCaptionManagerActor.h"
-
+#include "Component/SRInventoryComponent.h"
 
 
 
@@ -38,6 +38,8 @@ void USRInvestigationMenu::InitInvestigationMenuWidget(UActorComponent* DataSour
 
 	InvenPresenter->Init(DataSourceComp, InventoryWidget);
 	CluePresenter->Init(DataSourceComp, ClueWidget);
+
+	Invencomp = Cast<USRInventoryComponent>(DataSourceComp);
 
 	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRTutorialManager::StaticClass());
 	if (FoundActor)
@@ -117,6 +119,16 @@ void USRInvestigationMenu::ShowWidget()
 {
 	SetVisibility(ESlateVisibility::Visible);
 
+	APlayerController* PC = nullptr;
+	PC = GetWorld()->GetFirstPlayerController();
+	if (!PC)
+	{
+		return;
+	}
+	FInputModeUIOnly InputMode;
+	InputMode.SetWidgetToFocus(TakeWidget());
+	PC->SetInputMode(InputMode);
+
 	PlayAnimation(OpenMenu);
 	if (CaptionManager.IsValid())
 	{
@@ -126,6 +138,17 @@ void USRInvestigationMenu::ShowWidget()
 
 void USRInvestigationMenu::HideWidget()
 {
+	APlayerController* PC = nullptr;
+	PC = GetWorld()->GetFirstPlayerController();
+	if (!PC)
+	{
+		return;
+	}
+
+	FInputModeGameAndUI InputMode;
+	PC->SetInputMode(InputMode);
+	PC->bShowMouseCursor = false;
+	
 	PlayAnimation(CloseMenu);
 }
 
@@ -136,11 +159,20 @@ void USRInvestigationMenu::HideWidgetAnimFinished()
 	{
 		CaptionManager->NotifyInvestigationToggle(false);
 	}
+
+	if (Invencomp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InvenComp is vaild flush stress"));
+		Invencomp->FlushStressFromClueMaps();
+		
+	}
 }
 
 void USRInvestigationMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	SetIsFocusable(true);          // (UE5.2+). 혹은 bIsFocusable = true;
 
 	InventoryButton->OnClicked.AddDynamic(this, &ThisClass::OpenInventory);
 	ClueButton->OnClicked.AddDynamic(this, &ThisClass::OpenClue);
@@ -174,11 +206,13 @@ void USRInvestigationMenu::ChangeButtonZOrder(UButton* Widget,int8 NewZOrder)
 
 void USRInvestigationMenu::HandleVisibilityChange(ESlateVisibility InVisibility)
 {
+
 	if (InVisibility == ESlateVisibility::Visible && TutorialManager)
 	{
 		TutorialManager->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_OepnInvenstigation);
 		OnVisibilityChanged.RemoveDynamic(this, &ThisClass::HandleVisibilityChange);
 	}
+
 }
 
 void USRInvestigationMenu::OnTutorialStart(FGameplayTag Tag)
@@ -215,7 +249,7 @@ void USRInvestigationMenu::OnTutorialComplete(FGameplayTag Tag)
 		//InventoryButton->SetVisibility(ESlateVisibility::Visible);
 		//ClueButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
-	//test et
+	
 }
 
 void USRInvestigationMenu::NotifyClueButtonClick()
@@ -232,6 +266,19 @@ void USRInvestigationMenu::NotifyClueMapButtonClick()
 	{
 		TutorialManager->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_ClickClueMapButton);
 	}
+}
+
+FReply USRInvestigationMenu::NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FReply ReturnVal = Super::NativeOnPreviewKeyDown(InGeometry, InKeyEvent);
+
+	if (InKeyEvent.GetKey() == EKeys::E && GetVisibility() == ESlateVisibility::Visible)
+	{
+		HideWidget();
+		return FReply::Handled();
+	}
+
+	return ReturnVal;
 }
 
 

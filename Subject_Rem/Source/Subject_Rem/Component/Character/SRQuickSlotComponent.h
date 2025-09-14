@@ -23,9 +23,11 @@ public:
 	//퀵 슬롯 입력을 받아옵니다.
 	void PressQuickSlot(uint8 QuickSlotNum);
 
-	void RegisterItem(uint8 Index, FName Id);
+	bool RegisterItem(uint8 Index, FName Id);
 
 	void UnRegisterItem(uint8 Index);
+
+	bool CanRegisterItem(FName Id);
 
 	FName GetItemIdBySlotIndex(uint8 Index);
 

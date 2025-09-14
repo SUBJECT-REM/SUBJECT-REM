@@ -40,13 +40,25 @@ void USRItemPickupResultPresenter::ShowItemPickWidget(const FSRItemBaseData& Sho
 				ItemPickupResultWidget->OnClosedDelegate.AddDynamic(this, &ThisClass::HandleWidgetClose);
 				
 				ChashedCaptionManager = Cast<ASRCaptionManagerActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ASRCaptionManagerActor::StaticClass()));
-
+				
+			
 				
 			}
 		}
 		check(ItemPickupResultWidget);
 	}
 	CashedCaptionDataRow = ShownItemData.PickupCaptionRow;
+	// ✅ 먼저 “열림” 알림으로 재생을 일시정지
+	if (ChashedCaptionManager.IsValid())
+	{
+		ChashedCaptionManager->NotifyPickupResultToggle(true);
+	}
+	// 2) 픽업 캡션 미리 큐에 넣어둠 (닫히면 재생됨)
+	if (!CashedCaptionDataRow.RowName.IsNone())
+	{
+		ChashedCaptionManager->PlayCaptionImmediateNext(CashedCaptionDataRow.RowName,false);
+	}
+
 	ItemPickupResultWidget->SetItemPreview(ShownItemData.Mesh);
 	ItemPickupResultWidget->SetItemName(ShownItemData.Name);
 	ItemPickupResultWidget->SetItemDes(ShownItemData.PickupDescription);
@@ -82,7 +94,11 @@ void USRItemPickupResultPresenter::HandleWidgetVisibilityChanged(ESlateVisibilit
 
 void USRItemPickupResultPresenter::HandleWidgetClose()
 {
-	ChashedCaptionManager->RequestCaptionShowing(CashedCaptionDataRow.RowName);
+	//ChashedCaptionManager->EnqueueCaption(CashedCaptionDataRow.RowName);
+	if (ChashedCaptionManager.IsValid())
+	{
+		ChashedCaptionManager->NotifyPickupResultToggle(false); // 닫히는 순간 재생 재개
+	}
 }
 
 
