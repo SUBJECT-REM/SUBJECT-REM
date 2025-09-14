@@ -96,6 +96,8 @@ private:
 
 	void NotifyClueMapButtonClick();
 
+	virtual FReply NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 	UPROPERTY(meta = (BindWidget))
 	UButton* InventoryButton;
 	
