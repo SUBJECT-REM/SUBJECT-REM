@@ -158,13 +158,34 @@ void USRInventoryWidget::RegisterItemInQuickSlot(USRSlotWidget* DropedSlot, USRS
 	{
 		return;
 	}
+
 	if (DraggedSlot->IsChildOf(InventoryGridPanel) && DropedSlot->IsChildOf(QuickSlotGridPanel))
 	{
-		int32 Index = QuickSlotGridPanel->GetChildIndex(DropedSlot);
+		const int32 Index = QuickSlotGridPanel->GetChildIndex(DropedSlot);
+		const FSRItemBaseData MovedData = DropedSlot->GetItemData(); // 지금 드랍된(옮겨진) 데이터
 
-		UE_LOG(LogTemp, Warning, TEXT("RegistItem Requset to quick slot %d, %s"),Index, *DropedSlot->GetItemData().Id.ToString());
+		// 1) 등록 시도
+		const bool bOk = QuickSlotComp->RegisterItem(Index, MovedData.Id);
 
-		QuickSlotComp->RegisterItem(Index, DropedSlot->GetItemData().Id);
+		if (!bOk)
+		{
+			// 2) 실패 → 시각적으로 되돌리기
+			// (a) 드랍된 퀵슬롯 비우기
+			DropedSlot->SetItemIcon(nullptr);
+			DropedSlot->SetItemData(FSRItemBaseData());
+			DropedSlot->SetIsOccupied(false);
+
+			// (b) 원래 인벤토리 슬롯 복구
+			DraggedSlot->SetItemData(MovedData);
+			DraggedSlot->SetItemIcon(MovedData.Icon);
+			DraggedSlot->SetIsOccupied(true);
+
+			UE_LOG(LogTemp, Warning, TEXT("QuickSlot register rejected. Reverted visuals."));
+			return;
+		}
+
+		// 성공 시엔 그대로 유지 (QuickSlotComp가 OnQuickSlotChanged로 위젯 갱신함)
+		UE_LOG(LogTemp, Warning, TEXT("RegistItem to quick slot %d, %s"), Index, *MovedData.Id.ToString());
 	}
 }
 

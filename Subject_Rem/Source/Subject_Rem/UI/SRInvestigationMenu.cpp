@@ -16,7 +16,7 @@
 #include "SRGameplayTags.h"
 #include "Animation/WidgetAnimation.h"
 #include "Actor/SRCaptionManagerActor.h"
-
+#include "Component/SRInventoryComponent.h"
 
 
 
@@ -38,6 +38,8 @@ void USRInvestigationMenu::InitInvestigationMenuWidget(UActorComponent* DataSour
 
 	InvenPresenter->Init(DataSourceComp, InventoryWidget);
 	CluePresenter->Init(DataSourceComp, ClueWidget);
+
+	Invencomp = Cast<USRInventoryComponent>(DataSourceComp);
 
 	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRTutorialManager::StaticClass());
 	if (FoundActor)
@@ -136,6 +138,13 @@ void USRInvestigationMenu::HideWidgetAnimFinished()
 	{
 		CaptionManager->NotifyInvestigationToggle(false);
 	}
+
+	if (Invencomp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InvenComp is vaild flush stress"));
+		Invencomp->FlushStressFromClueMaps();
+		
+	}
 }
 
 void USRInvestigationMenu::NativeConstruct()
@@ -215,7 +224,7 @@ void USRInvestigationMenu::OnTutorialComplete(FGameplayTag Tag)
 		//InventoryButton->SetVisibility(ESlateVisibility::Visible);
 		//ClueButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
-	//test et
+	
 }
 
 void USRInvestigationMenu::NotifyClueButtonClick()
