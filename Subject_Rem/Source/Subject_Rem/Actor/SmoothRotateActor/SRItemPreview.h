@@ -22,6 +22,11 @@ public:
 	void ReplaceStaticMesh(UStaticMesh* NewMesh);
 	FORCEINLINE USRRotateableStaticMeshComponent* GetRotateableMeshComp() { return RotateableMeshComp; };
 
+	//Preview Mesh Rotate를 교체함. (이후 DT를 통해 값을 들고 올 예정)
+	void ResetRotation(FRotator Rotation);
+	UPROPERTY(EditAnywhere)
+	FRotator ResetRotationValue;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
