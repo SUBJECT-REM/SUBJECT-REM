@@ -31,12 +31,15 @@ void ASRItemPreview::BeginPlay()
 // Called every frame
 void ASRItemPreview::Tick(float DeltaTime)
 {
+	//생성자에서 막았습니다.
 	Super::Tick(DeltaTime);
 
 }
 
 void ASRItemPreview::ReplaceStaticMesh(UStaticMesh* NewMesh)
 {
+	ResetRotation(ResetRotationValue);
+
 	//메시 제거
 	if (!NewMesh)
 	{
@@ -48,3 +51,12 @@ void ASRItemPreview::ReplaceStaticMesh(UStaticMesh* NewMesh)
 	RotateableMeshComp->SetStaticMesh(NewMesh);
 	UE_LOG(LogTemp, Log, TEXT("Mesh replaced with: %s"), *NewMesh->GetName());
 }
+
+void ASRItemPreview::ResetRotation(FRotator Rotation)
+{
+	if (RotateableMeshComp)
+	{
+		RotateableMeshComp->SetRelativeRotation(Rotation);
+	}
+}
+
