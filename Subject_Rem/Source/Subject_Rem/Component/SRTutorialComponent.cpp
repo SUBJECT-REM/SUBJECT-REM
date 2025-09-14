@@ -18,7 +18,7 @@ USRTutorialComponent::USRTutorialComponent()
 
 void USRTutorialComponent::NotifyTutorialObjective(FGameplayTag ObjectiveTag)
 {
-	if (TutorialManager)
+	if (TutorialManager.IsValid())
 	{
 		TutorialManager->NotifyObjectiveCompleted(ObjectiveTag);
 	}
@@ -28,47 +28,90 @@ void USRTutorialComponent::NotifyTutorialObjective(FGameplayTag ObjectiveTag)
 	}
 }
 
-void USRTutorialComponent::SetTutorialWidgetComponent(UWidgetComponent* WidgetComp)
-{
-	OwnerTutorialWidgetComp = WidgetComp;
-}
-
-
 // Called when the game starts
 void USRTutorialComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TutorialManager = Cast<ASRTutorialManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ASRTutorialManager::StaticClass()));
+}
 
-	if (TutorialManager)
+void USRTutorialComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+	BindToManager();
+
+}
+
+void USRTutorialComponent::BindToManager()
+{
+	if (TutorialManager.IsValid()) return;
+
+	if (UWorld* W = GetWorld())
 	{
-		TutorialManager->OnTutorialStartDelegate.AddDynamic(this,&ThisClass::HandleTutorialStarted);
-		TutorialManager->OnTutorialCompleteDelegate.AddDynamic(this, &ThisClass::HandleTutorialCompleted);
+		if (AActor* ManagerActor = UGameplayStatics::GetActorOfClass(W, ASRTutorialManager::StaticClass()))
+		{
+			TutorialManager = Cast<ASRTutorialManager>(ManagerActor);
+			UE_LOG(LogTemp, Warning, TEXT("TutoManager found : USRTutorialComponent"));
+
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("TutoManager not found : USRTutorialComponent"));
+		}
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Getworld not vaild  : USRTutorialComponent"));
+
+	}
+	if (TutorialManager.IsValid())
+	{
+		TutorialManager->OnTutorialStartDelegate.AddDynamic(this, &ThisClass::HandleTutorialStarted);
+		TutorialManager->OnTutorialCompleteDelegate.AddDynamic(this, &ThisClass::HandleTutorialCompleted);
+		UE_LOG(LogTemp, Warning, TEXT("TutoManager bind : USRTutorialComponent"));
+
+	}
+}
+
+void USRTutorialComponent::UnbindFromManager()
+{
+	TutorialManager->OnTutorialStartDelegate.RemoveDynamic(this, &ThisClass::HandleTutorialStarted);
+	TutorialManager->OnTutorialCompleteDelegate.RemoveDynamic(this, &ThisClass::HandleTutorialCompleted);
+	TutorialManager = nullptr;
+}
+
+void USRTutorialComponent::HideSelf()
+{
+	SetVisibility(false, true);
+	UnbindFromManager();
 }
 
 void USRTutorialComponent::HandleTutorialStarted(FGameplayTag Tag)
 {
-	//Widget제거
-	if (OwnerTutorialWidgetComp && Tag== ExpectedTag)
+	if (Tag == ExpectedTag)
 	{
-		OwnerTutorialWidgetComp->SetVisibility(true);
+		UE_LOG(LogTemp, Warning, TEXT("WidgetComp SetVisibliry true : USRTutorialComponent"));
+		// 즉시 표시
+		SetVisibility(true, true);
+
+		// 혹시 이전 타이머가 남아있다면 취소
+		if (UWorld* W = GetWorld())
+		{
+			W->GetTimerManager().ClearTimer(HideTimerHandle);
+		}
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("WidgetComp SetVisibliry Tag != ExpectedTag : USRTutorialComponent"));
 }
 
 void USRTutorialComponent::HandleTutorialCompleted(FGameplayTag Tag)
 {
 	//Widget제거
-	if (OwnerTutorialWidgetComp && Tag == ExpectedTag)
+	if (UWorld* W = GetWorld())
 	{
-		FTimerHandle WidgetHiddenTimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(WidgetHiddenTimerHandle, this, &ThisClass::HiddenPlayerTutorialWidgetComponent, TutorialWidgetHiddenDelay ,false);
+		W->GetTimerManager().ClearTimer(HideTimerHandle);
+		W->GetTimerManager().SetTimer(
+			HideTimerHandle, this, &ThisClass::HideSelf, TutorialWidgetHiddenDelay, false);
 	}
 }
 
-void USRTutorialComponent::HiddenPlayerTutorialWidgetComponent()
-{
-	OwnerTutorialWidgetComp->SetVisibility(false);
-
-}

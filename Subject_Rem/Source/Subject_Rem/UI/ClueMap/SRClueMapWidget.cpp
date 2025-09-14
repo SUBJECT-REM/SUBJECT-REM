@@ -60,17 +60,10 @@ void USRClueMapWidget::FindCombinedResultWidgets()
       const int32 ChildCount = RootCanvasPanel->GetChildrenCount();
       for (int32 i = 0; i < ChildCount; ++i)
       {
-            //찾은 Widget이 USRClueMapCombinedResultWidget인지 확인한다.
             if (USRClueMapCombinedResultWidget* CombinedResultWidget = Cast<USRClueMapCombinedResultWidget>(RootCanvasPanel->GetChildAt(i)))
             {
-                  //UE_LOG(LogTemp, Warning, TEXT("Found ClueMapCombined ID : %s"), *CombinedResultWidget->CombinedClueID.ToString());
                   CombinedClueWidgets.Add(CombinedResultWidget->CombinedClueID, CombinedResultWidget);
                   CombinedResultWidget->ClueMapCombinedResultClickedDelegate.AddDynamic(this, &ThisClass::UpdateClueMapCombinedResultDescriptionWidget);
-                  //Test용으로 처음부터 더해버림 이후에 삭제해야함.
-                  //TrueClues.Add(CombinedResultWidget->CombinedClueID);
-                  ////Test로 10초 뒤 그림
-                  //FTimerHandle TestTimerHandle;
-                  //GetWorld()->GetTimerManager().SetTimer(TestTimerHandle,this,&USRClueMapWidget::DrawTrueClueLinkLine,10.0f, false);
             }
       }
 }
@@ -85,7 +78,7 @@ void USRClueMapWidget::FindTrueClueLinkWidgets()
             //찾은 Widget이 USRClueMapCombinedResultWidget인지 확인한다.
             if (USRTrueClueLinkWidget* TrueClueLinkWidget = Cast<USRTrueClueLinkWidget>(RootCanvasPanel->GetChildAt(i)))
             {
-                  TrueClueLinkWidgets.Add(TrueClueLinkWidget);
+                  TrueClueLinkWidgets.Add(TrueClueLinkWidget->CombinedClueID,TrueClueLinkWidget);
             }
       }
 } 
@@ -100,7 +93,6 @@ USRClueMapCombinedResultWidget* USRClueMapWidget::FindCombinedClueResultWidget(F
             //해당 Widget을 찾았다면 
             if (Key == CombinedClueID)
             {
-                  FoundCombinedClueWidgets.Add(Key, Widget);
                   Widget->SetVisibility(ESlateVisibility::Visible);
             
                   return Widget;
@@ -111,6 +103,22 @@ USRClueMapCombinedResultWidget* USRClueMapWidget::FindCombinedClueResultWidget(F
       return nullptr;
 }
 
+void USRClueMapWidget::HandleTrueClueLinkWidget(FName CombinedClueId)
+{
+    for (const TPair<FName, USRTrueClueLinkWidget*>& Pair : TrueClueLinkWidgets)
+    {
+        FName Key = Pair.Key;
+        USRTrueClueLinkWidget* Widget = Pair.Value;
+
+        //해당 Widget을 찾았다면 
+        if (Key == CombinedClueId)
+        {
+            Widget->SetVisibility(ESlateVisibility::Visible);
+        }
+
+    }
+}
+
 void USRClueMapWidget::HandleCombinedClue(const FSRClueMapData& Data)
 {
       //여기서 Broadcast로 들어온 Data에서 FName을 추출한다.
@@ -118,7 +126,7 @@ void USRClueMapWidget::HandleCombinedClue(const FSRClueMapData& Data)
 
       UE_LOG(LogTemp, Warning, TEXT("CombinedClueID: %s"), *CombinedClueID.ToString());
       USRClueMapCombinedResultWidget* FindWidget = FindCombinedClueResultWidget(CombinedClueID);
-      
+      HandleTrueClueLinkWidget(CombinedClueID);
       //진실 단서라면
       if (Data.bResult == true)
       {
@@ -127,8 +135,7 @@ void USRClueMapWidget::HandleCombinedClue(const FSRClueMapData& Data)
             //WidgetImageSetting
             if (FindWidget)
             {
-                FindWidget->LeftClueImage->SetBrushFromSoftTexture(Data.LeftIcon);
-                FindWidget->RightClueImage->SetBrushFromSoftTexture(Data.RightIcon);
+                FindWidget->UpdateLeftRightClueImage(Data.LeftIcon, Data.RightIcon);
             }
             
             TrueClues.Add(CombinedClueID);
@@ -137,24 +144,6 @@ void USRClueMapWidget::HandleCombinedClue(const FSRClueMapData& Data)
 
             UpdateClueMapProgressBar(Ratio);
             UpdatePercentTextBlock(Ratio);
-      }
-}
-
-void USRClueMapWidget::DrawTrueClueLinkLine()
-{
-      for (USRTrueClueLinkWidget* LinkLine : TrueClueLinkWidgets)
-      {
-            if (!LinkLine) continue;
-
-            //해당 LinkWidget이 연결될 두 단서가 현재 찾아진 단서인지 확인합니다.
-            const bool bClueAFound = TrueClues.Contains(LinkLine->GetClueAName());
-            const bool bClueBFound = TrueClues.Contains(LinkLine->GetClueBName());
-
-            //둘 다 찾은 단서라면 해당 두 단서를 연결하는 Widget을 보이도록 합니다.
-            if (bClueAFound && bClueBFound)
-            {
-                  LinkLine->SetVisibility(ESlateVisibility::Visible);
-            }
       }
 }
 
