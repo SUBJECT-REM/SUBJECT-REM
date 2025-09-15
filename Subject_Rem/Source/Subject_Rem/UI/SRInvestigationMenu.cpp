@@ -221,13 +221,13 @@ void USRInvestigationMenu::OnTutorialStart(FGameplayTag Tag)
 	if (Tag == SRGameplayTags::Tutorial_ID_ClickClueButton)
 	{
 		////ClueButton을 클릭하도록 하고 다른 UI클릭은 못하도록합니다.
-		ClueClickPulse->SetVisibility(ESlateVisibility::Visible);
+		ClueClickPulse->SetVisibility(ESlateVisibility::HitTestInvisible);
 		//InventoryButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 		//ClueMapButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 	else if (Tag == SRGameplayTags::Tutorial_ID_ClickClueMapButton)
 	{
-		ClueMapClickPulse->SetVisibility(ESlateVisibility::Visible);
+		ClueMapClickPulse->SetVisibility(ESlateVisibility::HitTestInvisible);
 		//InventoryButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 		//ClueButton->SetVisibility(ESlateVisibility::HitTestInvisible);*/
 	}
