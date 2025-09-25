@@ -11,7 +11,7 @@ void USRClueMapCombinedResultWidget::NativeConstruct()
      
       SetVisibility(ESlateVisibility::Visible);
      
-      CombinedClueButton->OnClicked.AddDynamic(this, &ThisClass::OnCobminedClueButtonClicked);
+      ClueMapDesShownButton->OnClicked.AddDynamic(this, &ThisClass::OnCobminedClueButtonClicked);
       LeftClueImage->SetVisibility(ESlateVisibility::Hidden);
       RightClueImage->SetVisibility(ESlateVisibility::Hidden);
 }

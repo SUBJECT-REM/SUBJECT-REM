@@ -59,7 +59,7 @@ protected:
 	USRClueMapCombinedResultWidget* FindCombinedClueResultWidget(FName CombinedClueName);
 	void HandleTrueClueLinkWidget(FName CombinedClueName);
 	UFUNCTION()
-	void HandleCombinedClue(const FSRClueMapData& Data);
+	void HandleCombinedClue(const FSRClueMapUIData& Data);
 
 	void FindPlayerInventoryComponent();
 

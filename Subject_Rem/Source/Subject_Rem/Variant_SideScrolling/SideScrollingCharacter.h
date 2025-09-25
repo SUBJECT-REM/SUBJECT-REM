@@ -13,7 +13,7 @@ class UInputAction;
 class USRInventoryComponent;
 class USRTutorialComponent;
 class USRInvestigationMenu;
-class ASRTutorialManager;
+class ASRGameFlowManager;
 struct FInputActionValue;
 
 /**
@@ -138,5 +138,5 @@ private:
 
 	TObjectPtr<USRInvestigationMenu> InvestigationWidget;
 
-	TWeakObjectPtr<ASRTutorialManager> CachedTutorialMgr;
+	TWeakObjectPtr<ASRGameFlowManager> CachedTutorialMgr;
 };

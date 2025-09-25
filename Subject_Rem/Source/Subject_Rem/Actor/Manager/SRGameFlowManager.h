@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameplayTagContainer.h"
-#include "SRTutorialManager.generated.h"
+#include "SRGameFlowManager.generated.h"
 
 
 /**
@@ -14,7 +14,7 @@
 class UInputMappingContext;
 
 USTRUCT(BlueprintType)
-struct FTutorialInfo
+struct FGameFlowInfo
 {
     GENERATED_BODY()
 
@@ -40,30 +40,31 @@ struct FTutorialInfo
 };
 
 /**
- * 튜토리얼 매니저: 현재 튜토리얼 상태를 관리하고,
+ * 게임플로우매니저 - 기존 튜토리얼 매니저를 재구성함, 튜토리얼이 아니라 게임 
  * 목표 달성 시 다음 단계로 자동 전환하는 클래스
  */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTutorialStartedSignature, FGameplayTag, ObjectiveTag);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTutorialCompletedSignature, FGameplayTag, CompleteId);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFlowStartedSignature, FGameplayTag, ObjectiveTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFlowCompletedSignature, FGameplayTag, CompleteId);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRequestPlayCaptionRow, const FName&, RowName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCaptionEndedSignature, const FName&, RowName);
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTutorialStepChanged, FGameplayTag, NewTutorialID);
 //TODO: TutorialManager가 아니라, GameFlowManager로 수정하고, 기능을 좀 많이 바꿔야할듯.플레이어의 행동 + 자막의 완료 시각이 플로우랑 많이 연관됨
+//이벤트 허브 느낌으로 접근해야할거같다.
 UCLASS()
-class SUBJECT_REM_API ASRTutorialManager : public AActor
+class SUBJECT_REM_API ASRGameFlowManager : public AActor
 {
     GENERATED_BODY()
 
 public:
-    ASRTutorialManager();
+    ASRGameFlowManager();
 
     /** 외부에서 튜토리얼 목표를 달성했음을 알릴 때 호출 */
     UFUNCTION(BlueprintCallable, Category = "Tutorial")
     void NotifyObjectiveCompleted(FGameplayTag CompletedTag);
 
-    /** 현재 튜토리얼 단계의 ID 반환 */
     UFUNCTION(BlueprintCallable, Category = "Tutorial")
-    FGameplayTag GetCurrentTutorialID() const { return CurrentTutorialID; }
+    FGameplayTag GetCurrentFlowID() const { return CurrentFlowID; }
 
     /** 현재 목표 태그 반환 */
     UFUNCTION(BlueprintCallable, Category = "Tutorial")
@@ -73,30 +74,41 @@ public:
     //FTutorialStepChanged  OnTutorialStepChanged;
 
     UPROPERTY(BlueprintAssignable)
-    FTutorialStartedSignature OnTutorialStartDelegate;
+    FFlowStartedSignature OnFlowStartDelegate;
 
     UPROPERTY(BlueprintAssignable)
-    FTutorialCompletedSignature OnTutorialCompleteDelegate;
+    FFlowCompletedSignature OnFlowCompleteDelegate;
 
+    UPROPERTY(BlueprintAssignable)
+    FOnRequestPlayCaptionRow OnRequestPlayCaptionRow; 
+
+    UPROPERTY(BlueprintAssignable)
+    FOnCaptionEndedSignature OnCaptionTypewriterEnd; //자막 재생 끝남 델리게이트
     /** 모든 튜토리얼 단계 데이터 */
     UPROPERTY(EditAnywhere, Category = "Tutorial|Data")
-    TArray<FTutorialInfo> TutorialInfos;
+    TArray<FGameFlowInfo> TutorialInfos;
 
+private:
+    UFUNCTION()
+    void ShowClueCombinedCaption(const FName& CaptionRow);
+
+    UFUNCTION()
+    void OnCaptionEnded(const FName& RowName);
 protected:
     virtual void BeginPlay() override;
 
     /** 첫 번째 튜토리얼 단계 시작 */
-    void StartFirstTutorial();
+    void StartFirstFlow();
 
     /** 특정 튜토리얼 단계로 전환 */
-    void SetupTutorial(FGameplayTag TutorialID);
+    void SetupFlow(FGameplayTag TutorialID);
 
     /** 튜토리얼 정보 검색 */
-    FTutorialInfo* FindTutorialInfo(FGameplayTag TutorialID);
+    FGameFlowInfo* FindNextFlowInfo(FGameplayTag TutorialID);
 
     /** 현재 튜토리얼 단계 ID */
     UPROPERTY(VisibleAnywhere, Category = "Tutorial|State")
-    FGameplayTag CurrentTutorialID;
+    FGameplayTag CurrentFlowID;
 
     /** 현재 목표 태그 */
     UPROPERTY(VisibleAnywhere, Category = "Tutorial|State")

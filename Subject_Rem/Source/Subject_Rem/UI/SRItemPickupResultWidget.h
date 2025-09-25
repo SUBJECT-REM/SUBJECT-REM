@@ -25,7 +25,7 @@ public:
 
 	void SetItemPreview(TSoftObjectPtr<UStaticMesh> Mesh);
 	void SetItemDes(FText Text);
-	void SetItemName(FName Text);
+	void SetItemName(FText Text);
 
 	FPickupResultClosed OnClosedDelegate;
 protected:

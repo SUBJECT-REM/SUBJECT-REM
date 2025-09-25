@@ -7,10 +7,10 @@
 #include "Components/Button.h"
 #include "Engine/Texture2D.h"
 
-void USRClueCombineResultWidget::SetClueMapImage(TSoftObjectPtr<UTexture2D> LeftIcon, TSoftObjectPtr<UTexture2D> RightIcon)
+void USRClueCombineResultWidget::SetClueMapImage(TArray<TSoftObjectPtr<UTexture2D>> Icons)
 {
-	ClueLeftImage->SetBrushFromSoftTexture(LeftIcon);
-	ClueRightImage->SetBrushFromSoftTexture(RightIcon);
+	ClueLeftImage->SetBrushFromSoftTexture(nullptr);
+	ClueRightImage->SetBrushFromSoftTexture(nullptr);
 }
 
 void USRClueCombineResultWidget::SetClueMapDes(FText Text)

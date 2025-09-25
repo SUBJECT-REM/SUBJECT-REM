@@ -17,7 +17,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddDeviceDataSignature, const FSRIt
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddClueDatasSignatue,const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddInventoryDataSignature, const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRemoveInventoryDataSignature, const TArray<FName>&, RemovedItemIds);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueCombineResultSignature, const FSRClueMapData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueCombineResultSignature, const FSRClueMapUIData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueCombineCaptionSignature, const FName& ,CaptionRowName);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SUBJECT_REM_API USRInventoryComponent : public UActorComponent
@@ -47,6 +48,7 @@ public:
 
 	/*ClueMap 생성에 대한 델리게이트*/
 	FOnClueCombineResultSignature ClueCombineResultDelegate;
+	FOnClueCombineCaptionSignature ClueCombineCaptionDelegate;
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<const USRItem*> InventoryItems;
@@ -77,7 +79,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FDataTableRowHandle> StartingItemDatas;
-
 
 	UPROPERTY()
 	USRItemPickupResultPresenter* ItemPickupPresenter;

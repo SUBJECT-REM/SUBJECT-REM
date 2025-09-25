@@ -6,8 +6,8 @@
 #include "UI/SRClueWidget.h"
 #include "Component/SRInventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Actor/Tutorial/SRTutorialManager.h"
-#include "Actor/SRCaptionManagerActor.h"
+#include "Actor/Manager/SRGameFlowManager.h"
+#include "Actor/Manager/SRCaptionManagerActor.h"
 #include "SRGameplayTags.h"
 
 void USRClueWidgetPresenter::Init(UActorComponent* InitComponent, UUserWidget* InitWidget)
@@ -32,10 +32,10 @@ void USRClueWidgetPresenter::Init(UActorComponent* InitComponent, UUserWidget* I
 	ClueWidget->CombineButtonClickedDelegate.AddDynamic(this, &ThisClass::RequestCombineClue);
 	ClueWidget->CombineButtonClickedDelegate.AddDynamic(this, &ThisClass::HandleCombineClueTutorial);
 
-	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRTutorialManager::StaticClass());
+	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRGameFlowManager::StaticClass());
 	if (FoundActor)
 	{
-		TutorialManager = Cast<ASRTutorialManager>(FoundActor);
+		TutorialManager = Cast<ASRGameFlowManager>(FoundActor);
 	}
 }
 
@@ -51,25 +51,9 @@ void USRClueWidgetPresenter::RequestCombineClue(TArray<FName> ClueIds)
 	InvenComp->CombineClue(ClueIds);
 }
 
-void USRClueWidgetPresenter::RequsetUpdateClueCombineResultWidget(const FSRClueMapData& Data)
+void USRClueWidgetPresenter::RequsetUpdateClueCombineResultWidget(const FSRClueMapUIData& Data)
 {
 	ClueWidget->UpdateClueCombineResultWidget(Data);
-
-	//GetCaptionManager();
-	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRCaptionManagerActor::StaticClass());
-	if (FoundActor)
-	{
-		 CaptionManager = Cast<ASRCaptionManagerActor>(FoundActor);
-	}
-
-	if (CaptionManager.IsValid())
-	{
-		if (Data.bShowCaption)
-		{
-			CaptionManager->EnqueueCaption(Data.CaptionRow.RowName);
-		}
-	}
-
 }
 
 void USRClueWidgetPresenter::HandleCombineClueTutorial(TArray<FName> ClueIds)

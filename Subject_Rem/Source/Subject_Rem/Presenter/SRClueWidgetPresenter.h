@@ -12,7 +12,7 @@
  */
 class USRInventoryComponent;
 class USRClueWidget;
-class ASRTutorialManager;
+class ASRGameFlowManager;
 class ASRCaptionManagerActor;
 
 UCLASS(BlueprintType, Blueprintable)
@@ -36,7 +36,7 @@ private:
 	void RequestCombineClue(TArray<FName> ClueIds);
 
 	UFUNCTION()
-	void RequsetUpdateClueCombineResultWidget(const FSRClueMapData& Data);
+	void RequsetUpdateClueCombineResultWidget(const FSRClueMapUIData& Data);
 
 	UFUNCTION()
 	void HandleCombineClueTutorial(TArray<FName> ClueIds);
@@ -48,7 +48,7 @@ private:
 	USRClueWidget* ClueWidget;
 
 	UPROPERTY()
-	ASRTutorialManager* TutorialManager;
+	ASRGameFlowManager* TutorialManager;
 
 	TWeakObjectPtr<ASRCaptionManagerActor> CaptionManager;
 };

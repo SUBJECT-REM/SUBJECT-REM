@@ -3,7 +3,7 @@
 
 #include "Component/SRTutorialComponent.h"
 #include "Components/WidgetComponent.h"
-#include "Actor/Tutorial/SRTutorialManager.h"
+#include "Actor/Manager/SRGameFlowManager.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
@@ -48,9 +48,9 @@ void USRTutorialComponent::BindToManager()
 
 	if (UWorld* W = GetWorld())
 	{
-		if (AActor* ManagerActor = UGameplayStatics::GetActorOfClass(W, ASRTutorialManager::StaticClass()))
+		if (AActor* ManagerActor = UGameplayStatics::GetActorOfClass(W, ASRGameFlowManager::StaticClass()))
 		{
-			TutorialManager = Cast<ASRTutorialManager>(ManagerActor);
+			TutorialManager = Cast<ASRGameFlowManager>(ManagerActor);
 			UE_LOG(LogTemp, Warning, TEXT("TutoManager found : USRTutorialComponent"));
 
 		}
@@ -66,8 +66,8 @@ void USRTutorialComponent::BindToManager()
 	}
 	if (TutorialManager.IsValid())
 	{
-		TutorialManager->OnTutorialStartDelegate.AddDynamic(this, &ThisClass::HandleTutorialStarted);
-		TutorialManager->OnTutorialCompleteDelegate.AddDynamic(this, &ThisClass::HandleTutorialCompleted);
+		TutorialManager->OnFlowStartDelegate.AddDynamic(this, &ThisClass::HandleTutorialStarted);
+		TutorialManager->OnFlowCompleteDelegate.AddDynamic(this, &ThisClass::HandleTutorialCompleted);
 		UE_LOG(LogTemp, Warning, TEXT("TutoManager bind : USRTutorialComponent"));
 
 	}
@@ -75,8 +75,8 @@ void USRTutorialComponent::BindToManager()
 
 void USRTutorialComponent::UnbindFromManager()
 {
-	TutorialManager->OnTutorialStartDelegate.RemoveDynamic(this, &ThisClass::HandleTutorialStarted);
-	TutorialManager->OnTutorialCompleteDelegate.RemoveDynamic(this, &ThisClass::HandleTutorialCompleted);
+	TutorialManager->OnFlowStartDelegate.RemoveDynamic(this, &ThisClass::HandleTutorialStarted);
+	TutorialManager->OnFlowCompleteDelegate.RemoveDynamic(this, &ThisClass::HandleTutorialCompleted);
 	TutorialManager = nullptr;
 }
 

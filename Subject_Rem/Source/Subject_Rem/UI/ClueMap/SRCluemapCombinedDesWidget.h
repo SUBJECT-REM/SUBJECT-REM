@@ -22,25 +22,35 @@ class SUBJECT_REM_API USRCluemapCombinedDesWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
-	void SetLeftRightImage(TSoftObjectPtr<UTexture2D> Left, TSoftObjectPtr<UTexture2D> Right);
-	void SetLeftRightItemName(FName Left, FName Right);
-	void SetClueMapName(FName Name);
+	void SetClueIcons(TArray<TSoftObjectPtr<UTexture2D>> Icons);
+	void SetClueNamesText(const TArray<FText>& Text);
+	void SetClueMapName(FText Name);
 	void SetClueMapDes(FText Des);
 
 	UFUNCTION()
 	void OnCloseButtonClicked();
 private:
-	UPROPERTY(meta = (BindWidget))
-	UImage* LeftImage;
+	void SetImageBrush(UImage* Image, const TSoftObjectPtr<UTexture2D>& SoftTex);
+	void SetRichText(URichTextBlock* Label, const FText& Text);
+	void HideRichText(URichTextBlock* Label);
+	void EnsureLayoutByCount(uint8 Count);
+	// Switcher + 2개 레이아웃
+	UPROPERTY(meta = (BindWidgetOptional)) class UWidgetSwitcher* LayoutSwitcher;
+	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueLeftImage;   // 2개용 Left
+	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueRightImage;  // 2개용 Right
 
-	UPROPERTY(meta = (BindWidget))
-	UImage* RightImage;
+	// 3개 레이아웃
+	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueLeftImage_3;
+	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueMidImage_3;
+	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueRightImage_3;
 
-	UPROPERTY(meta = (BindWidget))
-	URichTextBlock* LeftImageItemName;
 
-	UPROPERTY(meta = (BindWidget))
-	URichTextBlock* RightImageItemName;
+	UPROPERTY(meta = (BindWidgetOptional)) URichTextBlock* LeftImageItemName;
+	UPROPERTY(meta = (BindWidgetOptional)) URichTextBlock* RightImageItemName;
+
+	UPROPERTY(meta = (BindWidgetOptional)) URichTextBlock* LeftImageItemName_3;
+	UPROPERTY(meta = (BindWidgetOptional)) URichTextBlock* MidImageItemName_3;
+	UPROPERTY(meta = (BindWidgetOptional)) URichTextBlock* RightImageItemName_3;
 
 	UPROPERTY(meta = (BindWidget))
 	URichTextBlock* ClueMapName;

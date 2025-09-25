@@ -5,6 +5,8 @@
 #include"Components/Image.h"
 #include "Components/RichTextBlock.h"
 #include"Components/Button.h"
+#include "Components/WidgetSwitcher.h"
+
 
 void USRCluemapCombinedDesWidget::NativeConstruct()
 {
@@ -13,24 +15,56 @@ void USRCluemapCombinedDesWidget::NativeConstruct()
 	CloseButton->OnClicked.AddDynamic(this, &ThisClass::OnCloseButtonClicked);
 }
 
-void USRCluemapCombinedDesWidget::SetLeftRightImage(TSoftObjectPtr<UTexture2D> Left, TSoftObjectPtr<UTexture2D> Right)
+void USRCluemapCombinedDesWidget::SetClueIcons(TArray<TSoftObjectPtr<UTexture2D>> Icons)
 {
-	if (Left.IsNull() || Right.IsNull())
-		return;
+	const int32 N = Icons.Num();
+    if (LayoutSwitcher)
+    {
+        LayoutSwitcher->SetActiveWidgetIndex(N == 3 ? 1 : 0); // ← 세미콜론 빠져있었음!
+    }
 
-	LeftImage->SetBrushFromSoftTexture(Left);
-	RightImage->SetBrushFromSoftTexture(Right);
+    if (N == 2)
+    {
+        // .h의 이름과 일치하도록 사용(ClueLeftImage/ClueRightImage)
+        SetImageBrush(ClueLeftImage, Icons[0]);
+        SetImageBrush(ClueRightImage, Icons[1]);
+    }
+    else if (N == 3)
+    {
+        SetImageBrush(ClueLeftImage_3, Icons[0]);
+        SetImageBrush(ClueMidImage_3, Icons[1]);
+        SetImageBrush(ClueRightImage_3, Icons[2]);
+    }
 }
 
-void USRCluemapCombinedDesWidget::SetLeftRightItemName(FName Left, FName Right)
+void USRCluemapCombinedDesWidget::SetClueNamesText(const TArray<FText>& Text)
 {
-	LeftImageItemName->SetText(FText::FromName(Left));
-	RightImageItemName->SetText(FText::FromName(Right));
+    const int32 N = Text.Num();
+    EnsureLayoutByCount(N);
+
+    if (N == 3)
+    {
+        SetRichText(LeftImageItemName_3, Text[0]);
+        SetRichText(MidImageItemName_3, Text[1]);
+        SetRichText(RightImageItemName_3, Text[2]);
+
+        HideRichText(LeftImageItemName);
+        HideRichText(RightImageItemName);
+    }
+    else // N != 3 → 2로 처리
+    {
+        SetRichText(LeftImageItemName, Text.IsValidIndex(0) ? Text[0] : FText::GetEmpty());
+        SetRichText(RightImageItemName, Text.IsValidIndex(1) ? Text[1] : FText::GetEmpty());
+
+        HideRichText(LeftImageItemName_3);
+        HideRichText(MidImageItemName_3);
+        HideRichText(RightImageItemName_3);
+    }
 }
 
-void USRCluemapCombinedDesWidget::SetClueMapName(FName Name)
+void USRCluemapCombinedDesWidget::SetClueMapName(FText Name)
 {
-	ClueMapName->SetText(FText::FromName(Name));
+	ClueMapName->SetText(Name);
 }
 
 void USRCluemapCombinedDesWidget::SetClueMapDes(FText Des)
@@ -41,4 +75,56 @@ void USRCluemapCombinedDesWidget::SetClueMapDes(FText Des)
 void USRCluemapCombinedDesWidget::OnCloseButtonClicked()
 {
 	SetVisibility(ESlateVisibility::Hidden);
+}
+
+void USRCluemapCombinedDesWidget::SetImageBrush(UImage* Image, const TSoftObjectPtr<UTexture2D>& SoftTex)
+{
+    if (!Image)
+        return;
+
+    // 소프트 레퍼런스가 비었으면 감추기
+    if (SoftTex.IsNull())
+    {
+        Image->SetBrushFromTexture(nullptr);
+        Image->SetVisibility(ESlateVisibility::Collapsed);
+        return;
+    }
+
+    // 동기 로드 (프로토타입/에디터라면 OK, 추후 비동기 전환 가능)
+    if (!SoftTex.IsNull())
+    {
+        Image->SetBrushFromSoftTexture(SoftTex);
+        Image->SetVisibility(ESlateVisibility::Visible);
+    }
+    else
+    {
+        // 로드 실패 시 안전 처리
+        Image->SetBrushFromSoftTexture(nullptr);
+        Image->SetVisibility(ESlateVisibility::Collapsed);
+    }
+}
+
+void USRCluemapCombinedDesWidget::SetRichText(URichTextBlock* Label, const FText& Text)
+{
+    if (!Label) return;
+    Label->SetText(Text);
+    Label->SetVisibility(ESlateVisibility::Visible);
+}
+
+void USRCluemapCombinedDesWidget::HideRichText(URichTextBlock* Label)
+{
+    if (!Label) 
+        return;
+    Label->SetText(FText::GetEmpty());
+    Label->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void USRCluemapCombinedDesWidget::EnsureLayoutByCount(uint8 Count)
+{
+    // 2/3 외 값 방어
+    const int32 Cnt = (Count == 3) ? 3 : 2;
+    if (LayoutSwitcher)
+    {
+        LayoutSwitcher->SetActiveWidgetIndex(Cnt == 3 ? 1 : 0);
+    }
 }

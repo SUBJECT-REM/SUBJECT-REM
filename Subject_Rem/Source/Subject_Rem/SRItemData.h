@@ -57,7 +57,7 @@ struct FSRItemBaseData
 
 	/*아이템 이름*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName Name;
+	FText Name;
 
 	/*아이템 설명*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (MultiLine = true))
@@ -102,10 +102,7 @@ struct FSRClueCombineRuleData : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName ClueId1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName ClueId2;
+	TArray<FName> ClueIds;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDataTableRowHandle ClueCombineResult; // → FSRClueMapData
@@ -123,23 +120,11 @@ public:
 
 	/*아이템 이름*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName Name;
+	FText Name;
 
 	/*아이템 설명*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (MultiLine = true))
 	FText Description;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName LeftIconItemName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName RightIconItemName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftObjectPtr<UTexture2D> LeftIcon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftObjectPtr<UTexture2D> RightIcon;
 
 	/*단서 조합 후 즉시 증가하는 스트레스 증가량 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -187,4 +172,34 @@ public:
 	uint8 DeviceCombineSlotNum;
 
 
+};
+
+USTRUCT(BlueprintType)
+struct FSRCaptionData : public FTableRowBase
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText Text;
+
+	//이어서 재생할 자막 RowName ;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName NextTextRowName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Skipable;
+};
+
+USTRUCT(BlueprintType)
+struct FSRClueMapUIData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly) FSRClueMapData ClueMap;
+	UPROPERTY(BlueprintReadOnly) TArray<FName> ClueIds;
+	UPROPERTY(BlueprintReadOnly) TArray<FText> ClueNames;
+	UPROPERTY(BlueprintReadOnly) TArray<TSoftObjectPtr<UTexture2D>> ClueIcons;
+	/*진실, 거짓단서 유무*/
+	UPROPERTY(BlueprintReadWrite)
+	bool bResult;
 };

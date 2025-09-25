@@ -119,10 +119,10 @@ void USRClueMapWidget::HandleTrueClueLinkWidget(FName CombinedClueId)
     }
 }
 
-void USRClueMapWidget::HandleCombinedClue(const FSRClueMapData& Data)
+void USRClueMapWidget::HandleCombinedClue(const FSRClueMapUIData& Data)
 {
       //여기서 Broadcast로 들어온 Data에서 FName을 추출한다.
-      FName CombinedClueID = Data.Id;
+      FName CombinedClueID = Data.ClueMap.Id;
 
       UE_LOG(LogTemp, Warning, TEXT("CombinedClueID: %s"), *CombinedClueID.ToString());
       USRClueMapCombinedResultWidget* FindWidget = FindCombinedClueResultWidget(CombinedClueID);
@@ -135,7 +135,7 @@ void USRClueMapWidget::HandleCombinedClue(const FSRClueMapData& Data)
             //WidgetImageSetting
             if (FindWidget)
             {
-                FindWidget->UpdateLeftRightClueImage(Data.LeftIcon, Data.RightIcon);
+                FindWidget->UpdateLeftRightClueImage(nullptr,nullptr);
             }
             
             TrueClues.Add(CombinedClueID);
@@ -167,9 +167,9 @@ void USRClueMapWidget::UpdatePercentTextBlock(float NewPercent)
 void USRClueMapWidget::UpdateClueMapCombinedResultDescriptionWidget(const FSRClueMapData& Data)
 {
 
-    ClueMapCombinedDesWidget->SetLeftRightImage(Data.LeftIcon,Data.RightIcon);
+    //ClueMapCombinedDesWidget->SetLeftRightImage(Data.LeftIcon,Data.RightIcon);
     ClueMapCombinedDesWidget->SetClueMapName(Data.Name);
-    ClueMapCombinedDesWidget->SetLeftRightItemName(Data.LeftIconItemName,Data.RightIconItemName);
+    //ClueMapCombinedDesWidget->SetLeftRightItemName(Data.LeftIconItemName,Data.RightIconItemName);
     ClueMapCombinedDesWidget->SetClueMapDes(Data.Description);
 
     //TODO : ClueMapCombinedDesWidget에서 직접 Visibility처리하도록 할것

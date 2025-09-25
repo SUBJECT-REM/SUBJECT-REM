@@ -1,9 +1,12 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Actor/SRCaptionManagerActor.h"
+#include "Actor/Manager/SRCaptionManagerActor.h"
 #include "SRCaptionManagerActor.h"
 #include "Subsystem/SRStressLocalPlayerSubsystem.h"
+#include "Actor/Manager/SRGameFlowManager.h"
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 ASRCaptionManagerActor::ASRCaptionManagerActor()
 {
@@ -64,9 +67,16 @@ void ASRCaptionManagerActor::PlayCaption()
 	CaptionRequestedDelegate.Broadcast(Current);
 }
 
+void ASRCaptionManagerActor::OnRequestPlayCaptionRow(const FName& RowName)
+{
+	EnqueueCaption(RowName);
+}
+
 void ASRCaptionManagerActor::OnCaptionFinished_Implementation(FName RowName)
 {
 	Current = RowName;
+	CaptionTypewriterCompletedDelgate.Broadcast(RowName);
+
 	TryRunNext();
 }
 
@@ -110,6 +120,12 @@ void ASRCaptionManagerActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// GameFlow의 '자막 요청' 이벤트를 구독
+	if (auto* Flow = Cast<ASRGameFlowManager>(
+		UGameplayStatics::GetActorOfClass(GetWorld(), ASRGameFlowManager::StaticClass())))
+	{
+		Flow->OnRequestPlayCaptionRow.AddUniqueDynamic(this, &ThisClass::OnRequestPlayCaptionRow);
+	}
 }
 
 

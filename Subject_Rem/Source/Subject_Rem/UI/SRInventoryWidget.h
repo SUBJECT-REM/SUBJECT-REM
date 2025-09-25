@@ -40,7 +40,7 @@ class SUBJECT_REM_API USRInventoryWidget : public UUserWidget
 
 public:
 	UFUNCTION()
-	void UpdateItemName(FName Name);
+	void UpdateItemName(FText Name);
 
 	UFUNCTION()
 	void UpdateItemDes(FText Des);

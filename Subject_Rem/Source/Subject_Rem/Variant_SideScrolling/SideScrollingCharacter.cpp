@@ -20,7 +20,7 @@
 #include "UI/SRInvestigationMenu.h"
 #include "Component/SRInventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Actor/Tutorial/SRTutorialManager.h"
+#include "Actor/Manager/SRGameFlowManager.h"
 #include "SRGameplayTags.h"
 
 ASideScrollingCharacter::ASideScrollingCharacter()
@@ -75,10 +75,10 @@ void ASideScrollingCharacter::BeginPlay()
 
 	CreateInvestigationMenu();
 
-	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRTutorialManager::StaticClass());
+	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRGameFlowManager::StaticClass());
 	if (FoundActor)
 	{
-		CachedTutorialMgr = Cast<ASRTutorialManager>(FoundActor);
+		CachedTutorialMgr = Cast<ASRGameFlowManager>(FoundActor);
 	}
 }
 

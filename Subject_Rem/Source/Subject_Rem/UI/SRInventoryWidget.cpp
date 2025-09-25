@@ -56,10 +56,10 @@ void USRInventoryWidget::NativeConstruct()
 
 }
 
-void USRInventoryWidget::UpdateItemName(FName Name)
+void USRInventoryWidget::UpdateItemName(FText Name)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UpdateItemName : %s "), *Name.ToString());
-	ItemName->SetText(FText::FromName(Name));
+	ItemName->SetText(Name);
 	ItemName->InvalidateLayoutAndVolatility();
 	ItemName->ForceLayoutPrepass();
 }

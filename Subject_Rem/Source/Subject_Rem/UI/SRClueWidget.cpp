@@ -85,11 +85,12 @@ void USRClueWidget::UpdateClueGridWidget(const FSRItemBaseData& Data)
 	}
 }
 
-void USRClueWidget::UpdateClueCombineResultWidget(const FSRClueMapData& Data)
+void USRClueWidget::UpdateClueCombineResultWidget(const FSRClueMapUIData& Data)
 {
+	/*
 	ClueCombineResultWidget->SetClueMapImage(Data.LeftIcon, Data.RightIcon);
 	ClueCombineResultWidget->SetClueMapDes(Data.Description);
-	ClueCombineResultWidget->SetClueMapName(Data.Name);
+	ClueCombineResultWidget->SetClueMapName(Data.Name);*/
 	if (ClueCombineResultWidget->GetVisibility() != ESlateVisibility::Visible)
 	{
 		ClueCombineResultWidget->SetVisibility(ESlateVisibility::Visible);

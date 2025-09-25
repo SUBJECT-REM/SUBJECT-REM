@@ -19,7 +19,7 @@ struct FCaptionPayload
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCaptionRequestedSignature, const FName&, RowName);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTypewriterCompletedSignature, const FName&, RowName);
 UCLASS()
 class SUBJECT_REM_API ASRCaptionManagerActor : public AActor
 {
@@ -44,6 +44,8 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FCaptionRequestedSignature CaptionRequestedDelegate;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnTypewriterCompletedSignature CaptionTypewriterCompletedDelgate;
 	UPROPERTY(BlueprintReadOnly)
 	FName Current;
 protected:
@@ -54,6 +56,9 @@ private:
 	void TryRunNext();
 	//void ApplyStree();
 	void PlayCaption();
+
+	UFUNCTION()
+	void OnRequestPlayCaptionRow(const FName& RowName);
 
 	UPROPERTY(Transient)
 	TArray<FName> PendingQueue;
