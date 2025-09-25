@@ -25,7 +25,26 @@ void ASRGameFlowManager::OnCaptionEnded(const FName& RowName)
     OnCaptionTypewriterEnd.Broadcast(RowName);
 }
 
-void ASRGameFlowManager::ShowClueCombinedCaption(const FName& CaptionRow)
+void ASRGameFlowManager::DoNextFlow(FGameFlowInfo* Current, FGameplayTag CompletedTag)
+{
+
+    OnFlowCompleteDelegate.Broadcast(CurrentFlowID);
+    // 다음 튜토리얼로 진행
+    if (Current->NextFlow.IsValid())
+    {
+        SetupFlow(Current->NextFlow);
+
+        // 진행 상태 초기화
+        ObjectiveProgress.Remove(CompletedTag);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Log, TEXT("Tutorial Finished!"));
+    }
+    return;
+}
+
+void ASRGameFlowManager::RequestShowingCaption(const FName& CaptionRow)
 {
     if (CaptionRow.IsNone()) return;
 
@@ -41,7 +60,7 @@ void ASRGameFlowManager::BeginPlay()
     {
         if (auto* Inv = Pawn->FindComponentByClass<USRInventoryComponent>())
         {
-            Inv->ClueCombineCaptionDelegate.AddUniqueDynamic(this, &ThisClass::ShowClueCombinedCaption);
+            Inv->ClueCombineCaptionDelegate.AddDynamic(this, &ThisClass::RequestShowingCaption);
         }
     }
 
@@ -49,7 +68,7 @@ void ASRGameFlowManager::BeginPlay()
     if (auto* Caption = Cast<ASRCaptionManagerActor>(
         UGameplayStatics::GetActorOfClass(GetWorld(), ASRCaptionManagerActor::StaticClass())))
     {
-        Caption->CaptionTypewriterCompletedDelgate.AddUniqueDynamic(this, &ThisClass::OnCaptionEnded);
+        Caption->CaptionTypewriterCompletedDelgate.AddDynamic(this, &ThisClass::OnCaptionEnded);
     }
 
     StartFirstFlow();
@@ -77,7 +96,6 @@ void ASRGameFlowManager::SetupFlow(FGameplayTag TutorialID)
 
     CurrentFlowID = Info->ID;
     CurrentObjectiveTag = Info->ObjectivesTag;
-    UE_LOG(LogTemp, Warning, TEXT("TutorialStart : ASRGameFlowManager, Tag ID : %s"), *TutorialID.ToString());
     OnFlowStartDelegate.Broadcast(TutorialID);
 
     if (Info->AllowedInputContexts.Num() > 0)
@@ -104,7 +122,6 @@ void ASRGameFlowManager::SetupFlow(FGameplayTag TutorialID)
         }
     }
     // 여기서 UI 표시, 안내 메시지 등 실행 가능
-    UE_LOG(LogTemp, Log, TEXT("Tutorial Started: %s"), *CurrentFlowID.ToString());
 }
 
 void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag CompletedTag)
@@ -124,20 +141,13 @@ void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag CompletedTag)
 
     if (Count >= Info->RequiredCount)
     {
-        UE_LOG(LogTemp, Log, TEXT("Objective Fully Completed: %s"), *CompletedTag.ToString());
-        
-        OnFlowCompleteDelegate.Broadcast(CurrentFlowID);
-        // 다음 튜토리얼로 진행
-        if (Info->NextTutorial.IsValid())
-        {
-            SetupFlow(Info->NextTutorial);
+        DoNextFlow(Info, CompletedTag);
 
-            // 진행 상태 초기화
-            ObjectiveProgress.Remove(CompletedTag);
-        }
-        else
+        if (Info->bShownCaption && !Info->CaptionRow.IsNone())
         {
-            UE_LOG(LogTemp, Log, TEXT("Tutorial Finished!"));
+            RequestShowingCaption(Info->CaptionRow);
         }
     }
+
+    return;
 }

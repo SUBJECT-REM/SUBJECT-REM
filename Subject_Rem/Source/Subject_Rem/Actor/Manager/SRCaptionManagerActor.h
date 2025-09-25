@@ -44,7 +44,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FCaptionRequestedSignature CaptionRequestedDelegate;
 
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnTypewriterCompletedSignature CaptionTypewriterCompletedDelgate;
 	UPROPERTY(BlueprintReadOnly)
 	FName Current;

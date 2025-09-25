@@ -40,10 +40,18 @@ private:
 	void OnClickedCloseButton();
 
 	UPROPERTY(meta = (BindWidget))
+	class UWidgetSwitcher* LayoutSwitcher;
+
+	UPROPERTY(meta = (BindWidget))
 	UImage* ClueLeftImage;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* ClueRightImage;
+
+	// 3개 레이아웃
+	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueLeftImage_3;
+	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueMidImage_3;
+	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueRightImage_3;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ClueMapDes;
