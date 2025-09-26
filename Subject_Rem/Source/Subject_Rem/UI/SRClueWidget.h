@@ -83,6 +83,7 @@ private:
 	UFUNCTION()
 	void OnClickedDeviceSlot(USRSlotWidget* ClickedSlot);
 
+	UGridPanel* GetCurrentClueCombineGrid();
 	/*단서 조합 결과*/
 	UPROPERTY(meta = (BindWidget))
 	USRClueCombineResultWidget* ClueCombineResultWidget;
