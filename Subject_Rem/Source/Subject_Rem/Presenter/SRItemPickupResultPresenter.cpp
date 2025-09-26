@@ -7,7 +7,7 @@
 #include "SRItemData.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
-#include "Actor/SRCaptionManagerActor.h"
+#include "Actor/Manager/SRCaptionManagerActor.h"
 
 void USRItemPickupResultPresenter::Init(UActorComponent* InitComponent, UUserWidget* InitWidget)
 {

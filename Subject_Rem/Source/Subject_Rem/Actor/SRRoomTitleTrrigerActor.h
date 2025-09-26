@@ -16,7 +16,7 @@ struct FRoomTitleInfo
 	TSoftObjectPtr<UTexture2D> Image;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoomTitle")
-	FVector2D Size = FVector2D(405.84f, 106.32f);
+	FVector2D Size = FVector2D(405.84f, 106.32f); //2개로 나뉨 자주 쓰는걸 대입해놓음 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RoomTitle")
 	FVector2D Position = FVector2D(757.f, 40.f); // 위젯 내부에서 RenderTranslation 등에 사용

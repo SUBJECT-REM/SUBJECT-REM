@@ -57,7 +57,7 @@ struct FSRItemBaseData
 
 	/*아이템 이름*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName Name;
+	FText Name;
 
 	/*아이템 설명*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (MultiLine = true))
@@ -102,10 +102,7 @@ struct FSRClueCombineRuleData : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName ClueId1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName ClueId2;
+	TArray<FName> ClueIds;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDataTableRowHandle ClueCombineResult; // → FSRClueMapData
@@ -123,23 +120,11 @@ public:
 
 	/*아이템 이름*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName Name;
+	FText Name;
 
 	/*아이템 설명*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (MultiLine = true))
 	FText Description;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName LeftIconItemName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName RightIconItemName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftObjectPtr<UTexture2D> LeftIcon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftObjectPtr<UTexture2D> RightIcon;
 
 	/*단서 조합 후 즉시 증가하는 스트레스 증가량 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -183,8 +168,57 @@ struct FSRDeviceItemData : public FTableRowBase
 	GENERATED_BODY()
 
 public:
+	//3 or 1 - 오디오조합기계 or 슈퍼컴퓨터
+	//오디오조합기계 -> ClueMap 생성, 슈퍼컴퓨터 -> 새로운 Clue획득
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	uint8 DeviceCombineSlotNum;
+	uint8 UsingClueNum;
 
+	//여기서 UsingClueNum에 따른 기획이 정해져있으니까, 
+	//거기서는 FSRClueCombineRuleData를 통해 여기서는 Clue에 따른 모든 조합결과를 표시할수있으니 (1개 2개 3개)
+	//
+	//인벤토리쪽에서 CombineClue함수쪽에서 1개 ,2개 ,3개에 따른 각각 구현을하는건 어떤거같음?
 
+};
+
+USTRUCT(BlueprintType)
+struct FSRCaptionData : public FTableRowBase
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText Text;
+
+	//이어서 재생할 자막 RowName ;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName NextTextRowName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Skipable;
+};
+
+USTRUCT(BlueprintType)
+struct FSRClueMapUIData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly) FSRClueMapData ClueMap;
+	UPROPERTY(BlueprintReadOnly) TArray<FName> ClueIds;
+	UPROPERTY(BlueprintReadOnly) TArray<FText> ClueNames;
+
+	UPROPERTY(BlueprintReadOnly) TArray<TSoftObjectPtr<UTexture2D>> ClueIcons;
+	/*진실, 거짓단서 유무*/
+	UPROPERTY(BlueprintReadWrite)
+	bool bResult;
+};
+
+USTRUCT(BlueprintType)
+struct FSRDeviceUIData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSRItemBaseData Base;   // Id, Icon, Name 등
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 UsingSlotNum = 2;      // UsingClueNum (1/2/3)
 };

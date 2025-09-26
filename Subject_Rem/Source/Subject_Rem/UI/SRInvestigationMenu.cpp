@@ -5,7 +5,7 @@
 #include "UI/SRInventoryWidget.h"
 #include "UI/ClueMap/SRClueMapWidget.h"
 #include "UI/SRClueWidget.h" 
-#include "Actor/Tutorial/SRTutorialManager.h"
+#include "Actor/Manager/SRGameFlowManager.h"
 #include "Components/Button.h"
 #include "Components/Overlay.h"
 #include "Components/CanvasPanelSlot.h"
@@ -15,7 +15,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "SRGameplayTags.h"
 #include "Animation/WidgetAnimation.h"
-#include "Actor/SRCaptionManagerActor.h"
+#include "Actor/Manager/SRCaptionManagerActor.h"
 #include "Component/SRInventoryComponent.h"
 
 
@@ -41,10 +41,10 @@ void USRInvestigationMenu::InitInvestigationMenuWidget(UActorComponent* DataSour
 
 	Invencomp = Cast<USRInventoryComponent>(DataSourceComp);
 
-	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRTutorialManager::StaticClass());
+	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRGameFlowManager::StaticClass());
 	if (FoundActor)
 	{
-		 TutorialManager = Cast<ASRTutorialManager>(FoundActor);
+		 TutorialManager = Cast<ASRGameFlowManager>(FoundActor);
 	}
 	else
 	{
@@ -52,8 +52,8 @@ void USRInvestigationMenu::InitInvestigationMenuWidget(UActorComponent* DataSour
 	}
 	if (TutorialManager)
 	{
-		TutorialManager->OnTutorialStartDelegate.AddDynamic(this, &ThisClass::OnTutorialStart);
-		TutorialManager->OnTutorialCompleteDelegate.AddDynamic(this, &ThisClass::OnTutorialComplete);
+		TutorialManager->OnFlowStartDelegate.AddDynamic(this, &ThisClass::OnTutorialStart);
+		TutorialManager->OnFlowCompleteDelegate.AddDynamic(this, &ThisClass::OnTutorialComplete);
 	}
 }
 

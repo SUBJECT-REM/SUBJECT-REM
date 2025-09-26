@@ -8,7 +8,7 @@
 #include "Engine/TimerHandle.h"
 #include "SRTutorialComponent.generated.h"
 
-class ASRTutorialManager;
+class ASRGameFlowManager;
 class UWidgetComponent;
 
 /*튜토리얼 매니저를 참조해서 튜토리얼을 목적 태그를 바인딩할 컴포넌트 
@@ -45,7 +45,7 @@ private:
 
 	UFUNCTION()
 	void HandleTutorialCompleted(FGameplayTag Tag);
-	TWeakObjectPtr<ASRTutorialManager> TutorialManager;
+	TWeakObjectPtr<ASRGameFlowManager> TutorialManager;
 		
 	/** 지연 완료할 목표 태그 저장 */
 	FGameplayTag PendingObjectiveTag;

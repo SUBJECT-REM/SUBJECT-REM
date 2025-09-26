@@ -10,7 +10,7 @@
 class UButton;
 class UImage;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FClueMapCombinedResultClickedSignature, const FSRClueMapData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FClueMapCombinedResultClickedSignature, const FName&, Id);
 
 UCLASS()
 class SUBJECT_REM_API USRClueMapCombinedResultWidget : public UUserWidget
@@ -19,7 +19,7 @@ class SUBJECT_REM_API USRClueMapCombinedResultWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
-	void UpdateLeftRightClueImage(TSoftObjectPtr<UTexture2D> Left, TSoftObjectPtr<UTexture2D> Right);
+	void UpdateClueImage(TArray<TSoftObjectPtr<UTexture2D>> Icons);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 	UDataTable* ClueDataTable;
@@ -27,23 +27,29 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterSelect")
 	FName CombinedClueID;
 
+	UPROPERTY(meta = (BindWidget))
+	class UWidgetSwitcher* LayoutSwitcher;
+
 	//Descrtion을 위한 Button
 	UPROPERTY(meta = (BindWidget))
-	UButton* CombinedClueButton;
+	UButton* ClueMapDesShownButton;
 	//Button Image; 
 	UPROPERTY(meta = (BindWidget))
 	UImage* LeftClueImage;
 	UPROPERTY(meta = (BindWidget))
 	UImage* RightClueImage;
 
-	FClueMapCombinedResultClickedSignature ClueMapCombinedResultClickedDelegate;
+	UPROPERTY(meta = (BindWidget))
+	UImage* LeftClueImage_3;
 
-	//진실 단서인지 여기서 결정해도 됌.이 아니라 결정할 필요가 없다.
-	//그냥 결국 Description에 설명이 나오고
-	//진실 단서는 연결을 하는 것이니까. - 이 Widget에 연결과 관련해서만 수정하면 된다.
-	//그럼 연결은 내 생각에 ClueMapWidget에서 하는게 나을 것 같다.
-	//그 이유는 여긴 ClueMapCombine을 나타내는 Widget인거고
-	//ClueMapWidget에서 선을 나타내면 끝이니까.
+	UPROPERTY(meta = (BindWidget))
+	UImage* MidImage_3;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* RightClueImage_3;
+	
+
+	FClueMapCombinedResultClickedSignature ClueMapCombinedResultClickedDelegate;
 
 public:
 	FORCEINLINE bool GetIsFoundCombinedClue() const { return bIsFoundCombinedClue; };
@@ -53,4 +59,7 @@ private:
 
 	UFUNCTION()
 	void OnCobminedClueButtonClicked();
+
+	void SetImageBrush(UImage* Image, const TSoftObjectPtr<UTexture2D>& SoftTex);
+
 };

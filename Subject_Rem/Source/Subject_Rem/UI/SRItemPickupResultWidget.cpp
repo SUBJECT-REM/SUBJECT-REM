@@ -37,9 +37,9 @@ void USRItemPickupResultWidget::SetItemDes(FText Text)
 	ItemDes->ForceLayoutPrepass();
 }
 
-void USRItemPickupResultWidget::SetItemName(FName Text)
+void USRItemPickupResultWidget::SetItemName(FText Text)
 {
-	ItemName->SetText(FText::FromName(Text));
+	ItemName->SetText(Text);
 	ItemName->InvalidateLayoutAndVolatility();
 	ItemName->ForceLayoutPrepass();
 }

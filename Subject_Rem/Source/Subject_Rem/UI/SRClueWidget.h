@@ -16,6 +16,7 @@ class UButton;
 class USRSlotWidget;
 class USRClueCombineResultWidget;
 
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCombineButtonClickedSignature, TArray<FName>, ClickedSlot);
 
 UCLASS()
@@ -29,8 +30,9 @@ public:
 	* @param 갱신하기 위한 데이터
 	*/
 	void UpdateClueGridWidget(const FSRItemBaseData& Data);
-	void UpdateClueCombineResultWidget(const FSRClueMapData& Data);
-	
+	void UpdateClueCombineResultWidget(const FSRClueMapUIData& Data);
+	void UpdateDeviceGridWidget(const FSRDeviceUIData& Data);
+
 	FCombineButtonClickedSignature CombineButtonClickedDelegate;
 protected:
 	virtual void NativeConstruct() override;
@@ -39,10 +41,23 @@ protected:
 	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
 	UGridPanel* ClueGridPanel;
 
+	/*디바이스들을 보여주는 패널*/
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	UGridPanel* DeviceGridPanel;
+	
 	/*단서 조합 패널*/
+	//디바이스에 따른 위젯스위처
+	UPROPERTY(meta = (BindWidget))
+	class UWidgetSwitcher* ClueCombineSwitcher;
+
 	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
 	UGridPanel* ClueCombineGridPanel;
 
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	UGridPanel* One_ClueCombine;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	UGridPanel* Three_ClueCombineGridPanel;
 private:
 
 	/*
@@ -65,7 +80,8 @@ private:
 	UFUNCTION()
 	void OnClickedCombineButton();
 
-
+	UFUNCTION()
+	void OnClickedDeviceSlot(USRSlotWidget* ClickedSlot);
 
 	/*단서 조합 결과*/
 	UPROPERTY(meta = (BindWidget))
@@ -81,5 +97,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Styles")
 	FButtonStyle ClueSlotButtonSelectedStyle;
 
-	const int VaildCombineItemNum = 2;
+	int CurVaildCombineItemNum = 2;
+
+	TMap<FName, uint8> CashedDeviceUsingClueNum;
 };

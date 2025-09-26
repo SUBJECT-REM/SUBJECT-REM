@@ -16,9 +16,7 @@ void USRDragDropOperation::MoveToSlotData(USRSlotWidget* Drop)
 		return;
 	}
 
-	Drop->SetItemData(DraggedSlotItemData);
-	Drop->SetItemIcon(DraggedSlotItemData.Icon);
-	Drop->SetIsOccupied(true);
+	Drop->Fill(DraggedSlotItemData);
 
 	//드래그한곳에서 다시 드랍한다면
 	if (Drop == DraggedSlot)
@@ -27,9 +25,6 @@ void USRDragDropOperation::MoveToSlotData(USRSlotWidget* Drop)
 		return;
 	}
 
-	DraggedSlot->SetItemData(FSRItemBaseData());
-	DraggedSlot->SetItemIcon(nullptr);
-	DraggedSlot->SetIsOccupied(false);
-
+	DraggedSlot->Clear();
 	UE_LOG(LogTemp, Warning, TEXT("SlotDragDropOper : Move To Data "));
 }

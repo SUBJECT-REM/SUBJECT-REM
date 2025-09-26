@@ -42,6 +42,11 @@ void USRInventoryComponent::AddClueData(const FSRItemBaseData& Data)
 	AddClueDatasDelegate.Broadcast(Data);
 }
 
+void USRInventoryComponent::AddDeviceData(const FSRDeviceUIData& Data)
+{
+	AddDeviceDataDelegate.Broadcast(Data);
+}
+
 void USRInventoryComponent::AddItemData(const FSRItemData& Data)
 {
 	AddInventoryDataDelegate.Broadcast(Data.BaseInfo);
@@ -59,15 +64,48 @@ void USRInventoryComponent::EnsureItemPickupPresenter()
 	}
 }
 
+bool USRInventoryComponent::TryGetDeviceRow(const FSRItemData& ItemData, FSRDeviceItemData& OutDeviceRow) const
+{
+	const FDataTableRowHandle& Handle = ItemData.ItemDataTable;
+	const UDataTable* Table = Handle.DataTable;
+	if (!Table) return false;
+
+	const UScriptStruct* RowStruct = Table->GetRowStruct();
+	if (RowStruct != FSRDeviceItemData::StaticStruct())
+	{
+		// 이 테이블은 디바이스 테이블이 아님
+		return false;
+	}
+
+	FString Ctx(TEXT("DeviceRowLookup"));
+	if (const FSRDeviceItemData* Row = Table->FindRow<FSRDeviceItemData>(Handle.RowName, Ctx))
+	{
+		OutDeviceRow = *Row; // 복사
+		return true;
+	}
+	
+	return false;
+}
+
 void USRInventoryComponent::AddItem(const USRItem* Item)
 {
 	check(Item);
 
 	const IUseableInterface* UseableItem = Cast<IUseableInterface>(Item);
 	const FSRItemData ItemData = Item->GetItemData();
-	
 
-	if (UseableItem)
+	FSRDeviceItemData DeviceRow;
+	if (TryGetDeviceRow(ItemData, DeviceRow))
+	{
+		//Device데이터임.
+
+		FSRDeviceUIData UIData;
+		UIData.Base = ItemData.BaseInfo;
+		UIData.UsingSlotNum = FMath::Clamp<int32>(DeviceRow.UsingClueNum, 1, 3);
+
+		AddDeviceData(UIData);
+	}
+	else if (UseableItem)
 	{
 
 	}
@@ -97,55 +135,100 @@ void USRInventoryComponent::RemoveItems(const TArray<FName>& ItemIds)
 
 void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
 {
-	if (!ClueCombineRuleDataTable || ClueIds.Num() != 2)
+    if (!ClueCombineRuleDataTable || ClueIds.Num() < 2)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("조합 실패: 잘못된 단서 개수 또는 테이블 없음"));
+        return;
+    }
+
+    // None 제거(순서 유지)
+	ClueIds.RemoveAll([](const FName& N) { return N.IsNone(); });
+
+    // 순서 비교 람다
+    auto IsOrderedEqual = [](const TArray<FName>& A, const TArray<FName>& B)
+        {
+            if (A.Num() != B.Num()) return false;
+            for (int32 i = 0; i < A.Num(); ++i)
+                if (A[i] != B[i]) return false;
+            return true;
+        };
+
+    const FSRClueCombineRuleData* MatchedRule = nullptr;
+    FSRClueMapData* FoundClueMap = nullptr;
+
+    // 룰 순회: 개수 먼저 필터 → 순서 그대로 비교
+    for (const auto& Pair : ClueCombineRuleDataTable->GetRowMap())
+    {
+        const FSRClueCombineRuleData* Rule = reinterpret_cast<const FSRClueCombineRuleData*>(Pair.Value);
+        if (!Rule) continue;
+
+        // 룰의 재료 목록(신규 필드 우선, 없으면 구버전 2개 사용)
+        TArray<FName> RuleIds = Rule->ClueIds;
+   
+        // 1) 개수 다르면 스킵 (예: 2 vs 3)
+        if (RuleIds.Num() != ClueIds.Num())
+            continue;
+
+        // 2) 순서 그대로 동일해야 매치
+        if (!IsOrderedEqual(RuleIds, ClueIds))
+            continue;
+
+        // 결과 로우 접근
+        const FDataTableRowHandle& R = Rule->ClueCombineResult;
+        if (!R.DataTable) { UE_LOG(LogTemp, Warning, TEXT("ClueMapRow.DataTable nullptr")); return; }
+
+        FString Ctx(TEXT("ClueMap"));
+        FoundClueMap = R.DataTable->FindRow<FSRClueMapData>(R.RowName, Ctx);
+        if (!FoundClueMap) { UE_LOG(LogTemp, Warning, TEXT("ClueMapData 찾기 실패: %s"), *R.RowName.ToString()); return; }
+
+        MatchedRule = Rule;
+        break;
+    }
+
+    if (!MatchedRule || !FoundClueMap)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("일치하는(순서 민감) 조합 룰이 없음"));
+        return;
+    }
+
+    // 진실만 누적(기존 로직 유지)
+    if (FoundClueMap->bResult)
+    {
+        ClueMapDatas.Add(*FoundClueMap);
+    }
+
+    // 재료 제거 (입력 순서 그대로)
+    RemoveItems(ClueIds);
+
+    // ---- UI 페이로드 구성 & 방송 (요지는 동일, 생략 가능) ----
+    FSRClueMapUIData Payload;
+    Payload.ClueMap = *FoundClueMap;
+    Payload.ClueIds = ClueIds; // 순서 보존
+	Payload.bResult = FoundClueMap->bResult;
+    if (AllItemsDataTable)
+    {
+        // AllItemData에서 이름/아이콘 조회
+        for (const FName& Id : ClueIds)
+        {
+            FString FindClueCtx;
+            FSRItemData* FindClue = AllItemsDataTable->FindRow<FSRItemData>(Id, FindClueCtx);
+
+            if (FindClue)
+            {
+                Payload.ClueNames.Add(FindClue->BaseInfo.Name);
+                Payload.ClueIcons.Add(FindClue->BaseInfo.Icon);
+                
+            }
+
+        }
+    }
+
+    ClueCombineResultDelegate.Broadcast(Payload);
+
+	//아이템 조합 후 표출될 자막이 있다면
+	if (FoundClueMap->bShowCaption)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("조합 실패: 잘못된 단서 개수 또는 테이블 없음"));
-		return;
-	}
-
-	const FName ClueA = ClueIds[0];
-	const FName ClueB = ClueIds[1];
-
-	// 테이블 순회
-	for (const auto& Row : ClueCombineRuleDataTable->GetRowMap())
-	{
-		const FSRClueCombineRuleData* CombineRuleData = reinterpret_cast<FSRClueCombineRuleData*>(Row.Value);
-		if (!CombineRuleData) continue;
-
-		const bool bMatch =
-			(CombineRuleData->ClueId1 == ClueA && CombineRuleData->ClueId2 == ClueB);
-
-		if (bMatch)
-		{
-			// 결과 Row 접근
-			FString ClueMapContext;
-			const FDataTableRowHandle& ClueMapRow = CombineRuleData->ClueCombineResult;
-			FName ClueCombineResultRowName = ClueMapRow.RowName;
-			const UDataTable* ClueMapDataTable = ClueMapRow.DataTable;
-
-			if (!ClueMapDataTable)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("ClueCombineRule RowName :%s"), *ClueCombineResultRowName.ToString());
-				UE_LOG(LogTemp, Warning, TEXT("ClueCombineRule : ClueMapRow Data Table nullptr"));
-				return;
-			}
-
-			FSRClueMapData* FindClueMapResult = ClueMapDataTable->FindRow<FSRClueMapData>(ClueCombineResultRowName, ClueMapContext);
-
-			//bResult -> true 진실, false 면 거짓.
-			if (!FindClueMapResult)
-				return;
-			if (FindClueMapResult->bResult)
-			{
-				ClueMapDatas.Add(*FindClueMapResult);				
-			}
-		
-			RemoveItems(ClueIds);
-
-			//UI 델리게이트 브로드캐스트
-			ClueCombineResultDelegate.Broadcast(*FindClueMapResult);
-			return;
-		}
+		ClueCombineCaptionDelegate.Broadcast(FoundClueMap->CaptionRow.RowName);
 	}
 }
 

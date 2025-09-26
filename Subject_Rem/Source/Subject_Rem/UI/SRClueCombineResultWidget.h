@@ -22,13 +22,13 @@ class SUBJECT_REM_API USRClueCombineResultWidget : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetClueMapImage(TSoftObjectPtr<UTexture2D> LeftIcon, TSoftObjectPtr<UTexture2D> RightIcon);
+	void SetClueMapImage(TArray<TSoftObjectPtr<UTexture2D>> Icons);
 
 	UFUNCTION(BlueprintCallable)
 	void SetClueMapDes(FText Text);
 
 	UFUNCTION(BlueprintCallable)
-	void SetClueMapName(FName Text);
+	void SetClueMapName(FText Text);
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
 	UButton* CloseButton;
@@ -39,11 +39,24 @@ private:
 	UFUNCTION()
 	void OnClickedCloseButton();
 
+	void EnsureLayoutByCount(uint8 Count);
+
+	void SetImageBrush(UImage* Image, const TSoftObjectPtr<UTexture2D>& SoftTex);
+
+
+	UPROPERTY(meta = (BindWidget))
+	class UWidgetSwitcher* LayoutSwitcher;
+
 	UPROPERTY(meta = (BindWidget))
 	UImage* ClueLeftImage;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* ClueRightImage;
+
+	// 3개 레이아웃
+	UPROPERTY(meta = (BindWidget)) UImage* ClueLeftImage_3;
+	UPROPERTY(meta = (BindWidget)) UImage* ClueMidImage_3;
+	UPROPERTY(meta = (BindWidget)) UImage* ClueRightImage_3;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ClueMapDes;

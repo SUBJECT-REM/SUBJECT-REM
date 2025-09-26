@@ -27,11 +27,10 @@ void USRInventoryWidget::NativeConstruct()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("InvenGridPanel Children Cast cannot be cast to USRSlotWidget"));
 		}
-		InvenSlot->SetItemIcon(nullptr);
+		InvenSlot->Clear();
 		InvenSlot->SetSlotButtonNormalStyle(InventorySlotButtonNormalStyle);
 		InvenSlot->SetSlotButtonSelectedStyle(InventorySlotButtonSelectedStyle);
 
-		InvenSlot->SetIsEnabled(true);
 		InvenSlot->OnSlotClickedDelegate.AddDynamic(this, &ThisClass::UpdateItemDescriptionPanel);
 		InvenSlot->OnSlotDropedDelegate.AddDynamic(this, &ThisClass::UnRegisterItemInQuickSlot);
 	}
@@ -46,9 +45,11 @@ void USRInventoryWidget::NativeConstruct()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("QuickSlotGridChild Children Cast cannot be cast to USRSlotWidget"));
 		}
-		QuickSlot->SetItemIcon(nullptr);
+		QuickSlot->SetItemIconVisualOnly(nullptr);
 		QuickSlot->OnSlotDropedDelegate.AddDynamic(this, &ThisClass::RegisterItemInQuickSlot);
 	}
+
+
 	ItemObserveImage->SetVisibility(ESlateVisibility::Hidden);
 	ItemName->SetText(FText::GetEmpty());
 	ItemDescription->SetText(FText::GetEmpty());
@@ -56,10 +57,10 @@ void USRInventoryWidget::NativeConstruct()
 
 }
 
-void USRInventoryWidget::UpdateItemName(FName Name)
+void USRInventoryWidget::UpdateItemName(FText Name)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UpdateItemName : %s "), *Name.ToString());
-	ItemName->SetText(FText::FromName(Name));
+	ItemName->SetText(Name);
 	ItemName->InvalidateLayoutAndVolatility();
 	ItemName->ForceLayoutPrepass();
 }
@@ -90,9 +91,7 @@ void USRInventoryWidget::AddItemInventoryGridPanel(const FSRItemBaseData& Data)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Updated Inventory Slot Name %s"), *InvenSlot->GetName());
 
-			InvenSlot->SetItemData(Data);
-			InvenSlot->SetItemIcon(InvenSlot->GetItemData().Icon);
-			InvenSlot->SetIsOccupied(true);
+			InvenSlot->Fill(Data);
 			break;
 		}
 	}
@@ -108,9 +107,7 @@ void USRInventoryWidget::RemoveItemInventoryGridPanel(const TArray<FName>& ItemI
 		const FSRItemBaseData& Data = InvenSlot->GetItemData();
 		if (ItemIds.Contains(Data.Id))
 		{
-			InvenSlot->SetItemIcon(nullptr);
-			InvenSlot->SetItemData(FSRItemBaseData());
-			InvenSlot->SetIsOccupied(false);
+			InvenSlot->Clear();
 		}
 	}
 }
@@ -126,7 +123,7 @@ void USRInventoryWidget::UpdateQuickSlotGridPanel(int8 Index, TSoftObjectPtr<UTe
 		return;
 
 	QuickSlot->SetIsEnabled(true);
-	QuickSlot->SetItemIcon(Icon);
+	QuickSlot->SetItemIconVisualOnly(Icon);
 }
 
 void USRInventoryWidget::UpdateItemDescriptionPanel(USRSlotWidget* ClickedSlot)
@@ -170,15 +167,17 @@ void USRInventoryWidget::RegisterItemInQuickSlot(USRSlotWidget* DropedSlot, USRS
 		if (!bOk)
 		{
 			// 2) 실패 → 시각적으로 되돌리기
-			// (a) 드랍된 퀵슬롯 비우기
-			DropedSlot->SetItemIcon(nullptr);
-			DropedSlot->SetItemData(FSRItemBaseData());
-			DropedSlot->SetIsOccupied(false);
+			//// (a) 드랍된 퀵슬롯 비우기
+			//DropedSlot->SetItemIcon(nullptr);
+			//DropedSlot->SetItemData(FSRItemBaseData());
+			//DropedSlot->SetIsOccupied(false);
+			DropedSlot->Clear();
 
 			// (b) 원래 인벤토리 슬롯 복구
+			DraggedSlot->Fill(MovedData);/*
 			DraggedSlot->SetItemData(MovedData);
 			DraggedSlot->SetItemIcon(MovedData.Icon);
-			DraggedSlot->SetIsOccupied(true);
+			DraggedSlot->SetIsOccupied(true);*/
 
 			UE_LOG(LogTemp, Warning, TEXT("QuickSlot register rejected. Reverted visuals."));
 			return;
