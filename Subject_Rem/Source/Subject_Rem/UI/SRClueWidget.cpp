@@ -121,7 +121,8 @@ void USRClueWidget::ClueDataMoveToClueCombine(USRSlotWidget* ClickedSlot)
 {
 	check(ClueCombineGridPanel)
 
-	TArray<UWidget*> Child = ClueCombineGridPanel->GetAllChildren();
+
+	TArray<UWidget*> Child = GetCurrentClueCombineGrid()->GetAllChildren();
 
 	for (UWidget* Widget : Child)
 	{
@@ -167,7 +168,7 @@ void USRClueWidget::OnClickedCombineButton()
 
 	TArray<FName> CombinedClueIds;
 
-	for (UWidget* Widget : ClueCombineGridPanel->GetAllChildren())
+	for (UWidget* Widget : GetCurrentClueCombineGrid()->GetAllChildren())
 	{
 		USRSlotWidget* ClueCombineSlot = Cast<USRSlotWidget>(Widget);
 		FSRItemBaseData Data = ClueCombineSlot->GetItemData();
@@ -203,4 +204,9 @@ void USRClueWidget::OnClickedDeviceSlot(USRSlotWidget* ClickedSlot)
 		ClueCombineSwitcher->SetActiveWidgetIndex(FindUsingCombineSlotNum - 1);
 		CurVaildCombineItemNum = FindUsingCombineSlotNum;
 	}
+}
+
+UGridPanel* USRClueWidget::GetCurrentClueCombineGrid()
+{
+	return Cast<UGridPanel>(ClueCombineSwitcher->GetActiveWidget());
 }
