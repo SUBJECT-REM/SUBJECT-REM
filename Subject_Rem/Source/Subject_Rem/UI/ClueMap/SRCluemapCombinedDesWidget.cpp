@@ -18,10 +18,7 @@ void USRCluemapCombinedDesWidget::NativeConstruct()
 void USRCluemapCombinedDesWidget::SetClueIcons(TArray<TSoftObjectPtr<UTexture2D>> Icons)
 {
 	const int32 N = Icons.Num();
-    if (LayoutSwitcher)
-    {
-        LayoutSwitcher->SetActiveWidgetIndex(N == 3 ? 1 : 0); // ← 세미콜론 빠져있었음!
-    }
+    EnsureLayoutByCount(N);
 
     if (N == 2)
     {
@@ -116,8 +113,8 @@ void USRCluemapCombinedDesWidget::EnsureLayoutByCount(uint8 Count)
 {
     // 2/3 외 값 방어
     const int32 Cnt = (Count == 3) ? 3 : 2;
-    if (LayoutSwitcher)
-    {
-        LayoutSwitcher->SetActiveWidgetIndex(Cnt == 3 ? 1 : 0);
-    }
+    
+    IconLayoutSwitcher->SetActiveWidgetIndex(Cnt == 3 ? 1 : 0);
+    ItemNameLayoutSwitcher->SetActiveWidgetIndex(Cnt == 3 ? 1 : 0);
+    
 }

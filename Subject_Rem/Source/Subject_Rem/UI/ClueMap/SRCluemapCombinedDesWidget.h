@@ -35,22 +35,24 @@ private:
 	void HideRichText(URichTextBlock* Label);
 	void EnsureLayoutByCount(uint8 Count);
 	// Switcher + 2개 레이아웃
-	UPROPERTY(meta = (BindWidgetOptional)) class UWidgetSwitcher* LayoutSwitcher;
-	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueLeftImage;   // 2개용 Left
-	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueRightImage;  // 2개용 Right
+	UPROPERTY(meta = (BindWidget)) class UWidgetSwitcher* IconLayoutSwitcher;
+
+	UPROPERTY(meta = (BindWidget)) class UWidgetSwitcher* ItemNameLayoutSwitcher;
+	UPROPERTY(meta = (BindWidget)) UImage* ClueLeftImage;   // 2개용 Left
+	UPROPERTY(meta = (BindWidget)) UImage* ClueRightImage;  // 2개용 Right
 
 	// 3개 레이아웃
-	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueLeftImage_3;
-	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueMidImage_3;
-	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueRightImage_3;
+	UPROPERTY(meta = (BindWidget)) UImage* ClueLeftImage_3;
+	UPROPERTY(meta = (BindWidget)) UImage* ClueMidImage_3;
+	UPROPERTY(meta = (BindWidget)) UImage* ClueRightImage_3;
 
 
-	UPROPERTY(meta = (BindWidgetOptional)) URichTextBlock* LeftImageItemName;
-	UPROPERTY(meta = (BindWidgetOptional)) URichTextBlock* RightImageItemName;
+	UPROPERTY(meta = (BindWidget)) URichTextBlock* LeftImageItemName;
+	UPROPERTY(meta = (BindWidget)) URichTextBlock* RightImageItemName;
 
-	UPROPERTY(meta = (BindWidgetOptional)) URichTextBlock* LeftImageItemName_3;
-	UPROPERTY(meta = (BindWidgetOptional)) URichTextBlock* MidImageItemName_3;
-	UPROPERTY(meta = (BindWidgetOptional)) URichTextBlock* RightImageItemName_3;
+	UPROPERTY(meta = (BindWidget)) URichTextBlock* LeftImageItemName_3;
+	UPROPERTY(meta = (BindWidget)) URichTextBlock* MidImageItemName_3;
+	UPROPERTY(meta = (BindWidget)) URichTextBlock* RightImageItemName_3;
 
 	UPROPERTY(meta = (BindWidget))
 	URichTextBlock* ClueMapName;

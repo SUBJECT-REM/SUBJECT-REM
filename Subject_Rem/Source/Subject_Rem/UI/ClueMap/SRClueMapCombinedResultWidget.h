@@ -17,6 +17,8 @@ class SUBJECT_REM_API USRClueMapCombinedResultWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
+	virtual void NativePreConstruct() override;   
+
 	virtual void NativeConstruct() override;
 
 	void UpdateClueImage(TArray<TSoftObjectPtr<UTexture2D>> Icons);
@@ -54,12 +56,16 @@ public:
 public:
 	FORCEINLINE bool GetIsFoundCombinedClue() const { return bIsFoundCombinedClue; };
 	FORCEINLINE void SetIsFoundCombinedClue(bool newIsFound) { bIsFoundCombinedClue = newIsFound; };
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	uint8 ExpectedIconCount = 2; // 2 또는 3
 private:
 	bool bIsFoundCombinedClue = false;
 
 	UFUNCTION()
 	void OnCobminedClueButtonClicked();
 
-	void SetImageBrush(UImage* Image, const TSoftObjectPtr<UTexture2D>& SoftTex);
+	void SetImageBrush(UImage* Image, const TSoftObjectPtr<UTexture2D> SoftTex);
+
 
 };
