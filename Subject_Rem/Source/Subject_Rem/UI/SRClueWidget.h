@@ -97,7 +97,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Styles")
 	FButtonStyle ClueSlotButtonSelectedStyle;
 
-	const int VaildCombineItemNum = 2;
+	int CurVaildCombineItemNum = 2;
 
 	TMap<FName, uint8> CashedDeviceUsingClueNum;
 };

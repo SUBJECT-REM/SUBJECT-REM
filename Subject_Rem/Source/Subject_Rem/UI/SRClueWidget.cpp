@@ -181,7 +181,7 @@ void USRClueWidget::OnClickedCombineButton()
 		ClueCombineSlot->SetIsEnabled(true);
 	}
 
-	if (CombinedClueIds.Num() == VaildCombineItemNum)
+	if (CombinedClueIds.Num() == CurVaildCombineItemNum)
 	{
 		CombineButtonClickedDelegate.Broadcast(CombinedClueIds);
 	}
@@ -201,5 +201,6 @@ void USRClueWidget::OnClickedDeviceSlot(USRSlotWidget* ClickedSlot)
 			return;
 		uint8 FindUsingCombineSlotNum = *FindUsingCombineSlotNumPtr;
 		ClueCombineSwitcher->SetActiveWidgetIndex(FindUsingCombineSlotNum - 1);
+		CurVaildCombineItemNum = FindUsingCombineSlotNum;
 	}
 }
