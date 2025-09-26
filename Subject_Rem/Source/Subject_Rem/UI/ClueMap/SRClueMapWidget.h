@@ -25,13 +25,6 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
-	//조합된 Clue들은 해당 Canvas 아래에 넣으면 됩니다.
-	//UPROPERTY(meta = (BindWidget))
-	//UCanvasPanel* ClueMapCanvas;
-
-	//UPROPERTY(meta = (BindWidget))
-	//UCanvasPanel* ClueLinkLineCanvas;
-
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* RootCanvasPanel;
 
@@ -79,11 +72,14 @@ private:
 	//TODO: DatTable에서 TrueClueMap 개수 개져와서 설정하기.
 
 	UFUNCTION()
-	void UpdateClueMapCombinedResultDescriptionWidget(const FSRClueMapData& Data);
+	void UpdateClueMapCombinedResultDescriptionWidget(const FName& Id);
 
 	UPROPERTY(EditDefaultsOnly)
 	int32  MaxTrueClueMapNum = 12;
 
 	float GetProgressRatio() const; // 추가
+
+	// 캐시 추가
+	TMap<FName, FSRClueMapUIData> CachedUIByClueId;
 
 };

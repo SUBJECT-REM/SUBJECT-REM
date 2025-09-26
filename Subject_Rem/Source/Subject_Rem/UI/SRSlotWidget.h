@@ -34,8 +34,9 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
 	UImage* ItemIconImage;
 
-	UFUNCTION(BlueprintCallable)
-	void SetItemIcon(TSoftObjectPtr<UTexture2D> IconTexture);
+	void Fill(const FSRItemBaseData& NewData);
+	void Clear();
+
 
 	void ApplyButtonStyle(const FButtonStyle& InStyle);
 
@@ -44,12 +45,13 @@ public:
 
 	void SetSlotButtonSelectedStyle(const FButtonStyle& InStyle);
 	const FButtonStyle& GetSlotButtonSelectedStyle();
-	void SetItemData(const FSRItemBaseData& NewData);
 	const FSRItemBaseData& GetItemData() const;
 
 
-	void SetIsOccupied(bool IsOccupied);
 	bool GetIsOccupied() const { return bIsOccupied; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetItemIconVisualOnly(TSoftObjectPtr<UTexture2D> IconTexture);
 protected:
 	virtual void NativeConstruct() override;
 
@@ -58,6 +60,12 @@ private:
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	
+	void SetItemData(const FSRItemBaseData& NewData);
+	void SetIsOccupied(bool IsOccupied);
+
+	UFUNCTION(BlueprintCallable)
+	void SetItemIcon(TSoftObjectPtr<UTexture2D> IconTexture);
+
 	UFUNCTION()
 	void SlotDragCancelled(UDragDropOperation* DragDropOper);
 	//메시, 아이콘, 이름 ,Id, 설명이 담겨있습니다.

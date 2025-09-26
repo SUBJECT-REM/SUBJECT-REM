@@ -10,7 +10,7 @@
 class UButton;
 class UImage;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FClueMapCombinedResultClickedSignature, const FSRClueMapData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FClueMapCombinedResultClickedSignature, const FName&, Id);
 
 UCLASS()
 class SUBJECT_REM_API USRClueMapCombinedResultWidget : public UUserWidget
@@ -19,7 +19,7 @@ class SUBJECT_REM_API USRClueMapCombinedResultWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
-	void UpdateLeftRightClueImage(TSoftObjectPtr<UTexture2D> Left, TSoftObjectPtr<UTexture2D> Right);
+	void UpdateClueImage(TArray<TSoftObjectPtr<UTexture2D>> Icons);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 	UDataTable* ClueDataTable;
@@ -59,4 +59,7 @@ private:
 
 	UFUNCTION()
 	void OnCobminedClueButtonClicked();
+
+	void SetImageBrush(UImage* Image, const TSoftObjectPtr<UTexture2D>& SoftTex);
+
 };

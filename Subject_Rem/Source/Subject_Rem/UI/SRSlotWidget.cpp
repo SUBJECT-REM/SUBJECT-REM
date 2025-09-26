@@ -9,6 +9,23 @@
 #include "Components/Image.h"
 
 
+void USRSlotWidget::SetItemIconVisualOnly(TSoftObjectPtr<UTexture2D> IconTexture)
+{
+	if (!ItemIconImage)
+		return;
+
+	if (!IconTexture.IsNull())
+	{
+		ItemIconImage->SetBrushFromSoftTexture(IconTexture, true);
+		ItemIconImage->SetVisibility(ESlateVisibility::HitTestInvisible);
+	}
+	else
+	{
+		ItemIconImage->SetBrushFromSoftTexture(nullptr, true);
+		ItemIconImage->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 void USRSlotWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -35,6 +52,21 @@ FReply USRSlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const
 	return reply.NativeReply;
 }
 
+void USRSlotWidget::Fill(const FSRItemBaseData& NewData)
+{
+	SetItemData(NewData);
+	SetItemIcon(NewData.Icon);
+	SetIsOccupied(true);
+
+}
+
+void USRSlotWidget::Clear()
+{
+	SetItemIcon(nullptr);
+	SetItemData(FSRItemBaseData());
+	SetIsOccupied(false);
+}
+
 void USRSlotWidget::SetItemIcon(TSoftObjectPtr<UTexture2D> IconTexture)
 {
 	if (!ItemIconImage)
@@ -44,13 +76,11 @@ void USRSlotWidget::SetItemIcon(TSoftObjectPtr<UTexture2D> IconTexture)
 	{
 		ItemIconImage->SetBrushFromSoftTexture(IconTexture, true);
 		ItemIconImage->SetVisibility(ESlateVisibility::HitTestInvisible);
-		UE_LOG(LogTemp, Warning, TEXT("SetTexture Icon %s"), *GetName());
 	}
 	else
 	{
 		ItemIconImage->SetBrushFromSoftTexture(nullptr, true);
 		ItemIconImage->SetVisibility(ESlateVisibility::Hidden); 
-
 	}
 }
 
@@ -121,9 +151,7 @@ void USRSlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoi
 		OutOperation = DragDropOper;
 
 		//빈슬롯으로 세팅해줍니다.
-		SetIsOccupied(false);
-		SetItemIcon(nullptr);
-		SetItemData(FSRItemBaseData());
+		Clear();
 	}
 
 }
@@ -162,8 +190,6 @@ void USRSlotWidget::SlotDragCancelled(UDragDropOperation* DragDropOper)
 
 	const FSRItemBaseData SlotItemData = SlotDragDropOper->DraggedSlotItemData;
 
-	SetItemData(SlotItemData);
-	SetItemIcon(SlotItemData.Icon);
-	SetIsOccupied(true);
+	Fill(SlotItemData);
 }
 

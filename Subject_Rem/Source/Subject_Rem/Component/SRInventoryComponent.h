@@ -13,7 +13,7 @@ class USRItem;
 class USRItemPickupResultPresenter;
 class USRStressLocalPlayerSubsystem;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddDeviceDataSignature, const FSRItemBaseData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddDeviceDataSignature, const FSRDeviceUIData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddClueDatasSignatue,const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddInventoryDataSignature, const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRemoveInventoryDataSignature, const TArray<FName>&, RemovedItemIds);
@@ -41,7 +41,7 @@ public:
 
 	/*Clue 변경에 대한 델리게이트*/
 	FAddClueDatasSignatue AddClueDatasDelegate;
-
+	FAddDeviceDataSignature AddDeviceDataDelegate;
 	/*인벤토리 아이템 추가,제거에 대한 델리게이트*/
 	FAddInventoryDataSignature AddInventoryDataDelegate;
 	FRemoveInventoryDataSignature RemoveInventoryDataDelegate;
@@ -64,12 +64,17 @@ private:
 	void AddClueData(const FSRItemBaseData& Data);
 
 	UFUNCTION(BlueprintCallable)
+	void AddDeviceData(const FSRDeviceUIData& Data);
+
+
+	UFUNCTION(BlueprintCallable)
 	void AddItemData(const FSRItemData& Data);
 
 	//아이템 줍기시 나타낼 위젯에 대한 Presenter를 생성 및 초기화합니다.
 	//아이템 줍을 시점 및 데이터와 밀접하여 InventoryComp에 넣어놨음.
 	void EnsureItemPickupPresenter();
 
+	bool TryGetDeviceRow(const FSRItemData& ItemData, FSRDeviceItemData& OutDeviceRow) const;
 
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* AllItemsDataTable;

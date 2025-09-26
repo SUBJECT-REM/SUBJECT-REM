@@ -131,11 +131,12 @@ void USRClueMapWidget::HandleCombinedClue(const FSRClueMapUIData& Data)
       if (Data.bResult == true)
       {
             UE_LOG(LogTemp, Warning, TEXT("True Clue Combined"));
-            
+            CachedUIByClueId.Add(CombinedClueID, Data);
+
             //WidgetImageSetting
             if (FindWidget)
             {
-                FindWidget->UpdateLeftRightClueImage(nullptr,nullptr);
+                FindWidget->UpdateClueImage(Data.ClueIcons);
             }
             
             TrueClues.Add(CombinedClueID);
@@ -164,15 +165,23 @@ void USRClueMapWidget::UpdatePercentTextBlock(float NewPercent)
     PercentTextBlock->SetText(FText::AsPercent(FMath::Clamp(NewPercent, 0.f, 1.f), &Opt));
 }
 
-void USRClueMapWidget::UpdateClueMapCombinedResultDescriptionWidget(const FSRClueMapData& Data)
+void USRClueMapWidget::UpdateClueMapCombinedResultDescriptionWidget(const FName& Id)
 {
+    const FSRClueMapUIData* Data = CachedUIByClueId.Find(Id);
 
-    //ClueMapCombinedDesWidget->SetLeftRightImage(Data.LeftIcon,Data.RightIcon);
-    ClueMapCombinedDesWidget->SetClueMapName(Data.Name);
-    //ClueMapCombinedDesWidget->SetLeftRightItemName(Data.LeftIconItemName,Data.RightIconItemName);
-    ClueMapCombinedDesWidget->SetClueMapDes(Data.Description);
+    if (!Data)
+        return;
 
-    //TODO : ClueMapCombinedDesWidget에서 직접 Visibility처리하도록 할것
+    // 아이콘 2/3 세팅
+    ClueMapCombinedDesWidget->SetClueIcons(Data->ClueIcons);
+
+   
+    ClueMapCombinedDesWidget->SetClueNamesText(Data->ClueNames);
+
+    // 조합 결과의 타이틀/설명
+    ClueMapCombinedDesWidget->SetClueMapName(Data->ClueMap.Name);
+    ClueMapCombinedDesWidget->SetClueMapDes(Data->ClueMap.Description);
+
     ClueMapCombinedDesWidget->SetVisibility(ESlateVisibility::Visible);
 }
 

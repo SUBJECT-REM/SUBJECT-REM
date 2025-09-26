@@ -28,7 +28,7 @@ public:
 	void SetClueMapDes(FText Text);
 
 	UFUNCTION(BlueprintCallable)
-	void SetClueMapName(FName Text);
+	void SetClueMapName(FText Text);
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
 	UButton* CloseButton;
@@ -38,6 +38,11 @@ protected:
 private:
 	UFUNCTION()
 	void OnClickedCloseButton();
+
+	void EnsureLayoutByCount(uint8 Count);
+
+	void SetImageBrush(UImage* Image, const TSoftObjectPtr<UTexture2D>& SoftTex);
+
 
 	UPROPERTY(meta = (BindWidget))
 	class UWidgetSwitcher* LayoutSwitcher;
@@ -49,9 +54,9 @@ private:
 	UImage* ClueRightImage;
 
 	// 3개 레이아웃
-	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueLeftImage_3;
-	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueMidImage_3;
-	UPROPERTY(meta = (BindWidgetOptional)) UImage* ClueRightImage_3;
+	UPROPERTY(meta = (BindWidget)) UImage* ClueLeftImage_3;
+	UPROPERTY(meta = (BindWidget)) UImage* ClueMidImage_3;
+	UPROPERTY(meta = (BindWidget)) UImage* ClueRightImage_3;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ClueMapDes;

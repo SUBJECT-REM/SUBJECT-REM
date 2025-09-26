@@ -39,7 +39,8 @@ void ASRGameFlowManager::DoNextFlow(FGameFlowInfo* Current, FGameplayTag Complet
     }
     else
     {
-        UE_LOG(LogTemp, Log, TEXT("Tutorial Finished!"));
+        CurrentFlowID = FGameplayTag();       // 무효화
+        CurrentObjectiveTag = FGameplayTag(); // 무효화
     }
     return;
 }

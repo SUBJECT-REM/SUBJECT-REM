@@ -90,17 +90,10 @@ void USRCluemapCombinedDesWidget::SetImageBrush(UImage* Image, const TSoftObject
         return;
     }
 
-    // 동기 로드 (프로토타입/에디터라면 OK, 추후 비동기 전환 가능)
-    if (!SoftTex.IsNull())
+    else
     {
         Image->SetBrushFromSoftTexture(SoftTex);
         Image->SetVisibility(ESlateVisibility::Visible);
-    }
-    else
-    {
-        // 로드 실패 시 안전 처리
-        Image->SetBrushFromSoftTexture(nullptr);
-        Image->SetVisibility(ESlateVisibility::Collapsed);
     }
 }
 

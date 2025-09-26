@@ -21,16 +21,22 @@ void USRQuickSlotWidget::NativeConstruct()
 			USRQuickSlotComponent* QuickSlotComp = Actor->FindComponentByClass<USRQuickSlotComponent>();
 			if (QuickSlotComp)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("QuickSlot Widget Bind To Player QuickSlotComp"));
 				QuickSlotComp->OnQuickSlotChangedDelegate.AddDynamic(this, &ThisClass::OnSlotChange);
 			}
 		}
 	}
-	else
+
+	TArray<UWidget*> GridChild = QuickSlotGridPanel->GetAllChildren();
+
+	for (UWidget* Child : GridChild)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("QuickSlot Widget PlayerPawn nullptr"));
+		USRSlotWidget* SlotWidget = Cast<USRSlotWidget>(Child);
+
+		if (SlotWidget)
+		{
+			SlotWidget->SetItemIconVisualOnly(nullptr);
+		}
 	}
-	
 }
 
 void USRQuickSlotWidget::OnSlotChange(int32 Index, TSoftObjectPtr<UTexture2D> Icon)
@@ -39,5 +45,5 @@ void USRQuickSlotWidget::OnSlotChange(int32 Index, TSoftObjectPtr<UTexture2D> Ic
 
 	USRSlotWidget* QuickSlot = Cast<USRSlotWidget>(Child);
 
-	QuickSlot->SetItemIcon(Icon);
+	QuickSlot->SetItemIconVisualOnly(Icon);
 }

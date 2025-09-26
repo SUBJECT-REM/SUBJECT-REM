@@ -42,6 +42,11 @@ void USRInventoryComponent::AddClueData(const FSRItemBaseData& Data)
 	AddClueDatasDelegate.Broadcast(Data);
 }
 
+void USRInventoryComponent::AddDeviceData(const FSRDeviceUIData& Data)
+{
+	AddDeviceDataDelegate.Broadcast(Data);
+}
+
 void USRInventoryComponent::AddItemData(const FSRItemData& Data)
 {
 	AddInventoryDataDelegate.Broadcast(Data.BaseInfo);
@@ -59,15 +64,48 @@ void USRInventoryComponent::EnsureItemPickupPresenter()
 	}
 }
 
+bool USRInventoryComponent::TryGetDeviceRow(const FSRItemData& ItemData, FSRDeviceItemData& OutDeviceRow) const
+{
+	const FDataTableRowHandle& Handle = ItemData.ItemDataTable;
+	const UDataTable* Table = Handle.DataTable;
+	if (!Table) return false;
+
+	const UScriptStruct* RowStruct = Table->GetRowStruct();
+	if (RowStruct != FSRDeviceItemData::StaticStruct())
+	{
+		// 이 테이블은 디바이스 테이블이 아님
+		return false;
+	}
+
+	FString Ctx(TEXT("DeviceRowLookup"));
+	if (const FSRDeviceItemData* Row = Table->FindRow<FSRDeviceItemData>(Handle.RowName, Ctx))
+	{
+		OutDeviceRow = *Row; // 복사
+		return true;
+	}
+	
+	return false;
+}
+
 void USRInventoryComponent::AddItem(const USRItem* Item)
 {
 	check(Item);
 
 	const IUseableInterface* UseableItem = Cast<IUseableInterface>(Item);
 	const FSRItemData ItemData = Item->GetItemData();
-	
 
-	if (UseableItem)
+	FSRDeviceItemData DeviceRow;
+	if (TryGetDeviceRow(ItemData, DeviceRow))
+	{
+		//Device데이터임.
+
+		FSRDeviceUIData UIData;
+		UIData.Base = ItemData.BaseInfo;
+		UIData.UsingSlotNum = FMath::Clamp<int32>(DeviceRow.UsingClueNum, 1, 3);
+
+		AddDeviceData(UIData);
+	}
+	else if (UseableItem)
 	{
 
 	}
@@ -106,7 +144,7 @@ void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
     // None 제거(순서 유지)
 	ClueIds.RemoveAll([](const FName& N) { return N.IsNone(); });
 
-    // 순서 비교 헬퍼
+    // 순서 비교 람다
     auto IsOrderedEqual = [](const TArray<FName>& A, const TArray<FName>& B)
         {
             if (A.Num() != B.Num()) return false;
