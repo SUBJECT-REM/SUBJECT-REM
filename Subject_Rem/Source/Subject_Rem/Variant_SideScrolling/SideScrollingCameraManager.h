@@ -43,6 +43,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Side Scrolling Camera", meta = (ClampMin = 0, ClampMax = 10000, Units = "cm"))
 	float CameraYMaxBounds = 10000.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Side Scrolling Camera", meta = (Units = "cm"))
+	FVector PositionOffset = FVector::ZeroVector;
 	//카메라 세로이동(높이) 보간 속도 - 값이 클수록 Target에게 빠르게 감.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Side Scrolling Camera", meta = (ClampMin = 0, ClampMax = 10, Units = "cm"))
 	float ZCameraLocationUpdateSpeed = 2.0f;
@@ -52,6 +54,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Side Scrolling Camera")
 	FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
+
+
 
 
 protected:

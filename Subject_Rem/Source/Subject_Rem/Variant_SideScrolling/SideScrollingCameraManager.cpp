@@ -127,6 +127,10 @@ void ASideScrollingCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float De
 		//FVector TargetCameraLocation(CurrentX, CurrentY, CurrentZ);
 		FVector TargetCameraLocation(CurrentX, CurrentY, CurrentZ);
 
+		//오프셋반영
+		TargetCameraLocation += PositionOffset;
+
+
 		OutVT.POV.Location = FMath::VInterpTo(CurrentCameraLocation, TargetCameraLocation, DeltaTime, CameraLocationUpdateSpeed);
 	}
 }
