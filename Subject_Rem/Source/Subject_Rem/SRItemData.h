@@ -173,10 +173,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 UsingClueNum;
 
-	//여기서 UsingClueNum에 따른 기획이 정해져있으니까, 
-	//거기서는 FSRClueCombineRuleData를 통해 여기서는 Clue에 따른 모든 조합결과를 표시할수있으니 (1개 2개 3개)
-	//
-	//인벤토리쪽에서 CombineClue함수쪽에서 1개 ,2개 ,3개에 따른 각각 구현을하는건 어떤거같음?
+	//오디오 경우 파형데이터가 또ㅍ
 
 };
 
