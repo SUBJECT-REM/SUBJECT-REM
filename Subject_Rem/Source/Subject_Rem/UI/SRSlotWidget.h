@@ -78,5 +78,5 @@ private:
 
 	FButtonStyle SlotButtonNormalStyle;
 	FButtonStyle SlotButtonSelectedStyle;
-
+	//
 };
