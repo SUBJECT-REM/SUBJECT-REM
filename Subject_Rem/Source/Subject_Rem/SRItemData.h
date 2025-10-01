@@ -160,6 +160,9 @@ public:
 	//주기적으로 증가하는 스트레스 증가 캔슬
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bPeriodicStressIncreaseCancle = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool AutoRegistQuickSlot = false;
 };
 
 USTRUCT(BlueprintType)

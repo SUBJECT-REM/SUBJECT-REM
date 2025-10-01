@@ -94,6 +94,8 @@ public:
     UPROPERTY(EditAnywhere, Category = "Tutorial|Data")
     TArray<FGameFlowInfo> TutorialInfos;
 
+    UPROPERTY(EditAnywhere)
+    TMap<FName,TSoftObjectPtr<AActor>> EnabledActor;
 private:
     UFUNCTION()
     void RequestShowingCaption(const FName& CaptionRow);
@@ -102,6 +104,7 @@ private:
     void OnCaptionEnded(const FName& RowName);
 
     void DoNextFlow(FGameFlowInfo* Current, FGameplayTag CompletedTag);
+
 protected:
     virtual void BeginPlay() override;
 

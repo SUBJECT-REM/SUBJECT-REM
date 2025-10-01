@@ -21,8 +21,8 @@ void USRItemPickupResultPresenter::Init(UActorComponent* InitComponent, UUserWid
 	}
 	check(InvenComp);
 
-	InvenComp->AddInventoryDataDelegate.AddDynamic(this, &ThisClass::ShowItemPickWidget);
-
+	//InvenComp->AddInventoryDataDelegate.AddDynamic(this, &ThisClass::ShowItemPickWidget);
+	InvenComp->ItemPickupDelegate.AddDynamic(this, &ThisClass::ShowItemPickWidget);
 }
 
 void USRItemPickupResultPresenter::ShowItemPickWidget(const FSRItemBaseData& ShownItemData)
@@ -40,9 +40,6 @@ void USRItemPickupResultPresenter::ShowItemPickWidget(const FSRItemBaseData& Sho
 				ItemPickupResultWidget->OnClosedDelegate.AddDynamic(this, &ThisClass::HandleWidgetClose);
 				
 				ChashedCaptionManager = Cast<ASRCaptionManagerActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ASRCaptionManagerActor::StaticClass()));
-				
-			
-				
 			}
 		}
 		check(ItemPickupResultWidget);

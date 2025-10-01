@@ -2,6 +2,7 @@
 
 
 #include "Component/SRInventoryComponent.h"
+#include "Component/Character/SRQuickSlotComponent.h"
 #include "SRItem.h"
 #include "Interface/UseableInterface.h"
 #include "Presenter/SRItemPickupResultPresenter.h"
@@ -87,12 +88,50 @@ bool USRInventoryComponent::TryGetDeviceRow(const FSRItemData& ItemData, FSRDevi
 	return false;
 }
 
+bool USRInventoryComponent::TryAutoRegisterToQuickSlot(const FSRItemData& ItemData)
+{
+	APawn* OwnerPawn = Cast<APawn>(GetOwner());
+	if (!OwnerPawn) return false;
+
+	USRQuickSlotComponent* Quick = OwnerPawn->FindComponentByClass<USRQuickSlotComponent>();
+	if (!Quick) return false;
+
+	// 이 아이템이 소비 아이템인지 + 자동등록 옵션인지 확인
+	const FSRConsumeData* Consume = Quick->ResolveConsumeDataByItemId(ItemData.BaseInfo.Id);
+	if (!Consume || !Consume->AutoRegistQuickSlot)
+		return false;
+
+	// 첫 빈 슬롯 찾기 (유틸 없으면 간단히 루프)
+	int32 EmptyIndex = INDEX_NONE;
+	for (int32 i = 0; i < 3; ++i)
+	{
+		if (Quick->GetItemIdBySlotIndex(i).IsNone())
+		{
+			EmptyIndex = i;
+			break;
+		}
+	}
+	if (EmptyIndex == INDEX_NONE)
+	{
+		// 정책: 빈 칸 없으면 자동등록 실패로 간주(= 인벤토리 UI로 떨어지게)
+		return false;
+	}
+
+	// 실제 등록 (등록 성공 시 QuickSlot UI는 내부 Delegate로 갱신됨)
+	if (Quick->RegisterItem((uint8)EmptyIndex, ItemData.BaseInfo.Id))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("QuickSlot RegisterItem Call True in inventory"));
+		return true;
+	}
+	return false;
+}
+
 void USRInventoryComponent::AddItem(const USRItem* Item)
 {
 	check(Item);
 
-	const IUseableInterface* UseableItem = Cast<IUseableInterface>(Item);
 	const FSRItemData ItemData = Item->GetItemData();
+	ItemPickupDelegate.Broadcast(ItemData.BaseInfo);
 
 	FSRDeviceItemData DeviceRow;
 	if (TryGetDeviceRow(ItemData, DeviceRow))
@@ -105,13 +144,13 @@ void USRInventoryComponent::AddItem(const USRItem* Item)
 
 		AddDeviceData(UIData);
 	}
-	else if (UseableItem)
+	else if (TryAutoRegisterToQuickSlot(ItemData))
 	{
-
+		return;
 	}
-	//Useable아이템이 아니라면. ClueData입니다, Device일수도있음.
 	else
 	{
+
 		AddClueData(ItemData.BaseInfo);
 	}
 

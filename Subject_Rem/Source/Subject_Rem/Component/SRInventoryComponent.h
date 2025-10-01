@@ -19,6 +19,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddInventoryDataSignature, const FS
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRemoveInventoryDataSignature, const TArray<FName>&, RemovedItemIds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueCombineResultSignature, const FSRClueMapUIData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueCombineCaptionSignature, const FName& ,CaptionRowName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemPickedUpSignature, const FSRItemBaseData&, Base);
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SUBJECT_REM_API USRInventoryComponent : public UActorComponent
@@ -50,6 +52,8 @@ public:
 	FOnClueCombineResultSignature ClueCombineResultDelegate;
 	FOnClueCombineCaptionSignature ClueCombineCaptionDelegate;
 
+	FOnItemPickedUpSignature ItemPickupDelegate;
+
 	UPROPERTY(VisibleAnywhere)
 	TArray<const USRItem*> InventoryItems;
 
@@ -75,6 +79,9 @@ private:
 	void EnsureItemPickupPresenter();
 
 	bool TryGetDeviceRow(const FSRItemData& ItemData, FSRDeviceItemData& OutDeviceRow) const;
+
+	bool TryAutoRegisterToQuickSlot(const FSRItemData& ItemData);
+
 
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* AllItemsDataTable;

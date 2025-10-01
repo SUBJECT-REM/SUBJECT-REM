@@ -34,6 +34,7 @@ void USRInventoryPresenter::Init(UActorComponent* InitComponent, UUserWidget* In
 		QuickSlotComp = Owner->FindComponentByClass<USRQuickSlotComponent>();
 		if (QuickSlotComp)
 		{
+			UE_LOG(LogTemp, Warning, TEXT(" Bind QuickComp In InvenPresenter"));
 			QuickSlotComp->OnQuickSlotChangedDelegate.AddDynamic(this, &ThisClass::RequestUpdateQuickslotInInventory);
 			
 			TArray<TSoftObjectPtr<UTexture2D>> Icons;
@@ -64,5 +65,6 @@ void USRInventoryPresenter::RequsetRemoveInventoryWidget(const TArray<FName>& It
 
 void USRInventoryPresenter::RequestUpdateQuickslotInInventory(int32 SlotIndex, TSoftObjectPtr<UTexture2D> Icon)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Update Quick In Inven"));
 	InventoryWidget->UpdateQuickSlotGridPanel(SlotIndex, Icon);
 }

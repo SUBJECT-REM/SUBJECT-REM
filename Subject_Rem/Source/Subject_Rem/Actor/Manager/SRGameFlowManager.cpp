@@ -16,13 +16,24 @@ ASRGameFlowManager::ASRGameFlowManager()
 
 void ASRGameFlowManager::OnCaptionEnded(const FName& RowName)
 {
-    //특정 아이템 스폰 또는 활성화 dt를 사용해서 순회하면될거같은데
-
-
-
-
     //위젯에서 구독해 하이라이트 표시
     OnCaptionTypewriterEnd.Broadcast(RowName);
+
+    // 매핑에서 찾기
+    if (TSoftObjectPtr<AActor>* FoundPtr = EnabledActor.Find(RowName))
+    {
+        AActor* Target = FoundPtr->Get();                 // 이미 로드되어 있으면 바로 포인터 반환
+        if (!Target && !FoundPtr->IsNull())               // 아직 로드 안 되었으면 로드
+        {
+            Target = FoundPtr->LoadSynchronous();
+        }
+
+        if (Target)
+        {
+            Target->SetActorHiddenInGame(false);
+            Target->SetActorEnableCollision(true);
+        }
+    }
 }
 
 void ASRGameFlowManager::DoNextFlow(FGameFlowInfo* Current, FGameplayTag CompletedTag)
