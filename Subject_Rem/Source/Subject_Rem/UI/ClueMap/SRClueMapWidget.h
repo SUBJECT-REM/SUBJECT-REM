@@ -36,6 +36,11 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	USRCluemapCombinedDesWidget* ClueMapCombinedDesWidget;
+
+	// 슬롯(순서 기반)
+	UPROPERTY()
+	TArray<TObjectPtr<USRClueMapCombinedResultWidget>> ClueMapResults;
+
 protected:
 	bool bIsInitialized = false;
 
@@ -49,20 +54,18 @@ protected:
 	void FindCombinedResultWidgets();
 	void FindTrueClueLinkWidgets();
 
-	USRClueMapCombinedResultWidget* FindCombinedClueResultWidget(FName CombinedClueName);
 	void HandleTrueClueLinkWidget(FName CombinedClueName);
 	UFUNCTION()
 	void HandleCombinedClue(const FSRClueMapUIData& Data);
 
 	void FindPlayerInventoryComponent();
 
-	//Widget들만 모아서 미리 찾아 Array에 넣는 Array
-	TMap<FName, USRClueMapCombinedResultWidget*> CombinedClueWidgets;
+
 	//진실 단서만 담습니다.
 	TArray<FName> TrueClues;
 
 
-	TMap<FName,USRTrueClueLinkWidget*> TrueClueLinkWidgets;
+	TArray<USRTrueClueLinkWidget*> TrueClueLinkWidgets;
 
 	void UpdateClueMapProgressBar(float NewPercent);
 	void UpdatePercentTextBlock(float NewPercent);
@@ -74,6 +77,10 @@ private:
 	UFUNCTION()
 	void UpdateClueMapCombinedResultDescriptionWidget(const FName& Id);
 
+	void InitializeSlots();         // 컨테이너 자식 스캔해서 Slots 배열 구성
+	void InitializeLinks();         // 링크 자식 스캔해서 LinkWidgets 구성
+	void ResetClueMapUI();          // 슬롯/링크/진행도 초기화
+
 	UPROPERTY(EditDefaultsOnly)
 	int32  MaxTrueClueMapNum = 12;
 
@@ -81,5 +88,15 @@ private:
 
 	// 캐시 추가
 	TMap<FName, FSRClueMapUIData> CachedUIByClueId;
+
+	int32 MaxClueMapNum =0;
+	int32 NextFillIndex = 0;
+
+	UPROPERTY(EditDefaultsOnly)
+	FVector2D TwoClueBasedClueMapSize;
+
+	UPROPERTY(EditDefaultsOnly)
+	FVector2D ThreeClueBasedClueMapSize;
+
 
 };

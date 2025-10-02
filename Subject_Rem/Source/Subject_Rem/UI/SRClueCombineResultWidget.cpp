@@ -24,6 +24,10 @@ void USRClueCombineResultWidget::SetClueMapImage(TArray<TSoftObjectPtr<UTexture2
 		SetImageBrush(ClueMidImage_3, Icons[1]);
 		SetImageBrush(ClueRightImage_3, Icons[2]);
 	}
+	else
+	{
+		SetImageBrush(ClueImage, Icons[0]);
+	}
 }
 
 void USRClueCombineResultWidget::SetClueMapDes(FText Text)
@@ -52,11 +56,10 @@ void USRClueCombineResultWidget::OnClickedCloseButton()
 
 void USRClueCombineResultWidget::EnsureLayoutByCount(uint8 Count)
 {
-	// 2/3 외 값 방어
-	const int32 Cnt = (Count == 3) ? 3 : 2;
+	const int32 Index = Count - 1;
 	if (LayoutSwitcher)
 	{
-		LayoutSwitcher->SetActiveWidgetIndex(Cnt == 3 ? 1 : 0);
+		LayoutSwitcher->SetActiveWidgetIndex(Index);
 	}
 }
 

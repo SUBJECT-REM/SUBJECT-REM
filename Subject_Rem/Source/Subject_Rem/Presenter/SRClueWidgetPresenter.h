@@ -44,6 +44,9 @@ private:
 	UFUNCTION()
 	void HandleCombineClueTutorial(TArray<FName> ClueIds);
 
+	UFUNCTION()
+	void RequestRemoveDeviceData(FName Id);
+
 	UPROPERTY()
 	USRInventoryComponent* InvenComp;
 

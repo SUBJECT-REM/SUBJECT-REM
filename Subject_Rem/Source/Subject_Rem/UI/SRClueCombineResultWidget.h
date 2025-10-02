@@ -47,6 +47,11 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	class UWidgetSwitcher* LayoutSwitcher;
 
+	//1ro
+	UPROPERTY(meta = (BindWidget))
+	UImage* ClueImage;
+
+	//2개 레이아웃
 	UPROPERTY(meta = (BindWidget))
 	UImage* ClueLeftImage;
 

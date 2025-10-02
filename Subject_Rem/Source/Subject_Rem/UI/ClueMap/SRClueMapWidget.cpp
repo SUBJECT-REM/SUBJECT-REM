@@ -10,8 +10,8 @@
 #include "Component/SRInventoryComponent.h"
 #include"Components/Image.h"
 #include "Components/ProgressBar.h"
-
 #include "Components/RichTextBlock.h"
+#include "Components/CanvasPanelSlot.h"
 
 void USRClueMapWidget::NativeOnInitialized()
 {
@@ -45,7 +45,6 @@ void USRClueMapWidget::NativeDestruct()
       {
           if (USRClueMapCombinedResultWidget* CombinedResultWidget = Cast<USRClueMapCombinedResultWidget>(RootCanvasPanel->GetChildAt(i)))
           {
-              CombinedClueWidgets.Add(CombinedResultWidget->CombinedClueID, CombinedResultWidget);
               CombinedResultWidget->ClueMapCombinedResultClickedDelegate.RemoveDynamic(this, &ThisClass::UpdateClueMapCombinedResultDescriptionWidget);
           }
       }
@@ -62,10 +61,11 @@ void USRClueMapWidget::FindCombinedResultWidgets()
       {
             if (USRClueMapCombinedResultWidget* CombinedResultWidget = Cast<USRClueMapCombinedResultWidget>(RootCanvasPanel->GetChildAt(i)))
             {
-                  CombinedClueWidgets.Add(CombinedResultWidget->CombinedClueID, CombinedResultWidget);
                   CombinedResultWidget->ClueMapCombinedResultClickedDelegate.AddDynamic(this, &ThisClass::UpdateClueMapCombinedResultDescriptionWidget);
+                  ClueMapResults.Add(CombinedResultWidget);
             }
       }
+      MaxClueMapNum = ClueMapResults.Num();
 }
 
 void USRClueMapWidget::FindTrueClueLinkWidgets()
@@ -78,74 +78,73 @@ void USRClueMapWidget::FindTrueClueLinkWidgets()
             //찾은 Widget이 USRClueMapCombinedResultWidget인지 확인한다.
             if (USRTrueClueLinkWidget* TrueClueLinkWidget = Cast<USRTrueClueLinkWidget>(RootCanvasPanel->GetChildAt(i)))
             {
-                  TrueClueLinkWidgets.Add(TrueClueLinkWidget->CombinedClueID,TrueClueLinkWidget);
+                UE_LOG(LogTemp, Warning, TEXT("TrueClueLinkWidget : %s"), *TrueClueLinkWidget->GetName());
+                  TrueClueLinkWidgets.Add(TrueClueLinkWidget);
             }
       }
 } 
 
-USRClueMapCombinedResultWidget* USRClueMapWidget::FindCombinedClueResultWidget(FName CombinedClueID)
-{
-      for (const TPair<FName, USRClueMapCombinedResultWidget*>& Pair : CombinedClueWidgets)
-      {
-            FName Key = Pair.Key;
-            USRClueMapCombinedResultWidget* Widget = Pair.Value;
-
-            //해당 Widget을 찾았다면 
-            if (Key == CombinedClueID)
-            {
-                  Widget->SetVisibility(ESlateVisibility::Visible);
-            
-                  return Widget;
-            }
-            
-      }
-
-      return nullptr;
-}
 
 void USRClueMapWidget::HandleTrueClueLinkWidget(FName CombinedClueId)
 {
-    for (const TPair<FName, USRTrueClueLinkWidget*>& Pair : TrueClueLinkWidgets)
-    {
-        FName Key = Pair.Key;
-        USRTrueClueLinkWidget* Widget = Pair.Value;
 
-        //해당 Widget을 찾았다면 
-        if (Key == CombinedClueId)
-        {
-            Widget->SetVisibility(ESlateVisibility::Visible);
-        }
-
-    }
 }
 
 void USRClueMapWidget::HandleCombinedClue(const FSRClueMapUIData& Data)
 {
-      //여기서 Broadcast로 들어온 Data에서 FName을 추출한다.
-      FName CombinedClueID = Data.ClueMap.Id;
+    if (!ClueMapResults.IsValidIndex(NextFillIndex))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("NextFillIndex is not vaild"));
+    }
 
-      UE_LOG(LogTemp, Warning, TEXT("CombinedClueID: %s"), *CombinedClueID.ToString());
-      USRClueMapCombinedResultWidget* FindWidget = FindCombinedClueResultWidget(CombinedClueID);
-      HandleTrueClueLinkWidget(CombinedClueID);
-      //진실 단서라면
-      if (Data.bResult == true)
-      {
-            UE_LOG(LogTemp, Warning, TEXT("True Clue Combined"));
-            CachedUIByClueId.Add(CombinedClueID, Data);
+    USRClueMapCombinedResultWidget* ClueMapResult = ClueMapResults[NextFillIndex];
+    if (!ClueMapResult)
+        return;
 
-            //WidgetImageSetting
-            if (FindWidget)
-            {
-                FindWidget->UpdateClueImage(Data.ClueIcons);
-            }
-            
-            TrueClues.Add(CombinedClueID);
+
+    // ===== 아이콘 개수에 따른 슬롯 사이즈 적용 =====
+    const int32 IconCount = Data.ClueIcons.Num();
+    const bool bThree = (IconCount == 3);
+    const FVector2D DesiredSize = bThree ? ThreeClueBasedClueMapSize : TwoClueBasedClueMapSize;
+
+    if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(ClueMapResult->Slot))
+    {
+        CanvasSlot->SetSize(DesiredSize);  // 원하는 사이즈 적용
+    }
+
+    ClueMapResult->UpdateClueImage(Data.ClueIcons);    // 아이콘 배열, 이름 배열, 설명 등
+    ClueMapResult->SetClueMapId(Data.ClueMap.Id);
+    ClueMapResult->SetVisibility(ESlateVisibility::Visible);
+
+    CachedUIByClueId.Add(Data.ClueMap.Id, Data);
+
+      
+    //진실 단서라면
+    if (Data.bResult == true)
+    {
+        // 예) TrueCount에 대응하는 인덱스의 링크만 표시
+        if (TrueClueLinkWidgets.IsValidIndex(NextFillIndex) && TrueClueLinkWidgets[NextFillIndex])
+        {
+            TrueClueLinkWidgets[NextFillIndex]->SetVisibility(ESlateVisibility::Visible);
+        }       
+
+            TrueClues.Add(Data.ClueMap.Id);
 
             const float Ratio = GetProgressRatio();
 
             UpdateClueMapProgressBar(Ratio);
             UpdatePercentTextBlock(Ratio);
-      }
+    }
+    else
+    {
+        if (TrueClueLinkWidgets.IsValidIndex(NextFillIndex) && TrueClueLinkWidgets[NextFillIndex])
+        {
+            TrueClueLinkWidgets[NextFillIndex]->SetVisibility(ESlateVisibility::Hidden);
+        }
+    }
+
+    ++NextFillIndex;
+
 }
 
 void USRClueMapWidget::UpdateClueMapProgressBar(float NewPercent)
@@ -183,6 +182,18 @@ void USRClueMapWidget::UpdateClueMapCombinedResultDescriptionWidget(const FName&
     ClueMapCombinedDesWidget->SetClueMapDes(Data->ClueMap.Description);
 
     ClueMapCombinedDesWidget->SetVisibility(ESlateVisibility::Visible);
+}
+
+void USRClueMapWidget::InitializeSlots()
+{
+}
+
+void USRClueMapWidget::InitializeLinks()
+{
+}
+
+void USRClueMapWidget::ResetClueMapUI()
+{
 }
 
 float USRClueMapWidget::GetProgressRatio() const

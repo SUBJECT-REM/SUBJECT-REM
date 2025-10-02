@@ -9,10 +9,7 @@
 
 void USRClueMapCombinedResultWidget::NativePreConstruct()
 {
-    if (LayoutSwitcher)
-    {
-        LayoutSwitcher->SetActiveWidgetIndex(ExpectedIconCount != 3 ? 1 : 0);
-    }
+
 }
 
 void USRClueMapCombinedResultWidget::NativeConstruct()
@@ -37,7 +34,7 @@ void USRClueMapCombinedResultWidget::UpdateClueImage(TArray<TSoftObjectPtr<UText
     UE_LOG(LogTemp, Warning, TEXT("UpdateClueImage Icons Num :%d"), Icons.Num());
     if (LayoutSwitcher)
     {
-        LayoutSwitcher->SetActiveWidgetIndex(ExpectedIconCount != 3 ? 1 : 0);
+        LayoutSwitcher->SetActiveWidgetIndex(Icons.Num() == 3 ? 1 : 0);
     }
 
     if (Icons.Num() == 2)

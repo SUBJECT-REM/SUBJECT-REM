@@ -110,6 +110,28 @@ void USRInventoryWidget::RemoveItemInventoryGridPanel(const TArray<FName>& ItemI
 			InvenSlot->Clear();
 		}
 	}
+
+	TArray<const FSRItemBaseData> Datas;
+	for (UWidget* Widget : InventoryGridPanel->GetAllChildren())
+	{
+		USRSlotWidget* InvenSlot = Cast<USRSlotWidget>(Widget);
+		if (!InvenSlot) continue;
+
+		if (InvenSlot->GetIsOccupied())
+		{
+			Datas.Add(InvenSlot->GetItemData());
+			InvenSlot->Clear();
+		}
+	}
+
+	//다시 채워서 재정렬 
+	for (const FSRItemBaseData& Data : Datas)
+	{
+		AddItemInventoryGridPanel(Data);
+	}
+
+
+
 }
 
 void USRInventoryWidget::UpdateQuickSlotGridPanel(int8 Index, TSoftObjectPtr<UTexture2D> Icon)

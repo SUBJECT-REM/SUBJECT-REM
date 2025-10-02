@@ -23,11 +23,10 @@ public:
 
 	void UpdateClueImage(TArray<TSoftObjectPtr<UTexture2D>> Icons);
 
+	void SetClueMapId(FName Name) { CombinedClueID = Name; }
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 	UDataTable* ClueDataTable;
-	//해당 ClueID로 어떤 Clue인지 확인합니다.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterSelect")
-	FName CombinedClueID;
 
 	UPROPERTY(meta = (BindWidget))
 	class UWidgetSwitcher* LayoutSwitcher;
@@ -67,5 +66,8 @@ private:
 
 	void SetImageBrush(UImage* Image, const TSoftObjectPtr<UTexture2D> SoftTex);
 
+	//해당 ClueID로 어떤 Clue인지 확인합니다.
+	UPROPERTY()
+	FName CombinedClueID;
 
 };

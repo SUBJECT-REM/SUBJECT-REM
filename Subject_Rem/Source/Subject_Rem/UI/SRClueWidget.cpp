@@ -47,6 +47,38 @@ void USRClueWidget::NativeConstruct()
 		ClueCombineSlot->Clear();
 		ClueCombineSlot->SetIsEnabled(true);
 	}
+
+	TArray<UWidget*> One_ClueCombineChild = One_ClueCombine->GetAllChildren();
+
+	for (UWidget* Widget : One_ClueCombineChild)
+	{
+		USRSlotWidget* ClueCombineSlot = Cast<USRSlotWidget>(Widget);
+		if (!ClueCombineSlot)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ClueCombineGridPanel Children Cast cannot be cast to USRSlotWidget"));
+		}
+		check(ClueCombineSlot);
+
+		ClueCombineSlot->Clear();
+		ClueCombineSlot->SetIsEnabled(true);
+	}
+
+
+	TArray<UWidget*> Three_ClueCombineGridPanelChild = Three_ClueCombineGridPanel->GetAllChildren();
+
+	for (UWidget* Widget : Three_ClueCombineGridPanelChild)
+	{
+		USRSlotWidget* ClueCombineSlot = Cast<USRSlotWidget>(Widget);
+		if (!ClueCombineSlot)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ClueCombineGridPanel Children Cast cannot be cast to USRSlotWidget"));
+		}
+		check(ClueCombineSlot);
+
+		ClueCombineSlot->Clear();
+		ClueCombineSlot->SetIsEnabled(true);
+	}
+
 	
 	check(DeviceGridPanel)
 		TArray<UWidget*> DeviceGridChild = DeviceGridPanel->GetAllChildren();
@@ -185,6 +217,16 @@ void USRClueWidget::OnClickedCombineButton()
 	if (CombinedClueIds.Num() == CurVaildCombineItemNum)
 	{
 		CombineButtonClickedDelegate.Broadcast(CombinedClueIds);
+		
+		//사용한 디바이스 삭제 
+		if (CurUsingDevicedSlot)
+		{
+			RemoveDeviceDataDelegate.Broadcast(CurUsingDevicedSlot->GetItemData().Id);
+			CashedDeviceUsingClueNum.Remove(CurUsingDevicedSlot->GetItemData().Id);
+			CurUsingDevicedSlot->Clear();
+			CurUsingDevicedSlot = nullptr;
+			ClueCombineSwitcher->SetActiveWidgetIndex(1); //1 default 
+		}
 	}
 
 
@@ -196,13 +238,15 @@ void USRClueWidget::OnClickedDeviceSlot(USRSlotWidget* ClickedSlot)
 	if (!ClickedSlot->GetItemData().Id.IsNone())
 	{
 		FName DeviceId = ClickedSlot->GetItemData().Id;
-
+		UE_LOG(LogTemp, Warning, TEXT("Deviced Clicked Id : %s"), *DeviceId.ToString());
 		uint8* FindUsingCombineSlotNumPtr = CashedDeviceUsingClueNum.Find(DeviceId);
 		if (!FindUsingCombineSlotNumPtr)
 			return;
 		uint8 FindUsingCombineSlotNum = *FindUsingCombineSlotNumPtr;
 		ClueCombineSwitcher->SetActiveWidgetIndex(FindUsingCombineSlotNum - 1);
 		CurVaildCombineItemNum = FindUsingCombineSlotNum;
+		CurUsingDevicedSlot = ClickedSlot;
+		
 	}
 }
 

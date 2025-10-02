@@ -16,7 +16,7 @@ class UButton;
 class USRSlotWidget;
 class USRClueCombineResultWidget;
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRemoveDeviceDataSignature, FName, Id);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCombineButtonClickedSignature, TArray<FName>, ClickedSlot);
 
 UCLASS()
@@ -33,6 +33,7 @@ public:
 	void UpdateClueCombineResultWidget(const FSRClueMapUIData& Data);
 	void UpdateDeviceGridWidget(const FSRDeviceUIData& Data);
 
+	FRemoveDeviceDataSignature RemoveDeviceDataDelegate;
 	FCombineButtonClickedSignature CombineButtonClickedDelegate;
 protected:
 	virtual void NativeConstruct() override;
@@ -101,4 +102,6 @@ private:
 	int CurVaildCombineItemNum = 2;
 
 	TMap<FName, uint8> CashedDeviceUsingClueNum;
+
+	USRSlotWidget* CurUsingDevicedSlot;
 };
