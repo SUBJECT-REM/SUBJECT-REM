@@ -8,6 +8,8 @@
 #include "Subsystem/SRInputLocalPlayerSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Component/SRInventoryComponent.h"
+#include "Components/BoxComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 ASRGameFlowManager::ASRGameFlowManager()
 {
@@ -16,23 +18,18 @@ ASRGameFlowManager::ASRGameFlowManager()
 
 void ASRGameFlowManager::OnCaptionEnded(const FName& RowName)
 {
-    //위젯에서 구독해 하이라이트 표시
     OnCaptionTypewriterEnd.Broadcast(RowName);
 
-    // 매핑에서 찾기
-    if (TSoftObjectPtr<AActor>* FoundPtr = EnabledActorByCaptionRow.Find(RowName))
+    if (AActor* const* FoundPtr = EnabledActorByCaptionRow.Find(RowName)) 
     {
-        if (FoundPtr->IsNull()) return;
-
-        AActor* Target = FoundPtr->Get();
-        if (!Target)
+        if (AActor* Target = *FoundPtr) 
         {
-            Target = FoundPtr->LoadSynchronous();
-        }
-        if (Target)
-        {
-            Target->SetActorHiddenInGame(false);
-            Target->SetActorEnableCollision(true);
+            if (IsValid(Target))
+            {
+                Target->SetActorHiddenInGame(false);
+                UBoxComponent* BoxComp = Target->GetComponentByClass<UBoxComponent>();
+                BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+            }
         }
     }
 }
@@ -61,25 +58,29 @@ void ASRGameFlowManager::ActivateActorsForObjectiveTag(const FGameplayTag& Compl
 {
     if (!CompletedTag.IsValid()) return;
 
-    if (TSoftObjectPtr<AActor>* Found = EnabledActorByObjectiveTag.Find(CompletedTag))
+    if (AActor* const* FoundPtr = EnabledActorByObjectiveTag.Find(CompletedTag))
     {
-        ResolveAndEnableActor(*Found);
+        if (AActor* Target = *FoundPtr)
+        {
+            if (IsValid(Target))
+            {
+                Target->SetActorHiddenInGame(false);
+
+                UBoxComponent* BoxComp = Target->GetComponentByClass<UBoxComponent>();
+                UStaticMeshComponent*  MeshComp = Target->GetComponentByClass<UStaticMeshComponent>();
+                MeshComp->SetEnableGravity(true);
+                BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+            }
+        }
     }
 }
 
-void ASRGameFlowManager::ResolveAndEnableActor(TSoftObjectPtr<AActor>& SoftActorPtr)
+void ASRGameFlowManager::ResolveAndEnableActor(AActor* ActorPtr)
 {
-    if (SoftActorPtr.IsNull()) return;
-
-    AActor* Target = SoftActorPtr.Get();
-    if (!Target)
+    if (IsValid(ActorPtr))
     {
-        Target = SoftActorPtr.LoadSynchronous();
-    }
-    if (Target)
-    {
-        Target->SetActorHiddenInGame(false);
-        Target->SetActorEnableCollision(true);
+        ActorPtr->SetActorHiddenInGame(false);
+        ActorPtr->SetActorEnableCollision(true);
     }
 }
 

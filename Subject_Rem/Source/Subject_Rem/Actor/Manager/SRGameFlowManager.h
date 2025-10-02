@@ -95,10 +95,10 @@ public:
     TArray<FGameFlowInfo> SequenceFlowInfos;
 
     UPROPERTY(EditAnywhere)
-    TMap<FName,TSoftObjectPtr<AActor>> EnabledActorByCaptionRow;
+    TMap<FName,AActor*> EnabledActorByCaptionRow;
 
     UPROPERTY(EditAnywhere)
-    TMap<FGameplayTag, TSoftObjectPtr<AActor>> EnabledActorByObjectiveTag;
+    TMap<FGameplayTag, AActor*> EnabledActorByObjectiveTag;
 private:
     UFUNCTION()
     void RequestShowingCaption(const FName& CaptionRow);
@@ -110,7 +110,7 @@ private:
 
     void ActivateActorsForObjectiveTag(const FGameplayTag& CompletedTag);
 
-    void ResolveAndEnableActor(TSoftObjectPtr<AActor>& SoftActorPtr);
+    void ResolveAndEnableActor(AActor* ActorPtr);
 protected:
     virtual void BeginPlay() override;
 
