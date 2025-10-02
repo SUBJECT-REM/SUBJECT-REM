@@ -4,6 +4,7 @@
 
 #include "Engine/DataTable.h"
 #include "Engine/Texture2D.h"
+#include "GameplayTagContainer.h"
 #include "SRItemData.generated.h"
 /**
 *	[FSRItemData] (아이템들의 기본 데이터 정보가 담긴 데이터 테이블 로우)
@@ -147,6 +148,13 @@ public:
 	FDataTableRowHandle CaptionRow;
 };
 
+UENUM(BlueprintType)
+enum class EQuickSlotType : uint8
+{
+	Default,   // 일반 퀵슬롯 (0,1,2)
+	SpecialR   // R 키 전용
+};
+
 USTRUCT(BlueprintType)
 struct FSRConsumeData : public FTableRowBase
 {
@@ -163,6 +171,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool AutoRegistQuickSlot = false;
+
+	// 어떤 퀵슬롯에 들어갈지
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EQuickSlotType SlotType = EQuickSlotType::Default;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTag UseEventTag;
 };
 
 USTRUCT(BlueprintType)

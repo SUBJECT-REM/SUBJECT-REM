@@ -20,14 +20,15 @@ void ASRGameFlowManager::OnCaptionEnded(const FName& RowName)
     OnCaptionTypewriterEnd.Broadcast(RowName);
 
     // 매핑에서 찾기
-    if (TSoftObjectPtr<AActor>* FoundPtr = EnabledActor.Find(RowName))
+    if (TSoftObjectPtr<AActor>* FoundPtr = EnabledActorByCaptionRow.Find(RowName))
     {
-        AActor* Target = FoundPtr->Get();                 // 이미 로드되어 있으면 바로 포인터 반환
-        if (!Target && !FoundPtr->IsNull())               // 아직 로드 안 되었으면 로드
+        if (FoundPtr->IsNull()) return;
+
+        AActor* Target = FoundPtr->Get();
+        if (!Target)
         {
             Target = FoundPtr->LoadSynchronous();
         }
-
         if (Target)
         {
             Target->SetActorHiddenInGame(false);
@@ -54,6 +55,32 @@ void ASRGameFlowManager::DoNextFlow(FGameFlowInfo* Current, FGameplayTag Complet
         CurrentObjectiveTag = FGameplayTag(); // 무효화
     }
     return;
+}
+
+void ASRGameFlowManager::ActivateActorsForObjectiveTag(const FGameplayTag& CompletedTag)
+{
+    if (!CompletedTag.IsValid()) return;
+
+    if (TSoftObjectPtr<AActor>* Found = EnabledActorByObjectiveTag.Find(CompletedTag))
+    {
+        ResolveAndEnableActor(*Found);
+    }
+}
+
+void ASRGameFlowManager::ResolveAndEnableActor(TSoftObjectPtr<AActor>& SoftActorPtr)
+{
+    if (SoftActorPtr.IsNull()) return;
+
+    AActor* Target = SoftActorPtr.Get();
+    if (!Target)
+    {
+        Target = SoftActorPtr.LoadSynchronous();
+    }
+    if (Target)
+    {
+        Target->SetActorHiddenInGame(false);
+        Target->SetActorEnableCollision(true);
+    }
 }
 
 void ASRGameFlowManager::RequestShowingCaption(const FName& CaptionRow)
@@ -88,15 +115,15 @@ void ASRGameFlowManager::BeginPlay()
 
 void ASRGameFlowManager::StartFirstFlow()
 {
-    if (TutorialInfos.Num() > 0)
+    if (SequenceFlowInfos.Num() > 0)
     {
-        SetupFlow(TutorialInfos[0].ID);
+        SetupFlow(SequenceFlowInfos[0].ID);
     }
 }
 
 FGameFlowInfo* ASRGameFlowManager::FindNextFlowInfo(FGameplayTag TutorialID)
 {
-    return TutorialInfos.FindByPredicate([&](const FGameFlowInfo& Info) {
+    return SequenceFlowInfos.FindByPredicate([&](const FGameFlowInfo& Info) {
         return Info.ID == TutorialID;
     });
 }
@@ -139,6 +166,8 @@ void ASRGameFlowManager::SetupFlow(FGameplayTag TutorialID)
 void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag CompletedTag)
 {
     // 현재 단계 목표와 동일한지 확인
+    ActivateActorsForObjectiveTag(CompletedTag);
+
     if (CompletedTag != CurrentObjectiveTag)
         return;
 

@@ -21,6 +21,7 @@ namespace SRGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Tutorial_Objectives_ClickClueButton, "Tutorial.Objectives.ClickClueButton", "Tutorial Objectives Tag");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Tutorial_Objectives_CombineClue, "Tutorial.Objectives.CombineClue", "Tutorial Objectives Tag");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Tutorial_Objectives_ClickClueMapButton, "Tutorial.Objectives.ClickClueMapButton", "Tutorial Objectives Tag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameFlow_Objectives_UseFirstFill, "GameFlow.Objectives.UseFirstFill", "GameFlow Objectives Tag");
 
 
 }

@@ -92,10 +92,13 @@ public:
     FOnCaptionEndedSignature OnCaptionTypewriterEnd; //자막 재생 끝남 델리게이트
     /** 모든 튜토리얼 단계 데이터 */
     UPROPERTY(EditAnywhere, Category = "Tutorial|Data")
-    TArray<FGameFlowInfo> TutorialInfos;
+    TArray<FGameFlowInfo> SequenceFlowInfos;
 
     UPROPERTY(EditAnywhere)
-    TMap<FName,TSoftObjectPtr<AActor>> EnabledActor;
+    TMap<FName,TSoftObjectPtr<AActor>> EnabledActorByCaptionRow;
+
+    UPROPERTY(EditAnywhere)
+    TMap<FGameplayTag, TSoftObjectPtr<AActor>> EnabledActorByObjectiveTag;
 private:
     UFUNCTION()
     void RequestShowingCaption(const FName& CaptionRow);
@@ -105,6 +108,9 @@ private:
 
     void DoNextFlow(FGameFlowInfo* Current, FGameplayTag CompletedTag);
 
+    void ActivateActorsForObjectiveTag(const FGameplayTag& CompletedTag);
+
+    void ResolveAndEnableActor(TSoftObjectPtr<AActor>& SoftActorPtr);
 protected:
     virtual void BeginPlay() override;
 

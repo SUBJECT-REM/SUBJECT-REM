@@ -4,6 +4,10 @@
 #include "Component/Character/SRQuickSlotComponent.h"
 #include "Subsystem/SRStressLocalPlayerSubsystem.h"
 #include "SRItemData.h"
+#include "Kismet/GameplayStatics.h"
+#include "Actor/Manager/SRGameFlowManager.h"
+#include "Interface/SRKeyReceivable.h"
+
 // Sets default values for this component's properties
 USRQuickSlotComponent::USRQuickSlotComponent()
 {
@@ -12,8 +16,9 @@ USRQuickSlotComponent::USRQuickSlotComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
-	Slots.Init(NAME_None, 3);
-	SlotIcons.Init(nullptr, 3); 
+	//1,2,3,R
+	Slots.Init(NAME_None, 4);
+	SlotIcons.Init(nullptr, 4); 
 }
 
 // Called when the game starts
@@ -21,12 +26,12 @@ void USRQuickSlotComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	for (int i = 0; i < StartQuickItemDatas.Num(); i++)
+	// 월드에서 GameFlowManager 액터 찾기
+	if (UWorld* World = GetWorld())
 	{
-		RegisterItem(i, StartQuickItemDatas[i].RowName);
+		GameFlowManager = Cast<ASRGameFlowManager>(
+			UGameplayStatics::GetActorOfClass(World, ASRGameFlowManager::StaticClass()));
 	}
-	
 }
 
 void USRQuickSlotComponent::PressQuickSlot(uint8 QuickSlotNum)
@@ -36,6 +41,24 @@ void USRQuickSlotComponent::PressQuickSlot(uint8 QuickSlotNum)
 
 bool USRQuickSlotComponent::RegisterItem(uint8 Index, FName Id)
 {
+
+	//R 무조건 3번 슬롯으로	
+    const FSRConsumeData* Consume = ResolveConsumeDataByItemId(Id);
+    if (!Consume) return false;
+
+	if (Consume->SlotType == EQuickSlotType::SpecialR)
+	{
+		// ★ 인덱스 3에 꽂기
+		FString Ctx;
+		const FSRItemData* Item = ItemDataTable->FindRow<FSRItemData>(Id, Ctx);
+		Slots[RSlotIndex] = Id;
+		SlotIcons[RSlotIndex] = Item ? Item->BaseInfo.Icon : nullptr;
+		OnQuickSlotChangedDelegate.Broadcast(RSlotIndex, SlotIcons[RSlotIndex]);
+		return true;
+	}
+
+
+	//일반 사용 아이템
 	if (!Slots.IsValidIndex(Index) || Id.IsNone() || !ItemDataTable) return false;
 
 	if (!CanRegisterItem(Id)) {
@@ -76,6 +99,58 @@ bool USRQuickSlotComponent::CanRegisterItem(FName Id)
 	if (Sub.IsNull() || !Sub.DataTable) return false;
 
 	return Sub.DataTable->GetRowStruct() == FSRConsumeData::StaticStruct();
+}
+
+bool USRQuickSlotComponent::TryUseRSlot(AActor* Target)
+{
+	if (!Target) return false;
+
+	const FName ItemId = GetItemIdBySlotIndex(RSlotIndex);
+	if (ItemId.IsNone()) return false;
+
+	if (!Target->GetClass()->ImplementsInterface(USRKeyReceivable::StaticClass()))
+	{
+		return false;
+	}
+
+	if (ISRKeyReceivable::Execute_CanUseKey(Target, ItemId))
+	{
+		ISRKeyReceivable::Execute_UseKey(Target, ItemId, GetOwner());
+		UnRegisterItem(RSlotIndex);
+		return true;
+	}
+
+	return false;
+}
+
+bool USRQuickSlotComponent::TryAutoRegisterItem(FName ItemId)
+{
+	// 유효성 + 소비 아이템인지 확인
+	const FSRConsumeData* Consume = ResolveConsumeDataByItemId(ItemId);
+	if (!Consume || !Consume->AutoRegistQuickSlot)
+		return false;
+
+	// R 전용이면 3번 슬롯에
+	if (Consume->SlotType == EQuickSlotType::SpecialR)
+	{
+		const FName Curr = GetItemIdBySlotIndex(RSlotIndex);
+		if (!Curr.IsNone() )
+			return false;
+
+		return RegisterItem((uint8)RSlotIndex, ItemId);
+	}
+
+	// 기본(0~2) – 첫 빈 칸
+	for (int32 i = 0; i < 3; ++i)
+	{
+		if (GetItemIdBySlotIndex(i).IsNone())
+		{
+			return RegisterItem((uint8)i, ItemId);
+		}
+	}
+
+
+	return false;
 }
 
 FName USRQuickSlotComponent::GetItemIdBySlotIndex(uint8 Index)
@@ -121,7 +196,7 @@ const FSRConsumeData* USRQuickSlotComponent::ResolveConsumeDataByItemId(FName It
 	}
 
 	return Consume;
-\
+
 }
 
 TSoftObjectPtr<UTexture2D> USRQuickSlotComponent::GetSlotIconByIndex(int32 Index) const
@@ -137,47 +212,6 @@ void USRQuickSlotComponent::GetQuickslotSnapshot(TArray<TSoftObjectPtr<UTexture2
 
 void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 {
-	////Test
-	if (QuickSlotNum == 2)
-	{
-		//즉시 감소
-		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
-		{
-			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Quick 2"));
-				StressSubsystem->ClearStressTimer();
-				StressSubsystem->ChangeStressAmount(-20.0f);
-
-			}
-		}
-	}
-	else if (QuickSlotNum == 3)
-	{
-		//즉시 증가.
-		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
-		{
-			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Quick 3"));
-				StressSubsystem->ChangeStressAmount(+20.f);
-			}
-		}
-	}
-	else if (QuickSlotNum == 1)
-	{
-		//일정 시간 증가.
-		if (ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController())
-		{
-			if (USRStressLocalPlayerSubsystem* StressSubsystem = LocalPlayer->GetSubsystem<USRStressLocalPlayerSubsystem>())
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Quick 1"));
-				StressSubsystem->ChangeStressByTime(5.f,5.f);
-			}
-		}
-	}
-
-
 	if (QuickSlotNum == 0) 
 		return;
 
@@ -215,6 +249,10 @@ void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 		}
 	}
 
+	if (GameFlowManager && Consume->UseEventTag.IsValid())
+	{
+		GameFlowManager->NotifyObjectiveCompleted(Consume->UseEventTag);
+	}
 
 	// 사용 후 슬롯 비우기 + UI 반영
 	UnRegisterItem(Index);
