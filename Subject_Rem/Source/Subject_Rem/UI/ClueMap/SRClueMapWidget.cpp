@@ -113,7 +113,11 @@ void USRClueMapWidget::HandleCombinedClue(const FSRClueMapUIData& Data)
     }
 
     ClueMapResult->UpdateClueImage(Data.ClueIcons);    // 아이콘 배열, 이름 배열, 설명 등
-    ClueMapResult->SetClueMapId(Data.ClueMap.Id);
+
+    if (Data.ClueMap.bResult)
+    {
+        ClueMapResult->SetClueMapId(Data.ClueMap.Id);
+    }
     ClueMapResult->SetVisibility(ESlateVisibility::Visible);
 
     CachedUIByClueId.Add(Data.ClueMap.Id, Data);

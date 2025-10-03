@@ -27,6 +27,7 @@ namespace SRGameplayTags
 	SUBJECT_REM_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Tutorial_Objectives_CombineClue);
 	SUBJECT_REM_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Tutorial_Objectives_ClickClueMapButton);
 	SUBJECT_REM_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameFlow_Objectives_UseFirstFill);
+	SUBJECT_REM_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameFlow_Objectives_UsePillActiveDataArchiveRoomKey);
 
 
 

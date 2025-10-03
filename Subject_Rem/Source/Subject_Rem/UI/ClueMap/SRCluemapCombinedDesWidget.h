@@ -47,17 +47,17 @@ private:
 	UPROPERTY(meta = (BindWidget)) UImage* ClueRightImage_3;
 
 
-	UPROPERTY(meta = (BindWidget)) URichTextBlock* LeftImageItemName;
-	UPROPERTY(meta = (BindWidget)) URichTextBlock* RightImageItemName;
+	UPROPERTY(meta = (BindWidget), meta =(AllowPrivateAccess= "true")) URichTextBlock * LeftImageItemName;
+	UPROPERTY(meta = (BindWidget), meta = (AllowPrivateAccess = "true")) URichTextBlock* RightImageItemName;
 
-	UPROPERTY(meta = (BindWidget)) URichTextBlock* LeftImageItemName_3;
-	UPROPERTY(meta = (BindWidget)) URichTextBlock* MidImageItemName_3;
-	UPROPERTY(meta = (BindWidget)) URichTextBlock* RightImageItemName_3;
+	UPROPERTY(meta = (BindWidget), meta = (AllowPrivateAccess = "true")) URichTextBlock* LeftImageItemName_3;
+	UPROPERTY(meta = (BindWidget), meta = (AllowPrivateAccess = "true")) URichTextBlock* MidImageItemName_3;
+	UPROPERTY(meta = (BindWidget), meta = (AllowPrivateAccess = "true")) URichTextBlock* RightImageItemName_3;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget), meta = (AllowPrivateAccess = "true"))
 	URichTextBlock* ClueMapName;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget), meta = (AllowPrivateAccess = "true"))
 	URichTextBlock* ClueMapDes;
 
 	UPROPERTY(meta = (BindWidget))

@@ -78,6 +78,7 @@ public:
 
     //UPROPERTY(BlueprintAssignable, Category = "Tutorial")
     //FTutorialStepChanged  OnTutorialStepChanged;
+    void StartFlow();
 
     UPROPERTY(BlueprintAssignable)
     FFlowStartedSignature OnFlowStartDelegate;
@@ -115,10 +116,13 @@ protected:
     virtual void BeginPlay() override;
 
     /** 첫 번째 튜토리얼 단계 시작 */
-    void StartFirstFlow();
+  
 
     /** 특정 튜토리얼 단계로 전환 */
     void SetupFlow(FGameplayTag TutorialID);
+
+    void SetupFlowByIndex(int32 Index);
+    void CompleteAndPopCurrentFlow(FGameplayTag CompletedTag);
 
     /** 튜토리얼 정보 검색 */
     FGameFlowInfo* FindNextFlowInfo(FGameplayTag TutorialID);

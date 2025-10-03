@@ -35,6 +35,12 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	class URichTextBlock* ClueMapDes;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	URichTextBlock* ClueMapName;
 private:
 	UFUNCTION()
 	void OnClickedCloseButton();
@@ -63,11 +69,6 @@ private:
 	UPROPERTY(meta = (BindWidget)) UImage* ClueMidImage_3;
 	UPROPERTY(meta = (BindWidget)) UImage* ClueRightImage_3;
 
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ClueMapDes;
-
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ClueMapName;
 
 
 };

@@ -3,7 +3,7 @@
 
 #include "UI/SRClueCombineResultWidget.h"
 #include "Components/Image.h"
-#include "Components/TextBlock.h"
+#include "Components/RichTextBlock.h"
 #include "Components/Button.h"
 #include "Engine/Texture2D.h"
 #include "Components/WidgetSwitcher.h"

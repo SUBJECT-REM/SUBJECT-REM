@@ -103,23 +103,35 @@ bool USRQuickSlotComponent::CanRegisterItem(FName Id)
 
 bool USRQuickSlotComponent::TryUseRSlot(AActor* Target)
 {
-	if (!Target) return false;
-
+	UE_LOG(LogTemp, Warning, TEXT("TryUseRSlot"));
+	if (!Target) 
+	{
+		UE_LOG(LogTemp,Warning,TEXT("TryUseRSlot Target nullptr"))
+		return  false;
+	}
 	const FName ItemId = GetItemIdBySlotIndex(RSlotIndex);
-	if (ItemId.IsNone()) return false;
-
+	if (ItemId.IsNone())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TryUseRSlot : GetItemIdBySlotIndex false"));
+		return false;
+	}
 	if (!Target->GetClass()->ImplementsInterface(USRKeyReceivable::StaticClass()))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("TryUseRSlot : not ImplementsInterface USRKeyReceivable "));
+
 		return false;
 	}
 
 	if (ISRKeyReceivable::Execute_CanUseKey(Target, ItemId))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute_CasUseKey : true"));
 		ISRKeyReceivable::Execute_UseKey(Target, ItemId, GetOwner());
 		UnRegisterItem(RSlotIndex);
 		return true;
 	}
 
+
+	UE_LOG(LogTemp, Warning, TEXT("return false"));
 	return false;
 }
 

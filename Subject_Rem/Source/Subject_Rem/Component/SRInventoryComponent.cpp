@@ -222,10 +222,17 @@ void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
 			
             // UI 페이로드 방송 (기존 유지)
             FSRClueMapUIData Payload;
-            Payload.ClueMap = *FoundClueMap;
-            Payload.ClueIds = ClueIds;
-            Payload.bResult = FoundClueMap->bResult;
-
+			if (FoundClueMap->bResult)
+			{
+				Payload.ClueMap = *FoundClueMap;
+				Payload.ClueIds = ClueIds;
+				Payload.bResult = FoundClueMap->bResult;
+			}
+			else
+			{
+				Payload.ClueMap = *FoundClueMap;
+				Payload.bResult = FoundClueMap->bResult;
+			}
             if (AllItemsDataTable)
             {
                 for (const FName& Id : ClueIds)
@@ -301,30 +308,30 @@ void USRInventoryComponent::FlushStressFromClueMaps()
 		UE_LOG(LogTemp, Warning, TEXT("ClueMapDatasNum 0"));
 		return;
 	}
-	float ImmediateSum = 0.f;
+	float Immediate = 0.f;
 	struct FPeriodic { float Amount = 0.f; float Interval = 0.f; };
-	TArray<FPeriodic> Periodics;
+	FPeriodic Periodics;
 
 	for (const FSRClueMapData& Data : ClueMapDatas)
 	{
 		if (!Data.bResult) continue; // 거짓 결과는 무시
-		ImmediateSum += Data.ImmediateStessIncrease; // (필드명 오타 유지시 그대로 사용)
+		Immediate = Data.ImmediateStessIncrease; // (필드명 오타 유지시 그대로 사용)
 
 		if (Data.PeriodicStressIncrease.Amount != 0.f &&
 			Data.PeriodicStressIncrease.Interval > 0.f)
 		{
-			Periodics.Add({ Data.PeriodicStressIncrease.Amount,
-							Data.PeriodicStressIncrease.Interval });
+			Periodics.Amount = Data.PeriodicStressIncrease.Amount;
+			Periodics.Interval = Data.PeriodicStressIncrease.Interval;
 		}
 	}
 
-	if (ImmediateSum != 0.f)
+	if (Immediate != 0.f)
 	{
-		CashedStressSubsystem->ChangeStressAmount(ImmediateSum);
+		CashedStressSubsystem->ChangeStressAmount(Immediate);
 	}
-	for (const auto& P : Periodics)
+	if (Periodics.Amount > 0.f && Periodics.Interval > 0.f)
 	{
-		CashedStressSubsystem->ChangeStressByTime(P.Amount, P.Interval);
+		CashedStressSubsystem->ChangeStressByTime(Periodics.Amount, Periodics.Interval);
 	}
 
 	// 같은 조합 결과가 다음에 또 중복 적용되지 않도록 초기화

@@ -74,7 +74,7 @@ void ASRCaptionManagerActor::OnRequestPlayCaptionRow(const FName& RowName)
 
 void ASRCaptionManagerActor::OnCaptionFinished_Implementation(FName RowName)
 {
-	Current = RowName;
+	Current = NAME_None;
 	CaptionTypewriterCompletedDelgate.Broadcast(RowName);
 
 	TryRunNext();
