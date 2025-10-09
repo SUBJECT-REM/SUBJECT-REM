@@ -15,6 +15,7 @@ class UTextBlock;
 class USRSlotWidget;
 class UVerticalBox;
 class UUniformGridPanel;
+class URichTextBlock;
 class USRRotateItemPreviewWidget;
 class UImage;
 
@@ -82,11 +83,11 @@ private:
 
 	/*아이템 이름란*/
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ItemName;
+	URichTextBlock* ItemName;
 
 	/*아이템 설명란*/
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ItemDescription;
+	URichTextBlock* ItemDescription;
 
 	/*아이템 Preview*/
 	UPROPERTY(meta = (BindWidget))

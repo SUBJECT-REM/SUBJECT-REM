@@ -58,6 +58,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	uint8 ExpectedIconCount = 2; // 2 또는 3
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FButtonStyle ButtonThreeStyle;
 private:
 	bool bIsFoundCombinedClue = false;
 
@@ -69,5 +72,7 @@ private:
 	//해당 ClueID로 어떤 Clue인지 확인합니다.
 	UPROPERTY()
 	FName CombinedClueID;
+
+
 
 };

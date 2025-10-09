@@ -82,6 +82,12 @@ private:
 
 	bool TryAutoRegisterToQuickSlot(const FSRItemData& ItemData);
 
+	//단서조합 헬퍼함수
+	// 이름 사전식 정렬 (유틸)
+	void NormalizeIds(TArray<FName>& Arr);
+
+	// 순서 무시 비교: 정렬 후 완전 동일성 검사 (중복 미고려)
+	bool IsEqualSorted(TArray<FName> A, TArray<FName> B);
 
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* AllItemsDataTable;

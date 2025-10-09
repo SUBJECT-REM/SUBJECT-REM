@@ -33,6 +33,11 @@ void USRStressBar::UpdateStressProgressBar(float StressAmount)
       StackedStressBar->SetPercent(StressSubsystem->GetStressPercent());
       StressPreviewBar->SetFillColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
       StressPreviewBar->SetPercent(0.0f);
+
+      if (StressAmount > 0.f)
+          PlaySound(StressIncreseSound);
+      else
+          PlaySound(StressDecreaseSound);
 }
 
 void USRStressBar::OnStressWillChangeSoon(float ChangeValue, float DelayTime)

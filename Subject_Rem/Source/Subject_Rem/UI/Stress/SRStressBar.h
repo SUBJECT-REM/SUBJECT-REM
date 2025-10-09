@@ -9,7 +9,7 @@
 class USRStressLocalPlayerSubsystem;
 class UHorizontalBox;
 class UProgressBar;
-
+class USoundBase;
 UCLASS()
 class SUBJECT_REM_API USRStressBar : public UUserWidget
 {
@@ -21,6 +21,12 @@ protected:
 	UProgressBar* StackedStressBar;
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* StressPreviewBar;
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* StressIncreseSound;
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* StressDecreaseSound;
 private:
 	USRStressLocalPlayerSubsystem* StressSubsystem;
 	void UpdateStressProgressBar(float StressAmount);
