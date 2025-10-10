@@ -3,7 +3,7 @@
 
 #include "UI/SRClueCombineResultWidget.h"
 #include "Components/Image.h"
-#include "Components/TextBlock.h"
+#include "Components/RichTextBlock.h"
 #include "Components/Button.h"
 #include "Engine/Texture2D.h"
 #include "Components/WidgetSwitcher.h"
@@ -23,6 +23,10 @@ void USRClueCombineResultWidget::SetClueMapImage(TArray<TSoftObjectPtr<UTexture2
 		SetImageBrush(ClueLeftImage_3, Icons[0]);
 		SetImageBrush(ClueMidImage_3, Icons[1]);
 		SetImageBrush(ClueRightImage_3, Icons[2]);
+	}
+	else
+	{
+		SetImageBrush(ClueImage, Icons[0]);
 	}
 }
 
@@ -52,11 +56,10 @@ void USRClueCombineResultWidget::OnClickedCloseButton()
 
 void USRClueCombineResultWidget::EnsureLayoutByCount(uint8 Count)
 {
-	// 2/3 외 값 방어
-	const int32 Cnt = (Count == 3) ? 3 : 2;
+	const int32 Index = Count - 1;
 	if (LayoutSwitcher)
 	{
-		LayoutSwitcher->SetActiveWidgetIndex(Cnt == 3 ? 1 : 0);
+		LayoutSwitcher->SetActiveWidgetIndex(Index);
 	}
 }
 

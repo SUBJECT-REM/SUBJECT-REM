@@ -31,7 +31,7 @@ void USRClueWidgetPresenter::Init(UActorComponent* InitComponent, UUserWidget* I
 	check(ClueWidget)
 	ClueWidget->CombineButtonClickedDelegate.AddDynamic(this, &ThisClass::RequestCombineClue);
 	ClueWidget->CombineButtonClickedDelegate.AddDynamic(this, &ThisClass::HandleCombineClueTutorial);
-
+	ClueWidget->RemoveDeviceDataDelegate.AddDynamic(this, &ThisClass::RequestRemoveDeviceData);
 	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRGameFlowManager::StaticClass());
 	if (FoundActor)
 	{
@@ -68,4 +68,11 @@ void USRClueWidgetPresenter::HandleCombineClueTutorial(TArray<FName> ClueIds)
 		TutorialManager->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_CombineClue);
 		ClueWidget->CombineButtonClickedDelegate.RemoveDynamic(this, &ThisClass::HandleCombineClueTutorial);
 	}
+}
+
+void USRClueWidgetPresenter::RequestRemoveDeviceData(FName Id)
+{
+	TArray<FName> Ids;
+	Ids.Add(Id);
+	InvenComp->RemoveItems(Ids);
 }

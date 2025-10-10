@@ -78,6 +78,7 @@ public:
 
     //UPROPERTY(BlueprintAssignable, Category = "Tutorial")
     //FTutorialStepChanged  OnTutorialStepChanged;
+    void StartFlow();
 
     UPROPERTY(BlueprintAssignable)
     FFlowStartedSignature OnFlowStartDelegate;
@@ -92,10 +93,13 @@ public:
     FOnCaptionEndedSignature OnCaptionTypewriterEnd; //자막 재생 끝남 델리게이트
     /** 모든 튜토리얼 단계 데이터 */
     UPROPERTY(EditAnywhere, Category = "Tutorial|Data")
-    TArray<FGameFlowInfo> TutorialInfos;
+    TArray<FGameFlowInfo> SequenceFlowInfos;
 
     UPROPERTY(EditAnywhere)
-    TMap<FName,TSoftObjectPtr<AActor>> EnabledActor;
+    TMap<FName,AActor*> EnabledActorByCaptionRow;
+
+    UPROPERTY(EditAnywhere)
+    TMap<FGameplayTag, AActor*> EnabledActorByObjectiveTag;
 private:
     UFUNCTION()
     void RequestShowingCaption(const FName& CaptionRow);
@@ -105,14 +109,20 @@ private:
 
     void DoNextFlow(FGameFlowInfo* Current, FGameplayTag CompletedTag);
 
+    void ActivateActorsForObjectiveTag(const FGameplayTag& CompletedTag);
+
+    void ResolveAndEnableActor(AActor* ActorPtr);
 protected:
     virtual void BeginPlay() override;
 
     /** 첫 번째 튜토리얼 단계 시작 */
-    void StartFirstFlow();
+  
 
     /** 특정 튜토리얼 단계로 전환 */
     void SetupFlow(FGameplayTag TutorialID);
+
+    void SetupFlowByIndex(int32 Index);
+    void CompleteAndPopCurrentFlow(FGameplayTag CompletedTag);
 
     /** 튜토리얼 정보 검색 */
     FGameFlowInfo* FindNextFlowInfo(FGameplayTag TutorialID);

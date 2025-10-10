@@ -48,6 +48,9 @@ public:
 	FOnTypewriterCompletedSignature CaptionTypewriterCompletedDelgate;
 	UPROPERTY(BlueprintReadOnly)
 	FName Current;
+
+	UPROPERTY(Transient, VisibleAnywhere)
+	TArray<FName> PendingQueue;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -60,8 +63,7 @@ private:
 	UFUNCTION()
 	void OnRequestPlayCaptionRow(const FName& RowName);
 
-	UPROPERTY(Transient)
-	TArray<FName> PendingQueue;
+
 
 	bool bPickupResultOpen = false;
 	bool bInvestigationOpen = false;

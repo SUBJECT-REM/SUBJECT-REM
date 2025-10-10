@@ -29,6 +29,11 @@ public:
 
 	bool CanRegisterItem(FName Id);
 
+	UFUNCTION(BlueprintCallable)
+	bool TryUseRSlot(AActor* Target);
+
+	bool TryAutoRegisterItem(FName ItemId);
+	
 	FName GetItemIdBySlotIndex(uint8 Index);
 
 	const FSRConsumeData* ResolveConsumeDataByItemId(FName ItemId) const;
@@ -52,6 +57,8 @@ private:
 	UPROPERTY()
 	TArray<FName> Slots;
 
+	const uint8 RSlotIndex = 3;
+
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* ItemDataTable;
 
@@ -63,5 +70,6 @@ private:
 
 	TSoftObjectPtr<UTexture2D> ResolveIconByItemId(FName Id) const; // DT에서 찾아 반환
 
+	TSoftObjectPtr<class ASRGameFlowManager> GameFlowManager;
 
 };

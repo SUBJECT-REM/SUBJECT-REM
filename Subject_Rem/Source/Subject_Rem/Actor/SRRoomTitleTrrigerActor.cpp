@@ -5,6 +5,8 @@
 #include "Components/BoxComponent.h"
 #include "UI/SRHUD.h"
 #include "UI/SRRoomTitleWidget.h"
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 ASRRoomTitleTrrigerActor::ASRRoomTitleTrrigerActor()
 {
@@ -21,6 +23,8 @@ void ASRRoomTitleTrrigerActor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GameFlowManager = Cast<ASRGameFlowManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ASRGameFlowManager::StaticClass()));
+	
 }
 
 void ASRRoomTitleTrrigerActor::OnBoxCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -66,6 +70,12 @@ void ASRRoomTitleTrrigerActor::OnBoxCollisionBeginOverlap(UPrimitiveComponent* O
 			this, &ThisClass::OnBoxCollisionBeginOverlap);
 	}
 	
+	if (GameFlowManager.IsValid() && ApplyRoomFlowInfo)
+	{
+		GameFlowManager->SequenceFlowInfos.Add(RoomGameFlowInfo);
+		GameFlowManager->StartFlow();
+		ApplyRoomFlowInfo = false;
+	}
 }
 
 
