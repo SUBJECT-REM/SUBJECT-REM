@@ -52,3 +52,9 @@ FString USRFunctionLibrary::MakeRuneGibberish(int32 Len, int32 Seed)
     }
     return Out;
 }
+
+FName USRFunctionLibrary::MakeFalseClueIdFrom(const TArray<FName>& ConsumedIds)
+{
+    const FString Key = FString::JoinBy(ConsumedIds, TEXT("_"), [](const FName& N) { return N.ToString(); });
+    return FName(*FString::Printf(TEXT("False_%u"), FCrc::StrCrc32(*Key)));
+}

@@ -39,6 +39,27 @@ void USRInventoryComponent::BeginPlay()
 	}
 }
 
+void USRInventoryComponent::ApplyFallbackFalseClue(const TArray<FName>& ConsumedIds)
+{
+	// 기본 뼈대
+	FSRClueMapData Out;
+	Out.Id = USRFunctionLibrary::MakeFalseClueIdFrom(ConsumedIds);
+	Out.Name = FText::GetEmpty();
+	Out.bResult = false;
+	Out.ImmediateStessIncrease = 0.f;
+	Out.PeriodicStressIncrease = {}; // 0 초기화
+	Out.bShowCaption = false;
+	Out.CaptionRow = FDataTableRowHandle{};
+
+	// 룬 설명 생성
+	const int32 Seed = USRFunctionLibrary::MakeSeedFromIds(ConsumedIds);
+	const int32 TargetLen = 48; // 고정 길이(원하면 24~96 등 범위로 랜덤)
+	Out.Description = FText::FromString(USRFunctionLibrary::MakeRuneGibberish(TargetLen, Seed));
+
+	// 공통 적용
+	ApplyClueMapResult(Out, ConsumedIds);
+}
+
 bool USRInventoryComponent::DoesRuleMatchInput(const TArray<FName>& InputRaw, const TArray<FName>& InputNormalized, const FSRClueCombineRuleData* Rule) const
 {
 	if (!Rule) return false;
@@ -93,7 +114,7 @@ bool USRInventoryComponent::TryApplyCombineResult(const FDataTableRowHandle& Han
 			Out.Description = FText::FromString(USRFunctionLibrary::MakeRuneGibberish(TargetLen, Seed));
 		}
 
-		ApplyClueMapResult(*FoundClueMap, ConsumedIds);
+		ApplyClueMapResult(Out, ConsumedIds);
 		return true;
 	}
 	else if (RowStruct == FSRItemData::StaticStruct())
@@ -317,9 +338,10 @@ void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
 		{
 			return; // 첫 매칭 처리 후 종료
 		}
-		// 실패 시 다음 룰 계속
 	}
 
+	//거짓단서 처리
+	ApplyFallbackFalseClue(ClueIds);
 }
 
 void USRInventoryComponent::FlushStressFromClueMaps()

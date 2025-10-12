@@ -31,4 +31,5 @@ public:
 
     static FString MakeRuneGibberish(int32 Len, int32 Seed);
 
+    static FName MakeFalseClueIdFrom(const TArray<FName>& ConsumedIds);
 };

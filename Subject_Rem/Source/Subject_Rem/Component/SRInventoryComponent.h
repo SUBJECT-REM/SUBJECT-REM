@@ -63,6 +63,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 private:	
+	void ApplyFallbackFalseClue(const TArray<FName>& ConsumedIds);
 
 	// 1) 룰과 입력 매칭 여부 판단
 	bool DoesRuleMatchInput(const TArray<FName>& InputRaw,
