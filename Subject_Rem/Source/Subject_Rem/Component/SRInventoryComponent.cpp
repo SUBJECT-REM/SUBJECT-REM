@@ -38,6 +38,133 @@ void USRInventoryComponent::BeginPlay()
 	}
 }
 
+bool USRInventoryComponent::DoesRuleMatchInput(const TArray<FName>& InputRaw, const TArray<FName>& InputNormalized, const FSRClueCombineRuleData* Rule) const
+{
+	if (!Rule) return false;
+
+	const TArray<FName>& RuleIds = Rule->ClueIds;
+
+	if (RuleIds.Num() != InputRaw.Num())
+		return false;
+
+	if (RuleIds.Num() == 3) // 3개는 순서 민감
+	{
+		return (RuleIds == InputRaw);
+	}
+	else                    // 그 외(2개 등)는 순서 무시
+	{
+		TArray<FName> NormalizedRule = RuleIds;
+		const_cast<USRInventoryComponent*>(this)->NormalizeIds(NormalizedRule);
+		return (NormalizedRule == InputNormalized);
+	}
+}
+
+bool USRInventoryComponent::TryApplyCombineResult(const FDataTableRowHandle& Handle, const TArray<FName>& ConsumedIds)
+{
+	if (!Handle.DataTable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ClueMapRow.DataTable nullptr"));
+		return false;
+	}
+
+	const UScriptStruct* RowStruct = Handle.DataTable->GetRowStruct();
+	FString Ctx(TEXT("CombineResult"));
+
+	if (RowStruct == FSRClueMapData::StaticStruct())
+	{
+		const FSRClueMapData* FoundClueMap =
+			Handle.DataTable->FindRow<FSRClueMapData>(Handle.RowName, Ctx);
+
+		if (!FoundClueMap)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ClueMapData 찾기 실패: %s"), *Handle.RowName.ToString());
+			return false;
+		}
+
+		// 룬문자 관련 후처리 없이 그대로 적용
+		ApplyClueMapResult(*FoundClueMap, ConsumedIds);
+		return true;
+	}
+	else if (RowStruct == FSRItemData::StaticStruct())
+	{
+		const FSRItemData* NewItem =
+			Handle.DataTable->FindRow<FSRItemData>(Handle.RowName, Ctx);
+
+		if (!NewItem)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Clue(아이템) Row 찾기 실패: %s"), *Handle.RowName.ToString());
+			return false;
+		}
+
+		ApplyItemResult(*NewItem, ConsumedIds);
+		return true;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("지원하지 않는 결과 RowStruct: %s"),
+			   *GetNameSafe(RowStruct));
+		return false;
+	}
+}
+
+void USRInventoryComponent::ApplyClueMapResult(const FSRClueMapData& ClueMap, const TArray<FName>& ConsumedIds)
+{
+	// 인벤토리 데이터 반영
+	ClueMapDatas.Add(ClueMap);
+
+	// 재료 제거
+	RemoveItems(ConsumedIds);
+
+	// UI 페이로드 구성
+	FSRClueMapUIData Payload;
+	Payload.ClueMap = ClueMap;
+	Payload.bResult = ClueMap.bResult;
+	Payload.ClueIds = ConsumedIds;
+
+	FillNamesAndIcons(ConsumedIds, Payload);
+
+	// 브로드캐스트
+	ClueCombineResultDelegate.Broadcast(Payload);
+
+	if (ClueMap.bShowCaption)
+	{
+		ClueCombineCaptionDelegate.Broadcast(ClueMap.CaptionRow.RowName);
+	}
+
+}
+
+void USRInventoryComponent::ApplyItemResult(const FSRItemData& NewItem, const TArray<FName>& ConsumedIds)
+{
+	// 재료 제거 → 신규 아이템 추가
+	RemoveItems(ConsumedIds);
+	AddClueData(NewItem.BaseInfo);
+	AddItemData(NewItem);
+
+	// UI 페이로드
+	FSRClueMapUIData Payload;
+	Payload.ClueMap.Description = NewItem.BaseInfo.Description;
+	Payload.ClueMap.Name = NewItem.BaseInfo.Name;
+	Payload.ClueIcons.Add(NewItem.BaseInfo.Icon);
+	Payload.ClueIds = ConsumedIds;
+
+	ClueCombineResultDelegate.Broadcast(Payload);
+}
+
+void USRInventoryComponent::FillNamesAndIcons(const TArray<FName>& Ids, FSRClueMapUIData& InOutPayload) const
+{
+	if (!AllItemsDataTable) return;
+
+	for (const FName& Id : Ids)
+	{
+		FString FindCtx;
+		if (FSRItemData* Find = AllItemsDataTable->FindRow<FSRItemData>(Id, FindCtx))
+		{
+			InOutPayload.ClueNames.Add(Find->BaseInfo.Name);
+			InOutPayload.ClueIcons.Add(Find->BaseInfo.Icon);
+		}
+	}
+}
+
 void USRInventoryComponent::AddClueData(const FSRItemBaseData& Data)
 {
 	AddClueDatasDelegate.Broadcast(Data);
@@ -176,120 +303,30 @@ void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
 {
 	if (!ClueCombineRuleDataTable) return;
 
-	// 입력 정리 + 정렬 캐시(2개 조합용)
+	// 입력 정리
 	ClueIds.RemoveAll([](const FName& N) { return N.IsNone(); });
 	if (ClueIds.Num() == 0) return;
 
 	TArray<FName> NormalizedInput = ClueIds;
 	NormalizeIds(NormalizedInput);
 
+	// 룰 매칭 루프
 	for (const auto& Pair : ClueCombineRuleDataTable->GetRowMap())
 	{
 		const FSRClueCombineRuleData* Rule = reinterpret_cast<const FSRClueCombineRuleData*>(Pair.Value);
 		if (!Rule) continue;
 
-		// 룰 재료(가변 필드 우선, 구버전 2개 호환)
-		TArray<FName> RuleIds = Rule->ClueIds;
-
-		// 개수 불일치 스킵
-		if (RuleIds.Num() != ClueIds.Num()) continue;
-
-		// ====== 여기서 '매칭 여부' 먼저 결정 ======
-		bool bMatched = false;
-
-		if (RuleIds.Num() == 3)
-		{
-			// 3개 조합은 '순서 민감': 입력 그대로 일치해야 함
-			bMatched = (RuleIds == ClueIds);
-		}
-		else
-		{
-			// 그 외(주로 2개)는 '순서 무시': 정렬 후 비교
-			TArray<FName> NormalizedRule = RuleIds;
-			NormalizeIds(NormalizedRule);
-			bMatched = (NormalizedRule == NormalizedInput);
-		}
-
-		if (!bMatched) continue;
-		// ========================================
-
-		// 결과 접근
-		const FDataTableRowHandle& R = Rule->ClueCombineResult;
-		if (!R.DataTable) { UE_LOG(LogTemp, Warning, TEXT("ClueMapRow.DataTable nullptr")); continue; }
-
-		const UScriptStruct* RowStruct = R.DataTable->GetRowStruct();
-		FString Ctx(TEXT("CombineResult"));
-
-		if (RowStruct == FSRClueMapData::StaticStruct())
-		{
-			// ===== 기존 ClueMap 처리 그대로 =====
-			FSRClueMapData* FoundClueMap = R.DataTable->FindRow<FSRClueMapData>(R.RowName, Ctx);
-			if (!FoundClueMap) { UE_LOG(LogTemp, Warning, TEXT("ClueMapData 찾기 실패: %s"), *R.RowName.ToString()); continue; }
-
-			if (FoundClueMap->bResult)
-			{
-				ClueMapDatas.Add(*FoundClueMap);
-			}
-
-			RemoveItems(ClueIds);
-
-			FSRClueMapUIData Payload;
-			Payload.ClueMap = *FoundClueMap;
-			Payload.bResult = FoundClueMap->bResult;
-			Payload.ClueIds = ClueIds;
-
-			if (AllItemsDataTable)
-			{
-				for (const FName& Id : ClueIds)
-				{
-					FString FindCtx;
-					if (FSRItemData* Find = AllItemsDataTable->FindRow<FSRItemData>(Id, FindCtx))
-					{
-						Payload.ClueNames.Add(Find->BaseInfo.Name);
-						Payload.ClueIcons.Add(Find->BaseInfo.Icon);
-					}
-				}
-			}
-
-			ClueCombineResultDelegate.Broadcast(Payload);
-
-			if (FoundClueMap->bShowCaption)
-			{
-				ClueCombineCaptionDelegate.Broadcast(FoundClueMap->CaptionRow.RowName);
-			}
-
-			return; // 첫 매칭 처리 후 종료
-		}
-		else if (RowStruct == FSRItemData::StaticStruct())
-		{
-			// ===== 기존 새 아이템 처리 그대로 =====
-			const FSRItemData* NewClue = R.DataTable->FindRow<FSRItemData>(R.RowName, Ctx);
-			if (!NewClue) { UE_LOG(LogTemp, Warning, TEXT("Clue(아이템) Row 찾기 실패: %s"), *R.RowName.ToString()); continue; }
-
-			RemoveItems(ClueIds);
-
-			AddClueData(NewClue->BaseInfo);
-			AddItemData(*NewClue);
-
-			FSRClueMapUIData Payload;
-			Payload.ClueMap.Description = NewClue->BaseInfo.Description;
-			Payload.ClueMap.Name = NewClue->BaseInfo.Name;
-			Payload.ClueIcons.Add(NewClue->BaseInfo.Icon);
-			Payload.ClueIds = ClueIds;
-
-			ClueCombineResultDelegate.Broadcast(Payload);
-
-			return; // 첫 매칭 처리 후 종료
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("지원하지 않는 결과 RowStruct: %s"), *GetNameSafe(RowStruct));
+		if (!DoesRuleMatchInput(ClueIds, NormalizedInput, Rule))
 			continue;
-		}
-	}
 
-	UE_LOG(LogTemp, Verbose, TEXT("No matching combine rule for [%s]"),
-		*FString::JoinBy(ClueIds, TEXT(","), [](const FName& N) { return N.ToString(); }));
+		// 결과 RowHandle 적용 시도
+		const FDataTableRowHandle& Handle = Rule->ClueCombineResult;
+		if (TryApplyCombineResult(Handle, ClueIds))
+		{
+			return; // 첫 매칭 처리 후 종료
+		}
+		// 실패 시 다음 룰 계속
+	}
 
 }
 

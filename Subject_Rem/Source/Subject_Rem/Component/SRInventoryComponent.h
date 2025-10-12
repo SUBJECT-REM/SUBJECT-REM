@@ -63,6 +63,27 @@ public:
 protected:
 	virtual void BeginPlay() override;
 private:	
+
+	// 1) 룰과 입력 매칭 여부 판단
+	bool DoesRuleMatchInput(const TArray<FName>& InputRaw,
+							const TArray<FName>& InputNormalized,
+							const struct FSRClueCombineRuleData* Rule) const;
+
+	// 2) 결과 RowHandle을 해석해서 적용(ClueMap/Item) — 적용 성공 시 true 반환
+	bool TryApplyCombineResult(const FDataTableRowHandle& Handle,
+							   const TArray<FName>& ConsumedIds);
+
+	// 3) 결과 적용(ClueMap / Item)
+	void ApplyClueMapResult(const struct FSRClueMapData& ClueMap,
+							const TArray<FName>& ConsumedIds);
+
+	void ApplyItemResult(const struct FSRItemData& NewItem,
+						 const TArray<FName>& ConsumedIds);
+
+	// 4) UI용 이름/아이콘 채우기 유틸
+	void FillNamesAndIcons(const TArray<FName>& Ids,
+						   struct FSRClueMapUIData& InOutPayload) const;
+
 	/*단서 데이터 추가*/
 	UFUNCTION(BlueprintCallable)
 	void AddClueData(const FSRItemBaseData& Data);
