@@ -83,6 +83,12 @@ struct FSRItemBaseData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Caption",
 			  meta = (EditCondition = "bShowPickupCaption"))
 	FDataTableRowHandle PickupCaptionRow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bRequiredDevice= false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bRequiredDevice"))
+	FName RequiredDeviceId;
 };
 
 USTRUCT(BlueprintType)
@@ -191,8 +197,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 UsingClueNum;
 
-	//오디오 경우 파형데이터가 또ㅍ
-
+	// 이 디바이스에서 허용되는 아이템(단서) Id 목록
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Device")
+	TArray<FName> AllowedItemIds;
 };
 
 USTRUCT(BlueprintType)
@@ -236,4 +243,6 @@ struct FSRDeviceUIData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 UsingSlotNum = 2;      // UsingClueNum (1/2/3)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> AllowedItemIds;
 };

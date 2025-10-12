@@ -281,7 +281,7 @@ void USRInventoryComponent::AddItem(const USRItem* Item)
 		FSRDeviceUIData UIData;
 		UIData.Base = ItemData.BaseInfo;
 		UIData.UsingSlotNum = FMath::Clamp<int32>(DeviceRow.UsingClueNum, 1, 3);
-
+		UIData.AllowedItemIds = DeviceRow.AllowedItemIds;
 		AddDeviceData(UIData);
 	}
 	else if (TryAutoRegisterToQuickSlot(ItemData))
