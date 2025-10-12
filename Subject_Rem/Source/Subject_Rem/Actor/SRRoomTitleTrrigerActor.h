@@ -54,7 +54,7 @@ protected:
 	FGameFlowInfo RoomGameFlowInfo;
 
 	UPROPERTY(EditAnywhere)
-	bool ApplyRoomFlowInfo =false;
+	bool ApplyRoomFlowInfoOnce =false;
 
 	TWeakObjectPtr<ASRGameFlowManager> GameFlowManager;
 private:

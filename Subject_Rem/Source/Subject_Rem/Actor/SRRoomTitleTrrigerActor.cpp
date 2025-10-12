@@ -70,11 +70,11 @@ void ASRRoomTitleTrrigerActor::OnBoxCollisionBeginOverlap(UPrimitiveComponent* O
 			this, &ThisClass::OnBoxCollisionBeginOverlap);
 	}
 	
-	if (GameFlowManager.IsValid() && ApplyRoomFlowInfo)
+	if (GameFlowManager.IsValid() && ApplyRoomFlowInfoOnce)
 	{
 		GameFlowManager->SequenceFlowInfos.Add(RoomGameFlowInfo);
 		GameFlowManager->StartFlow();
-		ApplyRoomFlowInfo = false;
+		ApplyRoomFlowInfoOnce = false;
 	}
 }
 

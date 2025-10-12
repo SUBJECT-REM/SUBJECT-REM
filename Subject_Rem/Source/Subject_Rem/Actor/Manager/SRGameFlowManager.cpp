@@ -16,6 +16,17 @@ ASRGameFlowManager::ASRGameFlowManager()
     PrimaryActorTick.bCanEverTick = false;
 }
 
+void ASRGameFlowManager::EnqueueFlow(const FGameFlowInfo& Info, bool bStartIfIdle)
+{
+    SequenceFlowInfos.Add(Info);
+
+    const bool bIdle = !CurrentFlowID.IsValid();
+    if (bStartIfIdle && bIdle)
+    {
+        SetupFlowByIndex(0);
+    }
+}
+
 void ASRGameFlowManager::OnCaptionEnded(const FName& RowName)
 {
     OnCaptionTypewriterEnd.Broadcast(RowName);

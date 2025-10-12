@@ -65,6 +65,9 @@ class SUBJECT_REM_API ASRGameFlowManager : public AActor
 public:
     ASRGameFlowManager();
 
+    UFUNCTION(BlueprintCallable)
+    void EnqueueFlow(const FGameFlowInfo& Info, bool bStartIfIdle = true);
+
     /** 외부에서 튜토리얼 목표를 달성했음을 알릴 때 호출 */
     UFUNCTION(BlueprintCallable, Category = "Tutorial")
     void NotifyObjectiveCompleted(FGameplayTag CompletedTag);
@@ -91,7 +94,7 @@ public:
 
     UPROPERTY(BlueprintAssignable)
     FOnCaptionEndedSignature OnCaptionTypewriterEnd; //자막 재생 끝남 델리게이트
-    /** 모든 튜토리얼 단계 데이터 */
+
     UPROPERTY(EditAnywhere, Category = "Tutorial|Data")
     TArray<FGameFlowInfo> SequenceFlowInfos;
 
@@ -115,11 +118,7 @@ private:
 protected:
     virtual void BeginPlay() override;
 
-    /** 첫 번째 튜토리얼 단계 시작 */
-  
-
-    /** 특정 튜토리얼 단계로 전환 */
-    void SetupFlow(FGameplayTag TutorialID);
+      void SetupFlow(FGameplayTag TutorialID);
 
     void SetupFlowByIndex(int32 Index);
     void CompleteAndPopCurrentFlow(FGameplayTag CompletedTag);
