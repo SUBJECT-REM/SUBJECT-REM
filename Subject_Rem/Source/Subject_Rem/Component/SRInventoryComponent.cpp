@@ -7,6 +7,7 @@
 #include "Interface/UseableInterface.h"
 #include "Presenter/SRItemPickupResultPresenter.h"
 #include "Subsystem/SRStressLocalPlayerSubsystem.h"
+#include "SRFunctionLibrary.h"
 
 // Sets default values for this component's properties
 USRInventoryComponent::USRInventoryComponent()
@@ -54,7 +55,7 @@ bool USRInventoryComponent::DoesRuleMatchInput(const TArray<FName>& InputRaw, co
 	else                    // 그 외(2개 등)는 순서 무시
 	{
 		TArray<FName> NormalizedRule = RuleIds;
-		const_cast<USRInventoryComponent*>(this)->NormalizeIds(NormalizedRule);
+		USRFunctionLibrary::NormalizeIds(NormalizedRule);
 		return (NormalizedRule == InputNormalized);
 	}
 }
@@ -81,7 +82,17 @@ bool USRInventoryComponent::TryApplyCombineResult(const FDataTableRowHandle& Han
 			return false;
 		}
 
-		// 룬문자 관련 후처리 없이 그대로 적용
+		FSRClueMapData Out = *FoundClueMap;
+
+		//거짓 단서면 룬 텍스트로 교체
+		if (!Out.bResult)
+		{
+			const int32 Seed = USRFunctionLibrary::MakeSeedFromIds(ConsumedIds);
+			const int32 BaseLen = Out.Description.ToString().Len();
+			const int32 TargetLen = FMath::Clamp(BaseLen, 24, 96); // 길이 대략 유지
+			Out.Description = FText::FromString(USRFunctionLibrary::MakeRuneGibberish(TargetLen, Seed));
+		}
+
 		ApplyClueMapResult(*FoundClueMap, ConsumedIds);
 		return true;
 	}
@@ -233,25 +244,6 @@ bool USRInventoryComponent::TryAutoRegisterToQuickSlot(const FSRItemData& ItemDa
 	return false;
 }
 
-void USRInventoryComponent::NormalizeIds(TArray<FName>& Arr)
-{
-	Arr.Sort([](const FName& L, const FName& R) {
-		return L.LexicalLess(R);
- });
-}
-
-bool USRInventoryComponent::IsEqualSorted(TArray<FName> A, TArray<FName> B)
-{
-	if (A.Num() != B.Num()) return false;
-	NormalizeIds(A);
-	NormalizeIds(B);
-	for (int32 i = 0; i < A.Num(); ++i)
-	{
-		if (A[i] != B[i]) return false;
-	}
-	return true;
-}
-
 
 void USRInventoryComponent::AddItem(const USRItem* Item)
 {
@@ -308,7 +300,7 @@ void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
 	if (ClueIds.Num() == 0) return;
 
 	TArray<FName> NormalizedInput = ClueIds;
-	NormalizeIds(NormalizedInput);
+	USRFunctionLibrary::NormalizeIds(NormalizedInput);
 
 	// 룰 매칭 루프
 	for (const auto& Pair : ClueCombineRuleDataTable->GetRowMap())
