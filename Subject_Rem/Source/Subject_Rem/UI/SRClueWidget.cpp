@@ -382,10 +382,6 @@ void USRClueWidget::OnClickedCombineButton()
 		{
 			CombinedClueIds.Add(Data.Id);
 		}
-
-		//조합 이후 ClueCombinePanel 아이템들 제거
-		ClueCombineSlot->Clear();
-		ClueCombineSlot->SetIsEnabled(true);
 	}
 
 	if (CombinedClueIds.Num() == CurVaildCombineItemNum)
@@ -399,9 +395,21 @@ void USRClueWidget::OnClickedCombineButton()
 			CashedDeviceUsingClueNum.Remove(CurUsingDevicedSlot->GetItemData().Id);
 			CurUsingDevicedSlot->Clear();
 			CurUsingDevicedSlot = nullptr;
-			ClueCombineSwitcher->SetActiveWidgetIndex(1); //1 default 
+			ClueCombineSwitcher->SetActiveWidgetIndex(DefaultClueCombinePanelIndex); //1 default 
+			CurVaildCombineItemNum = DefaultVaildCombineItemNum; //2 default;
+		}
+
+		for (UWidget* Widget : GetCurrentClueCombineGrid()->GetAllChildren())
+		{
+			USRSlotWidget* ClueCombineSlot = Cast<USRSlotWidget>(Widget);
+
+
+			//조합 이후 ClueCombinePanel 아이템들 제거
+			ClueCombineSlot->Clear();
+			ClueCombineSlot->SetIsEnabled(true);
 		}
 	}
+
 
 
 }

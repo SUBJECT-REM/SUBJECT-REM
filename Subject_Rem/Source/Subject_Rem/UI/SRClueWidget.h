@@ -118,4 +118,7 @@ private:
 	USRSlotWidget* CurUsingDevicedSlot;
 
 	TMap<FName, TArray<FName>> CachedDeviceAllowedMap;
+
+	const int DefaultVaildCombineItemNum = 2;
+	const int DefaultClueCombinePanelIndex = 1;
 };

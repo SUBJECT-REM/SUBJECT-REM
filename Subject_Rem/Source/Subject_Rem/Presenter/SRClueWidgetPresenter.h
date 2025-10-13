@@ -42,7 +42,7 @@ private:
 	void RequestUpdateDeviceGridWidget(const FSRDeviceUIData& Data);
 
 	UFUNCTION()
-	void HandleCombineClueTutorial(TArray<FName> ClueIds);
+	void HandleCombineClue(TArray<FName> ClueIds);
 
 	UFUNCTION()
 	void RequestRemoveDeviceData(FName Id);
@@ -54,7 +54,7 @@ private:
 	USRClueWidget* ClueWidget;
 
 	UPROPERTY()
-	ASRGameFlowManager* TutorialManager;
+	ASRGameFlowManager* GameFlowMng;;
 
 	TWeakObjectPtr<ASRCaptionManagerActor> CaptionManager;
 };

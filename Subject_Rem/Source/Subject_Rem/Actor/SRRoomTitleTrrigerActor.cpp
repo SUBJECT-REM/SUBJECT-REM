@@ -24,7 +24,7 @@ void ASRRoomTitleTrrigerActor::BeginPlay()
 	Super::BeginPlay();
 
 	GameFlowManager = Cast<ASRGameFlowManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ASRGameFlowManager::StaticClass()));
-	
+	GameFlowManager->OnFlowCompleteDelegate.AddDynamic(this, &ThisClass::NotifyGameFlowCompletedId);
 }
 
 void ASRRoomTitleTrrigerActor::OnBoxCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -70,11 +70,41 @@ void ASRRoomTitleTrrigerActor::OnBoxCollisionBeginOverlap(UPrimitiveComponent* O
 			this, &ThisClass::OnBoxCollisionBeginOverlap);
 	}
 	
-	if (GameFlowManager.IsValid() && ApplyRoomFlowInfoOnce)
+	// 플로우 주입
+	if (GameFlowManager.IsValid())
 	{
-		GameFlowManager->SequenceFlowInfos.Add(RoomGameFlowInfo);
-		GameFlowManager->StartFlow();
-		ApplyRoomFlowInfoOnce = false;
+		if (!bApplyRoomFlowInfoOnce)
+		{
+			return;
+		}
+
+		// 직렬 주입: 순서대로 처리
+		if (SequenceRoomGameFlowInfos.Num() > 0)
+		{
+			GameFlowManager->EnqueueFlows(SequenceRoomGameFlowInfos, /*bStartIfIdle=*/true);
+
+		}
+
+		// 병렬 주입: 동시에 처리
+		if (ParallelRoomGameFlowInfos.Num() > 0)
+		{
+			GameFlowManager->AddParallelFlows(ParallelRoomGameFlowInfos);
+		}
+
+		if (EnabledActorByObjectiveTag.Num() > 0)
+		{
+			GameFlowManager->RegisterActorForObjectiveTag(EnabledActorByObjectiveTag);
+		}
+		bApplyRoomFlowInfoOnce = false;
+	}
+}
+
+void ASRRoomTitleTrrigerActor::NotifyGameFlowCompletedId(FGameplayTag Tag)
+{
+	if (Tag == RoomClearConditionTag)
+	{
+		if (GameFlowManager.IsValid())
+			GameFlowManager->NotifyObjectiveCompleted(RoomClearTag);
 	}
 }
 

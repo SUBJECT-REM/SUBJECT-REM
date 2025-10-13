@@ -50,15 +50,28 @@ protected:
 	UPROPERTY(EditAnywhere)
 	bool bTriggerOnce = false;
 
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "ApplyRoomFlowInfo"))
-	FGameFlowInfo RoomGameFlowInfo;
+	UPROPERTY(EditAnywhere, Category = "Flow|Sequence")
+	TArray<FGameFlowInfo> SequenceRoomGameFlowInfos;
 
+	UPROPERTY(EditAnywhere, Category = "Flow|Parallel")
+	TArray<FGameFlowInfo> ParallelRoomGameFlowInfos;
+
+	UPROPERTY(EditAnywhere, Category = "Flow")
+	TMap<FGameplayTag, AActor*> EnabledActorByObjectiveTag;
+
+
+	UPROPERTY(EditAnywhere, Category = "Flow")
+	FGameplayTag RoomClearConditionTag;
+
+	UPROPERTY(EditAnywhere, Category = "Flow")
+	FGameplayTag RoomClearTag;
 	UPROPERTY(EditAnywhere)
-	bool ApplyRoomFlowInfoOnce =false;
+	bool bApplyRoomFlowInfoOnce =false;
 
 	TWeakObjectPtr<ASRGameFlowManager> GameFlowManager;
 private:
 	UFUNCTION()
 	void OnBoxCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
+	UFUNCTION()
+	void NotifyGameFlowCompletedId(FGameplayTag Tag);
 };

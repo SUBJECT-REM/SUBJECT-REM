@@ -30,5 +30,7 @@ namespace SRGameplayTags
 	SUBJECT_REM_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameFlow_Objectives_UsePillActiveDataArchiveRoomKey);
 
 
+	SUBJECT_REM_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameFlow_Objectives_DataStoreRoomSucced);
+
 
 }

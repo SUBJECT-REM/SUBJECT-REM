@@ -117,6 +117,10 @@ void ASideScrollingCharacter::Move(const FInputActionValue& Value)
 	// route the input
 	DoMove(MoveVector.Y);
 
+	if (CachedTutorialMgr.IsValid())
+	{
+		CachedTutorialMgr->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_Move);
+	}
 
 }
 

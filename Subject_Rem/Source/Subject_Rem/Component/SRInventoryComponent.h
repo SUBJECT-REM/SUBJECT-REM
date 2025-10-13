@@ -120,6 +120,7 @@ private:
 	TSubclassOf<USRItemPickupResultPresenter> ItemPickupPresenterClass;
 
 	TWeakObjectPtr<USRStressLocalPlayerSubsystem> CashedStressSubsystem;
+	TWeakObjectPtr<class ASRGameFlowManager> CashedGameFlowMng;
 	const int first = 0;
 	const int second = 1;
 };

@@ -7,7 +7,10 @@
 #include "Interface/UseableInterface.h"
 #include "Presenter/SRItemPickupResultPresenter.h"
 #include "Subsystem/SRStressLocalPlayerSubsystem.h"
+#include "Kismet/GameplayStatics.h"
+#include "Actor/Manager/SRGameFlowManager.h"
 #include "SRFunctionLibrary.h"
+#include "SRGameplayTags.h"
 
 // Sets default values for this component's properties
 USRInventoryComponent::USRInventoryComponent()
@@ -37,6 +40,10 @@ void USRInventoryComponent::BeginPlay()
 			}
 		}
 	}
+	
+	//CashedGameFlowMng = UGameplayStatics::GetActorOfClass(GetWorld(), ASRGameFlowManager::StaticClass());
+
+
 }
 
 void USRInventoryComponent::ApplyFallbackFalseClue(const TArray<FName>& ConsumedIds)
@@ -105,14 +112,14 @@ bool USRInventoryComponent::TryApplyCombineResult(const FDataTableRowHandle& Han
 
 		FSRClueMapData Out = *FoundClueMap;
 
-		//거짓 단서면 룬 텍스트로 교체
-		if (!Out.bResult)
-		{
-			const int32 Seed = USRFunctionLibrary::MakeSeedFromIds(ConsumedIds);
-			const int32 BaseLen = Out.Description.ToString().Len();
-			const int32 TargetLen = FMath::Clamp(BaseLen, 24, 96); // 길이 대략 유지
-			Out.Description = FText::FromString(USRFunctionLibrary::MakeRuneGibberish(TargetLen, Seed));
-		}
+		////거짓 단서면 룬 텍스트로 교체
+		//if (!Out.bResult)
+		//{
+		//	const int32 Seed = USRFunctionLibrary::MakeSeedFromIds(ConsumedIds);
+		//	const int32 BaseLen = Out.Description.ToString().Len();
+		//	const int32 TargetLen = FMath::Clamp(BaseLen, 24, 96); // 길이 대략 유지
+		//	Out.Description = FText::FromString(USRFunctionLibrary::MakeRuneGibberish(TargetLen, Seed));
+		//}
 
 		ApplyClueMapResult(Out, ConsumedIds);
 		return true;
@@ -143,9 +150,6 @@ void USRInventoryComponent::ApplyClueMapResult(const FSRClueMapData& ClueMap, co
 {
 	// 인벤토리 데이터 반영
 	ClueMapDatas.Add(ClueMap);
-
-	// 재료 제거
-	RemoveItems(ConsumedIds);
 
 	// UI 페이로드 구성
 	FSRClueMapUIData Payload;
@@ -336,11 +340,16 @@ void USRInventoryComponent::CombineClue(TArray<FName> ClueIds)
 		const FDataTableRowHandle& Handle = Rule->ClueCombineResult;
 		if (TryApplyCombineResult(Handle, ClueIds))
 		{
+			RemoveItems(ClueIds);
 			return; // 첫 매칭 처리 후 종료
 		}
 	}
 
+	
+	//CashedGameFlowMng->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_CombineClue);
 	//거짓단서 처리
+		// 재료 제거
+	RemoveItems(ClueIds);
 	ApplyFallbackFalseClue(ClueIds);
 }
 
