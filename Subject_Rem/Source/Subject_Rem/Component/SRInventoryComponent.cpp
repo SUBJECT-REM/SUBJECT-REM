@@ -151,16 +151,32 @@ void USRInventoryComponent::ApplyClueMapResult(const FSRClueMapData& ClueMap, co
 	// 인벤토리 데이터 반영
 	ClueMapDatas.Add(ClueMap);
 
-	// UI 페이로드 구성
-	FSRClueMapUIData Payload;
-	Payload.ClueMap = ClueMap;
-	Payload.bResult = ClueMap.bResult;
-	Payload.ClueIds = ConsumedIds;
+	// ClueMap 업데이트 페이로드
+	FSRClueMapUIData ClueMapPayload;
+	ClueMapPayload.ClueMap = ClueMap;
+	ClueMapPayload.bResult = ClueMap.bResult;
+	ClueMapPayload.ClueIds = ConsumedIds;
 
-	FillNamesAndIcons(ConsumedIds, Payload);
+	// UI 페이로드
+	FSRClueCombineResultUIData CombineResultPayload;
+	CombineResultPayload.ClueMap.Description = ClueMap.Description;
+	CombineResultPayload.ClueMap.Name = ClueMap.Name;
+	for (const FName& Id : ConsumedIds)
+	{
+		FString FindCtx;
+		if (FSRItemData* Find = AllItemsDataTable->FindRow<FSRItemData>(Id, FindCtx))
+		{
+			CombineResultPayload.ClueIcons.Add(Find->BaseInfo.Icon);
+		}
+	}
 
+	CombineResultPayload.ClueIds = ConsumedIds;
+
+	FillNamesAndIcons(ConsumedIds, ClueMapPayload);
 	// 브로드캐스트
-	ClueCombineResultDelegate.Broadcast(Payload);
+	ClueCombineResultDelegate.Broadcast(CombineResultPayload);
+
+	ClueMapResultDelegate.Broadcast(ClueMapPayload);
 
 	if (ClueMap.bShowCaption)
 	{
@@ -176,8 +192,8 @@ void USRInventoryComponent::ApplyItemResult(const FSRItemData& NewItem, const TA
 	AddClueData(NewItem.BaseInfo);
 	AddItemData(NewItem);
 
-	// UI 페이로드
-	FSRClueMapUIData Payload;
+	// 조합 결과 UI 페이로드
+	FSRClueCombineResultUIData Payload;
 	Payload.ClueMap.Description = NewItem.BaseInfo.Description;
 	Payload.ClueMap.Name = NewItem.BaseInfo.Name;
 	Payload.ClueIcons.Add(NewItem.BaseInfo.Icon);

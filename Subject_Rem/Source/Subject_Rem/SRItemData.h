@@ -234,6 +234,18 @@ struct FSRClueMapUIData
 };
 
 USTRUCT(BlueprintType)
+struct FSRClueCombineResultUIData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly) FSRClueMapData ClueMap;
+	UPROPERTY(BlueprintReadOnly) TArray<FName> ClueIds;
+	UPROPERTY(BlueprintReadOnly) TArray<FText> ClueNames;
+
+	UPROPERTY(BlueprintReadOnly) TArray<TSoftObjectPtr<UTexture2D>> ClueIcons;
+};
+
+USTRUCT(BlueprintType)
 struct FSRDeviceUIData
 {
 	GENERATED_BODY()

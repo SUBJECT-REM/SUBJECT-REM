@@ -120,7 +120,7 @@ void USRClueWidget::UpdateClueGridWidget(const FSRItemBaseData& Data)
 	}
 }
 
-void USRClueWidget::UpdateClueCombineResultWidget(const FSRClueMapUIData& Data)
+void USRClueWidget::UpdateClueCombineResultWidget(const FSRClueCombineResultUIData& Data)
 {
 	
 	ClueCombineResultWidget->SetClueMapImage(Data.ClueIcons);

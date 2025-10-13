@@ -30,7 +30,7 @@ public:
 	* @param 갱신하기 위한 데이터
 	*/
 	void UpdateClueGridWidget(const FSRItemBaseData& Data);
-	void UpdateClueCombineResultWidget(const FSRClueMapUIData& Data);
+	void UpdateClueCombineResultWidget(const FSRClueCombineResultUIData& Data);
 	void UpdateDeviceGridWidget(const FSRDeviceUIData& Data);
 
 	FRemoveDeviceDataSignature RemoveDeviceDataDelegate;

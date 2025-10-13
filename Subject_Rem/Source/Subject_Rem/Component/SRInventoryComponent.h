@@ -17,7 +17,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddDeviceDataSignature, const FSRDe
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddClueDatasSignatue,const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddInventoryDataSignature, const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRemoveInventoryDataSignature, const TArray<FName>&, RemovedItemIds);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueCombineResultSignature, const FSRClueMapUIData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueCombineResultSignature, const FSRClueCombineResultUIData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueMapResultSignature, const FSRClueMapUIData&, Data);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueCombineCaptionSignature, const FName& ,CaptionRowName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemPickedUpSignature, const FSRItemBaseData&, Base);
 
@@ -51,6 +53,7 @@ public:
 	/*ClueMap 생성에 대한 델리게이트*/
 	FOnClueCombineResultSignature ClueCombineResultDelegate;
 	FOnClueCombineCaptionSignature ClueCombineCaptionDelegate;
+	FOnClueMapResultSignature ClueMapResultDelegate;
 
 	FOnItemPickedUpSignature ItemPickupDelegate;
 

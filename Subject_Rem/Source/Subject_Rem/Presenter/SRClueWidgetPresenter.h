@@ -36,7 +36,7 @@ private:
 	void RequestCombineClue(TArray<FName> ClueIds);
 
 	UFUNCTION()
-	void RequsetUpdateClueCombineResultWidget(const FSRClueMapUIData& Data);
+	void RequsetUpdateClueCombineResultWidget(const FSRClueCombineResultUIData& Data);
 
 	UFUNCTION()
 	void RequestUpdateDeviceGridWidget(const FSRDeviceUIData& Data);
