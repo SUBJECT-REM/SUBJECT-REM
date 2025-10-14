@@ -9,12 +9,12 @@
 
 void USRClueMapCombinedResultWidget::NativePreConstruct()
 {
-
+    Super::NativePreConstruct();
 }
 
 void USRClueMapCombinedResultWidget::NativeConstruct()
 {
-     
+    Super::NativeConstruct();
       SetVisibility(ESlateVisibility::Visible);
      
       ClueMapDesShownButton->OnClicked.AddDynamic(this, &ThisClass::OnCobminedClueButtonClicked);

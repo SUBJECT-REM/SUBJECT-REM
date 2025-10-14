@@ -84,11 +84,15 @@ struct FSRItemBaseData
 			  meta = (EditCondition = "bShowPickupCaption"))
 	FDataTableRowHandle PickupCaptionRow;
 
+	//디바이스를 통한 조합 처리
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bRequiredDevice= false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bRequiredDevice"))
 	FName RequiredDeviceId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* PickupSound;
 };
 
 USTRUCT(BlueprintType)
