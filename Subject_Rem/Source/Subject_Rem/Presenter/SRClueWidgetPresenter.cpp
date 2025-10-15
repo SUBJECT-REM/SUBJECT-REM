@@ -67,6 +67,11 @@ void USRClueWidgetPresenter::HandleCombineClue(TArray<FName> ClueIds)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ClueCombine Notify Ojbect Completed"));
 		GameFlowMng->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_CombineClue);
+
+		if (ClueIds.Num() == 3)
+		{
+			GameFlowMng->NotifyObjectiveCompleted(SRGameplayTags::GameFlow_Objectives_CobmineAudio);
+		}
 		//ClueWidget->CombineButtonClickedDelegate.RemoveDynamic(this, &ThisClass::HandleCombineClueTutorial);
 	}
 }
