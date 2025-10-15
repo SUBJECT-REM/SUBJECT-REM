@@ -47,7 +47,8 @@ void USRStressUIController::UpdateStressProgressBar(float StressAmount)
       //            SetHightStressEffectAlpha(0.0f);
       //      }
       //}
-      PlayDangerPulse(true);
+      if(StressAmount >0.f)
+        PlayDangerPulse(true);
 }
 
 void USRStressUIController::SetHightStressEffectAlpha(float Alpha)

@@ -122,7 +122,10 @@ public:
     TArray<FGameFlowInfo> ParallelFlows;
 
     UPROPERTY(EditAnywhere)
-    TMap<FName,AActor*> EnabledActorByCaptionRow;
+    TMap<FName,AActor*> EnabledActorByCaptionRowEnded;
+
+    UPROPERTY(EditAnywhere)
+    TMap<FName, AActor*> EnabledActorByCaptionRowStart;
 
     UPROPERTY(EditAnywhere)
     TMap<FGameplayTag, AActor*> EnabledActorByObjectiveTag;
@@ -132,6 +135,9 @@ private:
 
     UFUNCTION()
     void OnCaptionEnded(const FName& RowName);
+
+    UFUNCTION()
+    void OnActorEnableByCaptionStart(const FName& RowName);
 
     void DoNextFlow(FGameFlowInfo* Current, FGameplayTag CompletedTag);
 

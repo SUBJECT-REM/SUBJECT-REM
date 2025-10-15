@@ -61,7 +61,7 @@ void ASRGameFlowManager::OnCaptionEnded(const FName& RowName)
 {
     OnCaptionTypewriterEnd.Broadcast(RowName);
 
-    if (AActor* const* FoundPtr = EnabledActorByCaptionRow.Find(RowName)) 
+    if (AActor* const* FoundPtr = EnabledActorByCaptionRowEnded.Find(RowName))
     {
         if (AActor* Target = *FoundPtr) 
         {
@@ -74,6 +74,24 @@ void ASRGameFlowManager::OnCaptionEnded(const FName& RowName)
         }
     }
 }
+
+void ASRGameFlowManager::OnActorEnableByCaptionStart(const FName& RowName)
+{
+
+    if (AActor* const* FoundPtr = EnabledActorByCaptionRowStart.Find(RowName))
+    {
+        if (AActor* Target = *FoundPtr)
+        {
+            if (IsValid(Target))
+            {
+                Target->SetActorHiddenInGame(false);
+                UBoxComponent* BoxComp = Target->GetComponentByClass<UBoxComponent>();
+                BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+            }
+        }
+    }
+}
+
 
 void ASRGameFlowManager::DoNextFlow(FGameFlowInfo* Current, FGameplayTag CompletedTag)
 {
@@ -177,11 +195,11 @@ void ASRGameFlowManager::BeginPlay()
         }
     }
 
-    // SRGameFlowManager.cpp (BeginPlay)
     if (auto* Caption = Cast<ASRCaptionManagerActor>(
         UGameplayStatics::GetActorOfClass(GetWorld(), ASRCaptionManagerActor::StaticClass())))
     {
         Caption->CaptionTypewriterCompletedDelgate.AddDynamic(this, &ThisClass::OnCaptionEnded);
+        Caption->CaptionTypewriterStartDelgate.AddDynamic(this, &ThisClass::OnActorEnableByCaptionStart);
     }
 
     StartFlow();

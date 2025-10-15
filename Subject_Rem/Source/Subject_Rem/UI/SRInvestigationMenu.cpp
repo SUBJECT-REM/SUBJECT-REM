@@ -278,6 +278,11 @@ FReply USRInvestigationMenu::NativeOnPreviewKeyDown(const FGeometry& InGeometry,
 		HideWidget();
 		return FReply::Handled();
 	}
+	else if (InKeyEvent.GetKey() == EKeys::Escape && GetVisibility() == ESlateVisibility::Visible)
+	{
+		HideWidget();
+		return FReply::Handled();
+	}
 
 	return ReturnVal;
 }
