@@ -32,21 +32,23 @@ void USRStressUIController::UpdateStressProgressBar(float StressAmount)
 
       float StressPercent = StressSubsystem->GetStressPercent();
 
-      if (StressPercent >= 0.8f)
-      {
-            if (!IsAnimationPlaying(Pulse))
-            {
-                  PlayDangerPulse(true);
-            }
-      }
-      else
-      {
-            if (IsAnimationPlaying(Pulse))
-            {
-                  PlayDangerPulse(false);
-                  SetHightStressEffectAlpha(0.0f);
-            }
-      }
+      //if (StressPercent >= 0.8f)
+      //{
+      //      if (!IsAnimationPlaying(Pulse))
+      //      {
+      //            PlayDangerPulse(true);
+      //      }
+      //}
+      //else
+      //{
+      //      if (IsAnimationPlaying(Pulse))
+      //      {
+      //            PlayDangerPulse(false);
+      //            SetHightStressEffectAlpha(0.0f);
+      //      }
+      //}
+      if(StressAmount >0.f)
+        PlayDangerPulse(true);
 }
 
 void USRStressUIController::SetHightStressEffectAlpha(float Alpha)
@@ -68,7 +70,7 @@ void USRStressUIController::PlayDangerPulse(bool bIsPlay)
             if (!IsAnimationPlaying(Pulse))
             {
                   HighStressEffect->SetVisibility(ESlateVisibility::Visible);
-                  PlayAnimation(Pulse, 0.f, -1);
+                  PlayAnimation(Pulse, 0.f, 1);
             }
       }
       else 

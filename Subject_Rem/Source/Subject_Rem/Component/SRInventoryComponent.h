@@ -17,7 +17,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddDeviceDataSignature, const FSRDe
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddClueDatasSignatue,const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddInventoryDataSignature, const FSRItemBaseData&, Data);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRemoveInventoryDataSignature, const TArray<FName>&, RemovedItemIds);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueCombineResultSignature, const FSRClueMapUIData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueCombineResultSignature, const FSRClueCombineResultUIData&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueMapResultSignature, const FSRClueMapUIData&, Data);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClueCombineCaptionSignature, const FName& ,CaptionRowName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemPickedUpSignature, const FSRItemBaseData&, Base);
 
@@ -51,6 +53,7 @@ public:
 	/*ClueMap 생성에 대한 델리게이트*/
 	FOnClueCombineResultSignature ClueCombineResultDelegate;
 	FOnClueCombineCaptionSignature ClueCombineCaptionDelegate;
+	FOnClueMapResultSignature ClueMapResultDelegate;
 
 	FOnItemPickedUpSignature ItemPickupDelegate;
 
@@ -63,6 +66,28 @@ public:
 protected:
 	virtual void BeginPlay() override;
 private:	
+	void ApplyFallbackFalseClue(const TArray<FName>& ConsumedIds);
+
+	// 1) 룰과 입력 매칭 여부 판단
+	bool DoesRuleMatchInput(const TArray<FName>& InputRaw,
+							const TArray<FName>& InputNormalized,
+							const struct FSRClueCombineRuleData* Rule) const;
+
+	// 2) 결과 RowHandle을 해석해서 적용(ClueMap/Item) — 적용 성공 시 true 반환
+	bool TryApplyCombineResult(const FDataTableRowHandle& Handle,
+							   const TArray<FName>& ConsumedIds);
+
+	// 3) 결과 적용(ClueMap / Item)
+	void ApplyClueMapResult(const struct FSRClueMapData& ClueMap,
+							const TArray<FName>& ConsumedIds);
+
+	void ApplyItemResult(const struct FSRItemData& NewItem,
+						 const TArray<FName>& ConsumedIds);
+
+	// 4) UI용 이름/아이콘 채우기 유틸
+	void FillNamesAndIcons(const TArray<FName>& Ids,
+						   struct FSRClueMapUIData& InOutPayload) const;
+
 	/*단서 데이터 추가*/
 	UFUNCTION(BlueprintCallable)
 	void AddClueData(const FSRItemBaseData& Data);
@@ -82,13 +107,6 @@ private:
 
 	bool TryAutoRegisterToQuickSlot(const FSRItemData& ItemData);
 
-	//단서조합 헬퍼함수
-	// 이름 사전식 정렬 (유틸)
-	void NormalizeIds(TArray<FName>& Arr);
-
-	// 순서 무시 비교: 정렬 후 완전 동일성 검사 (중복 미고려)
-	bool IsEqualSorted(TArray<FName> A, TArray<FName> B);
-
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* AllItemsDataTable;
 	
@@ -105,6 +123,7 @@ private:
 	TSubclassOf<USRItemPickupResultPresenter> ItemPickupPresenterClass;
 
 	TWeakObjectPtr<USRStressLocalPlayerSubsystem> CashedStressSubsystem;
+	TWeakObjectPtr<class ASRGameFlowManager> CashedGameFlowMng;
 	const int first = 0;
 	const int second = 1;
 };

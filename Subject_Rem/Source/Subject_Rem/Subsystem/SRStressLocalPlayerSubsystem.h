@@ -50,7 +50,7 @@ public:
 
 private:
 	/* 로컬 플레이어의 현재 스트레스 */
-	float StressAmount = 0.5f;
+	float StressAmount = 0.0f;
 
 	/* 최소/최대 스트레스 값 */
 	const float MinStress = 0.0f;

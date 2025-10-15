@@ -16,11 +16,52 @@ ASRGameFlowManager::ASRGameFlowManager()
     PrimaryActorTick.bCanEverTick = false;
 }
 
+void ASRGameFlowManager::EnqueueFlows(const TArray<FGameFlowInfo>& NewFlows, bool bStartIfIdle)
+{
+    if (NewFlows.Num() == 0) return;
+
+    // 뒤에 이어붙이기 (원하면 중복 방지 로직도 추가 가능)
+    SequenceFlowInfos.Append(NewFlows);
+
+    // 현재 아무 단계도 진행 중이 아니면 즉시 0번부터 시작
+    const bool bIdle = !CurrentFlowID.IsValid() && SequenceFlowInfos.Num() > 0;
+    if (bStartIfIdle && bIdle)
+    {
+        SetupFlowByIndex(0);
+    }
+}
+
+void ASRGameFlowManager::AddParallelFlows(const TArray<FGameFlowInfo>& NewFlows)
+{
+    if (NewFlows.Num() == 0) return;
+    ParallelFlows.Append(NewFlows);
+    // 진행도는 요청 오면 그때부터 올라감(ParallelProgress는 필요할 때 자동 생성)
+}
+
+void ASRGameFlowManager::RegisterActorForObjectiveTag(const TMap<FGameplayTag, AActor*>& Map)
+{
+    for (const auto& Pair : Map)
+    {
+        EnabledActorByObjectiveTag.Add(Pair.Key, Pair.Value);
+    }
+}
+
+void ASRGameFlowManager::UnregisterActorForObjectiveTag(FGameplayTag Tag, AActor* Actor)
+{
+    if (!Tag.IsValid()) return;
+
+    AActor** Found = EnabledActorByObjectiveTag.Find(Tag);
+    if (Found && *Found == Actor)
+    {
+        EnabledActorByObjectiveTag.Remove(Tag);
+    }
+}
+
 void ASRGameFlowManager::OnCaptionEnded(const FName& RowName)
 {
     OnCaptionTypewriterEnd.Broadcast(RowName);
 
-    if (AActor* const* FoundPtr = EnabledActorByCaptionRow.Find(RowName)) 
+    if (AActor* const* FoundPtr = EnabledActorByCaptionRowEnded.Find(RowName))
     {
         if (AActor* Target = *FoundPtr) 
         {
@@ -33,6 +74,24 @@ void ASRGameFlowManager::OnCaptionEnded(const FName& RowName)
         }
     }
 }
+
+void ASRGameFlowManager::OnActorEnableByCaptionStart(const FName& RowName)
+{
+
+    if (AActor* const* FoundPtr = EnabledActorByCaptionRowStart.Find(RowName))
+    {
+        if (AActor* Target = *FoundPtr)
+        {
+            if (IsValid(Target))
+            {
+                Target->SetActorHiddenInGame(false);
+                UBoxComponent* BoxComp = Target->GetComponentByClass<UBoxComponent>();
+                BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+            }
+        }
+    }
+}
+
 
 void ASRGameFlowManager::DoNextFlow(FGameFlowInfo* Current, FGameplayTag CompletedTag)
 {
@@ -58,20 +117,23 @@ void ASRGameFlowManager::ActivateActorsForObjectiveTag(const FGameplayTag& Compl
 {
     if (!CompletedTag.IsValid()) return;
 
-    if (AActor* const* FoundPtr = EnabledActorByObjectiveTag.Find(CompletedTag))
-    {
-        if (AActor* Target = *FoundPtr)
-        {
-            if (IsValid(Target))
-            {
-                Target->SetActorHiddenInGame(false);
+    AActor* Target = nullptr;
 
-                UBoxComponent* BoxComp = Target->GetComponentByClass<UBoxComponent>();
-                UStaticMeshComponent*  MeshComp = Target->GetComponentByClass<UStaticMeshComponent>();
-                MeshComp->SetEnableGravity(true);
-                BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-            }
-        }
+    // 맵에서 꺼내면서(복사) 동시에 제거
+    if (!EnabledActorByObjectiveTag.RemoveAndCopyValue(CompletedTag, Target) || !IsValid(Target))
+    {
+        return;
+    }
+
+    Target->SetActorHiddenInGame(false);
+
+    if (UBoxComponent* Box = Target->FindComponentByClass<UBoxComponent>())
+    {
+        Box->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    }
+    if (UStaticMeshComponent* Mesh = Target->FindComponentByClass<UStaticMeshComponent>())
+    {
+        Mesh->SetEnableGravity(true);
     }
 }
 
@@ -81,6 +143,35 @@ void ASRGameFlowManager::ResolveAndEnableActor(AActor* ActorPtr)
     {
         ActorPtr->SetActorHiddenInGame(false);
         ActorPtr->SetActorEnableCollision(true);
+    }
+}
+
+void ASRGameFlowManager::HandleParallelObjectiveCompleted(const FGameplayTag& CompletedTag)
+{
+    for (int32 i = ParallelFlows.Num() - 1; i >= 0; --i)
+    {
+        FGameFlowInfo& Flow = ParallelFlows[i];
+        if (Flow.ObjectivesTag != CompletedTag)
+            continue;
+
+        int32& Count = ParallelProgress.FindOrAdd(Flow.ID);
+        ++Count;
+
+        const int32 Need = FMath::Max(1, Flow.RequiredCount);
+        if (Count >= Need)
+        {
+            // 병렬도 완료 시 연출/활성화가 필요하다면 여기서 수행
+            if (Flow.bShownCaption && !Flow.CaptionRow.IsNone())
+            {
+                RequestShowingCaption(Flow.CaptionRow);
+            }
+            //ActivateActorsForObjectiveTag(CompletedTag);
+
+            OnFlowCompleteDelegate.Broadcast(Flow.ID);
+
+            ParallelProgress.Remove(Flow.ID);
+            ParallelFlows.RemoveAtSwap(i);
+        }
     }
 }
 
@@ -104,11 +195,11 @@ void ASRGameFlowManager::BeginPlay()
         }
     }
 
-    // SRGameFlowManager.cpp (BeginPlay)
     if (auto* Caption = Cast<ASRCaptionManagerActor>(
         UGameplayStatics::GetActorOfClass(GetWorld(), ASRCaptionManagerActor::StaticClass())))
     {
         Caption->CaptionTypewriterCompletedDelgate.AddDynamic(this, &ThisClass::OnCaptionEnded);
+        Caption->CaptionTypewriterStartDelgate.AddDynamic(this, &ThisClass::OnActorEnableByCaptionStart);
     }
 
     StartFlow();
@@ -135,38 +226,6 @@ FGameFlowInfo* ASRGameFlowManager::FindNextFlowInfo(FGameplayTag TutorialID)
 
 void ASRGameFlowManager::SetupFlow(FGameplayTag TutorialID)
 {
-    //FGameFlowInfo* Info = FindNextFlowInfo(TutorialID);
-    //if (!Info) return;
-
-    //CurrentFlowID = Info->ID;
-    //CurrentObjectiveTag = Info->ObjectivesTag;
-    //OnFlowStartDelegate.Broadcast(TutorialID);
-
-    //if (Info->AllowedInputContexts.Num() > 0)
-    //{
-    //    if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
-    //    {
-    //        if (USRInputLocalPlayerSubsystem* Subsystem =
-    //                ULocalPlayer::GetSubsystem<USRInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
-    //        {
-    //            // 한 번에 교체할 세트 구성
-    //            TArray<FIMCEntry> StageContexts;
-    //            for (UInputMappingContext* Context : Info->AllowedInputContexts)
-    //            {
-    //                if (Context)
-    //                {
-    //                    // 튜토리얼 단계용 우선순위 규칙 (예: 10)
-    //                    StageContexts.Emplace(Context, /*Priority=*/10);
-    //                }
-    //            }
-
-    //            // 통째로 적용
-    //            Subsystem->ReplaceContexts(StageContexts);
-    //        }
-    //    }
-    //}
-    //// 여기서 UI 표시, 안내 메시지 등 실행 가능
-
 
     if (SequenceFlowInfos.Num() == 0)
     {
@@ -175,7 +234,7 @@ void ASRGameFlowManager::SetupFlow(FGameplayTag TutorialID)
         return;
     }
 
-    SetupFlowByIndex(0); // ★ 언제나 0번만
+    SetupFlowByIndex(0);
 
 }
 
@@ -247,35 +306,11 @@ void ASRGameFlowManager::CompleteAndPopCurrentFlow(FGameplayTag CompletedTag)
 
 void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag CompletedTag)
 {
-    //// 현재 단계 목표와 동일한지 확인
-    //ActivateActorsForObjectiveTag(CompletedTag);
 
-    //if (CompletedTag != CurrentObjectiveTag)
-    //    return;
-
-    //FGameFlowInfo* Info = FindNextFlowInfo(CurrentFlowID);
-    //if (!Info) return;
-
-    //// 누적 횟수 증가
-    //int32& Count = ObjectiveProgress.FindOrAdd(CompletedTag);
-    //Count++;
-
-    //UE_LOG(LogTemp, Log, TEXT("Objective %s Progress: %d / %d"), *CompletedTag.ToString(), Count, Info->RequiredCount);
-
-    //if (Count >= Info->RequiredCount)
-    //{
-    //    DoNextFlow(Info, CompletedTag);
-
-    //    if (Info->bShownCaption && !Info->CaptionRow.IsNone())
-    //    {
-    //        RequestShowingCaption(Info->CaptionRow);
-    //    }
-    //}
-
-    //return;
+    HandleParallelObjectiveCompleted(CompletedTag);
     ActivateActorsForObjectiveTag(CompletedTag);
-
-
+   
+    //기존 시퀀스 플로우
     if (CompletedTag != CurrentObjectiveTag) return;
 
     int32& Count = ObjectiveProgress.FindOrAdd(CompletedTag);
@@ -298,4 +333,5 @@ void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag CompletedTag)
         CompleteAndPopCurrentFlow(CompletedTag);
         return;
     }
+
 }

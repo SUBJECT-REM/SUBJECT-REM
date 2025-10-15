@@ -245,11 +245,18 @@ void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 		return;
 	}
 
+
+
 	// 스트레스 적용 (즉시 감소)
 	if (ULocalPlayer* LP = GetWorld()->GetFirstLocalPlayerFromController())
 	{
 		if (USRStressLocalPlayerSubsystem* StressSS = LP->GetSubsystem<USRStressLocalPlayerSubsystem>())
 		{
+			if (StressSS->GetStress() <= 0.f)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("CurrentStressAmount <= 0.f , Can not Use Item"));
+				return;
+			}
 			if (Consume->bPeriodicStressIncreaseCancle)
 			{
 				StressSS->ClearStressTimer();
@@ -257,7 +264,6 @@ void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 			UE_LOG(LogTemp, Warning, TEXT("Consume Decrease %f"), Consume->ImmediateStessDecrease);
 			StressSS->ChangeStressAmount(Consume->ImmediateStessDecrease);
 			
-
 		}
 	}
 

@@ -28,6 +28,8 @@ public:
 	template<class T>
 	T* GetWidgetOfClass(TSubclassOf<UUserWidget> ExactClass);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "UI", meta = (DeterminesOutputType = "WidgetClass"))
+	UUserWidget* GetWidgetByClass(TSubclassOf<UUserWidget> WidgetClass, bool bExactMatch);
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray<UUserWidget*> AddedViewportWidgets;
