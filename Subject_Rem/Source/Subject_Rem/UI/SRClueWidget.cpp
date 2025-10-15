@@ -247,7 +247,12 @@ void USRClueWidget::RevertDrop(USRSlotWidget* DroppedSlot, USRSlotWidget* Dragge
 
 void USRClueWidget::DeactivateCurrentDevice()
 {
-	if (!CurUsingDevicedSlot) return;
+	//Default상태에서 다른 다비아스 클릭시에 대한 처리
+	if (!CurUsingDevicedSlot)
+	{
+		UGridPanel* ActiveCombine = GetCurrentClueCombineGrid();
+		MoveAllFromCombineToClue(ActiveCombine);
+	}
 
 	// 현재 활성 탭(조합 그리드)에서 아이템을 전부 회수
 	UGridPanel* ActiveCombine = GetCurrentClueCombineGrid();
@@ -388,16 +393,16 @@ void USRClueWidget::OnClickedCombineButton()
 	{
 		CombineButtonClickedDelegate.Broadcast(CombinedClueIds);
 		
-		//사용한 디바이스 삭제 
-		if (CurUsingDevicedSlot)
-		{
-			RemoveDeviceDataDelegate.Broadcast(CurUsingDevicedSlot->GetItemData().Id);
-			CashedDeviceUsingClueNum.Remove(CurUsingDevicedSlot->GetItemData().Id);
-			CurUsingDevicedSlot->Clear();
-			CurUsingDevicedSlot = nullptr;
-			ClueCombineSwitcher->SetActiveWidgetIndex(DefaultClueCombinePanelIndex); //1 default 
-			CurVaildCombineItemNum = DefaultVaildCombineItemNum; //2 default;
-		}
+		////사용한 디바이스 삭제 
+		//if (CurUsingDevicedSlot)
+		//{
+		//	RemoveDeviceDataDelegate.Broadcast(CurUsingDevicedSlot->GetItemData().Id);
+		//	CashedDeviceUsingClueNum.Remove(CurUsingDevicedSlot->GetItemData().Id);
+		//	CurUsingDevicedSlot->Clear();
+		//	CurUsingDevicedSlot = nullptr;
+		//	ClueCombineSwitcher->SetActiveWidgetIndex(DefaultClueCombinePanelIndex); //1 default 
+		//	CurVaildCombineItemNum = DefaultVaildCombineItemNum; //2 default;
+		//}
 
 		for (UWidget* Widget : GetCurrentClueCombineGrid()->GetAllChildren())
 		{
@@ -416,37 +421,24 @@ void USRClueWidget::OnClickedCombineButton()
 
 void USRClueWidget::OnClickedDeviceSlot(USRSlotWidget* ClickedSlot)
 {
-	////ClickedSlot->GetItemData().Id
-	//if (!ClickedSlot->GetItemData().Id.IsNone())
-	//{
-	//	FName DeviceId = ClickedSlot->GetItemData().Id;
-	//	UE_LOG(LogTemp, Warning, TEXT("Deviced Clicked Id : %s"), *DeviceId.ToString());
-	//	uint8* FindUsingCombineSlotNumPtr = CashedDeviceUsingClueNum.Find(DeviceId);
-	//	if (!FindUsingCombineSlotNumPtr)
-	//		return;
-	//	uint8 FindUsingCombineSlotNum = *FindUsingCombineSlotNumPtr;
-	//	ClueCombineSwitcher->SetActiveWidgetIndex(FindUsingCombineSlotNum - 1);
-	//	CurVaildCombineItemNum = FindUsingCombineSlotNum;
-	//	CurUsingDevicedSlot = ClickedSlot;
-	//	
-	//}
 	if (!ClickedSlot) return;
 
 	const FName DeviceId = ClickedSlot->GetItemData().Id;
 	if (DeviceId.IsNone()) return;
 
-	// 이미 이 디바이스가 활성이라면 → 비활성화 토글
-	if (CurUsingDevicedSlot == ClickedSlot)
-	{
-		DeactivateCurrentDevice(); // 조합칸에 있는 단서 되돌리고 디폴트로
-		return;
-	}
+	//// 이미 이 디바이스가 활성이라면 → 비활성화 토글
+	//if (CurUsingDevicedSlot == ClickedSlot)
+	//{
+	//	DeactivateCurrentDevice(); // 조합칸에 있는 단서 되돌리고 디폴트로
+	//	return;
+	//}
 
-	// 다른 디바이스가 활성이라면 먼저 정리
-	if (CurUsingDevicedSlot)
-	{
-		DeactivateCurrentDevice();
-	}
+	//// 다른 디바이스가 활성이라면 먼저 정리
+	//if (CurUsingDevicedSlot)
+	//{
+	//	DeactivateCurrentDevice();
+	//}
+	DeactivateCurrentDevice();
 
 	// 새 디바이스 활성화
 	uint8* NumPtr = CashedDeviceUsingClueNum.Find(DeviceId);

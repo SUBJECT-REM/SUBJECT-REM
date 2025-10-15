@@ -59,6 +59,7 @@ void USRInventoryPresenter::RequestAddInventoryWidget(const FSRItemBaseData& Dat
 void USRInventoryPresenter::RequsetRemoveInventoryWidget(const TArray<FName>& ItemIds)
 {
 	InventoryWidget->RemoveItemInventoryGridPanel(ItemIds);
+	InventoryWidget->UpdateItemPreview(nullptr);
 	InventoryWidget->UpdateItemName(FText());
 	InventoryWidget->UpdateItemDes(FText());
 }

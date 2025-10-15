@@ -164,8 +164,9 @@ void USRInvestigationMenu::HideWidgetAnimFinished()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("InvenComp is vaild flush stress"));
 		Invencomp->FlushStressFromClueMaps();
-		
 	}
+
+	OpenInventory();
 }
 
 void USRInvestigationMenu::NativeConstruct()

@@ -206,21 +206,7 @@ void ASideScrollingCharacter::ToggleInvestigationMenu()
 		{
 			InvestigationWidget->ShowWidget();
 
-		/*	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
-			{
-				PC->SetInputMode(FInputModeUIOnly());
-				PC->SetShowMouseCursor(true);
-			}*/
-		}/*
-		else
-		{
-			InvestigationWidget->HideWidget();
-			if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
-			{
-				PC->SetInputMode(FInputModeGameAndUI());
-				PC->SetShowMouseCursor(false);
-			}
-		}*/
+		}
 	}
 	
 }
