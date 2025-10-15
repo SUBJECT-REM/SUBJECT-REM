@@ -10,7 +10,7 @@
 #include "Components/UniformGridPanel.h"
 #include "Components/Image.h"
 #include "Component/Character/SRQuickSlotComponent.h"
-
+#include "Components/RichTextBlock.h"
 
 
 void USRInventoryWidget::NativeConstruct()

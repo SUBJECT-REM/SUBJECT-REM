@@ -57,3 +57,12 @@ void ASideScrollingPlayerController::OnPawnDestroyed(AActor* DestroyedActor)
 		}
 	}
 }
+
+void ASideScrollingPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	FInputModeGameOnly Mode;
+	SetInputMode(Mode);
+	bShowMouseCursor=false;
+}

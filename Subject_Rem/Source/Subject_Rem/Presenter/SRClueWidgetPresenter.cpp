@@ -30,12 +30,12 @@ void USRClueWidgetPresenter::Init(UActorComponent* InitComponent, UUserWidget* I
 	}
 	check(ClueWidget)
 	ClueWidget->CombineButtonClickedDelegate.AddDynamic(this, &ThisClass::RequestCombineClue);
-	ClueWidget->CombineButtonClickedDelegate.AddDynamic(this, &ThisClass::HandleCombineClueTutorial);
+	ClueWidget->CombineButtonClickedDelegate.AddDynamic(this, &ThisClass::HandleCombineClue);
 	ClueWidget->RemoveDeviceDataDelegate.AddDynamic(this, &ThisClass::RequestRemoveDeviceData);
 	AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ASRGameFlowManager::StaticClass());
 	if (FoundActor)
 	{
-		TutorialManager = Cast<ASRGameFlowManager>(FoundActor);
+		GameFlowMng = Cast<ASRGameFlowManager>(FoundActor);
 	}
 }
 
@@ -51,7 +51,7 @@ void USRClueWidgetPresenter::RequestCombineClue(TArray<FName> ClueIds)
 	InvenComp->CombineClue(ClueIds);
 }
 
-void USRClueWidgetPresenter::RequsetUpdateClueCombineResultWidget(const FSRClueMapUIData& Data)
+void USRClueWidgetPresenter::RequsetUpdateClueCombineResultWidget(const FSRClueCombineResultUIData& Data)
 {
 	ClueWidget->UpdateClueCombineResultWidget(Data);
 }
@@ -61,12 +61,18 @@ void USRClueWidgetPresenter::RequestUpdateDeviceGridWidget(const FSRDeviceUIData
 	ClueWidget->UpdateDeviceGridWidget(Data);
 }
 
-void USRClueWidgetPresenter::HandleCombineClueTutorial(TArray<FName> ClueIds)
+void USRClueWidgetPresenter::HandleCombineClue(TArray<FName> ClueIds)
 {
-	if (TutorialManager)
+	if (GameFlowMng)
 	{
-		TutorialManager->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_CombineClue);
-		ClueWidget->CombineButtonClickedDelegate.RemoveDynamic(this, &ThisClass::HandleCombineClueTutorial);
+		UE_LOG(LogTemp, Warning, TEXT("ClueCombine Notify Ojbect Completed"));
+		GameFlowMng->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_CombineClue);
+
+		if (ClueIds.Num() == 3)
+		{
+			GameFlowMng->NotifyObjectiveCompleted(SRGameplayTags::GameFlow_Objectives_CobmineAudio);
+		}
+		//ClueWidget->CombineButtonClickedDelegate.RemoveDynamic(this, &ThisClass::HandleCombineClueTutorial);
 	}
 }
 

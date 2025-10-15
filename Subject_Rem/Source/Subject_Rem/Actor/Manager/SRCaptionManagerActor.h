@@ -20,6 +20,8 @@ struct FCaptionPayload
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCaptionRequestedSignature, const FName&, RowName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTypewriterCompletedSignature, const FName&, RowName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTypewriterStartSignature, const FName&, RowName);
+
 UCLASS()
 class SUBJECT_REM_API ASRCaptionManagerActor : public AActor
 {
@@ -46,6 +48,11 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnTypewriterCompletedSignature CaptionTypewriterCompletedDelgate;
+
+	//JumpTo 캡션의 경우 Caption에서 직접 호출해서 해당 델리게이트는 블루프린트에서 바인딩했음.(Caption을 bp로 구성되어있어서.)
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnTypewriterStartSignature CaptionTypewriterStartDelgate;
+
 	UPROPERTY(BlueprintReadOnly)
 	FName Current;
 

@@ -230,7 +230,7 @@ void USRClueMapWidget::BindInventoryDelegate()
             return;
       }
 
-      InventoryComponent->ClueCombineResultDelegate.AddDynamic(this, &ThisClass::HandleCombinedClue);
+      InventoryComponent->ClueMapResultDelegate.AddDynamic(this, &ThisClass::HandleCombinedClue);
 }
 
 void USRClueMapWidget::UnbindInventoryDelegate()
@@ -241,6 +241,6 @@ void USRClueMapWidget::UnbindInventoryDelegate()
             return;
       }
 
-      InventoryComponent->ClueCombineResultDelegate.RemoveDynamic(this, &ThisClass::HandleCombinedClue);
+      InventoryComponent->ClueMapResultDelegate.RemoveDynamic(this, &ThisClass::HandleCombinedClue);
 }
 

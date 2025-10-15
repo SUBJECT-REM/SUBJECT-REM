@@ -83,6 +83,16 @@ struct FSRItemBaseData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Caption",
 			  meta = (EditCondition = "bShowPickupCaption"))
 	FDataTableRowHandle PickupCaptionRow;
+
+	//디바이스를 통한 조합 처리
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bRequiredDevice= false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bRequiredDevice"))
+	FName RequiredDeviceId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* PickupSound;
 };
 
 USTRUCT(BlueprintType)
@@ -191,8 +201,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 UsingClueNum;
 
-	//오디오 경우 파형데이터가 또ㅍ
-
+	// 이 디바이스에서 허용되는 아이템(단서) Id 목록
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Device")
+	TArray<FName> AllowedItemIds;
 };
 
 USTRUCT(BlueprintType)
@@ -227,6 +238,18 @@ struct FSRClueMapUIData
 };
 
 USTRUCT(BlueprintType)
+struct FSRClueCombineResultUIData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly) FSRClueMapData ClueMap;
+	UPROPERTY(BlueprintReadOnly) TArray<FName> ClueIds;
+	UPROPERTY(BlueprintReadOnly) TArray<FText> ClueNames;
+
+	UPROPERTY(BlueprintReadOnly) TArray<TSoftObjectPtr<UTexture2D>> ClueIcons;
+};
+
+USTRUCT(BlueprintType)
 struct FSRDeviceUIData
 {
 	GENERATED_BODY()
@@ -236,4 +259,6 @@ struct FSRDeviceUIData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 UsingSlotNum = 2;      // UsingClueNum (1/2/3)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> AllowedItemIds;
 };

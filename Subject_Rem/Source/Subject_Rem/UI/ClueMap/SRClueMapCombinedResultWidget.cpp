@@ -9,12 +9,12 @@
 
 void USRClueMapCombinedResultWidget::NativePreConstruct()
 {
-
+    Super::NativePreConstruct();
 }
 
 void USRClueMapCombinedResultWidget::NativeConstruct()
 {
-     
+    Super::NativeConstruct();
       SetVisibility(ESlateVisibility::Visible);
      
       ClueMapDesShownButton->OnClicked.AddDynamic(this, &ThisClass::OnCobminedClueButtonClicked);
@@ -48,6 +48,8 @@ void USRClueMapCombinedResultWidget::UpdateClueImage(TArray<TSoftObjectPtr<UText
         SetImageBrush(LeftClueImage_3, Icons[0]);
         SetImageBrush(MidImage_3, Icons[1]);
         SetImageBrush(RightClueImage_3, Icons[2]);
+
+        ClueMapDesShownButton->SetStyle(ButtonThreeStyle);
     }
 }
 

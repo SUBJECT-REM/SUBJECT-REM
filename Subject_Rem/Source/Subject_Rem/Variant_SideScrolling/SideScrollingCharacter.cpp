@@ -117,6 +117,10 @@ void ASideScrollingCharacter::Move(const FInputActionValue& Value)
 	// route the input
 	DoMove(MoveVector.Y);
 
+	if (CachedTutorialMgr.IsValid())
+	{
+		CachedTutorialMgr->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_Move);
+	}
 
 }
 
@@ -202,21 +206,7 @@ void ASideScrollingCharacter::ToggleInvestigationMenu()
 		{
 			InvestigationWidget->ShowWidget();
 
-		/*	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
-			{
-				PC->SetInputMode(FInputModeUIOnly());
-				PC->SetShowMouseCursor(true);
-			}*/
-		}/*
-		else
-		{
-			InvestigationWidget->HideWidget();
-			if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
-			{
-				PC->SetInputMode(FInputModeGameAndUI());
-				PC->SetShowMouseCursor(false);
-			}
-		}*/
+		}
 	}
 	
 }

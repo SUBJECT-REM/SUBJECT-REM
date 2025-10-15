@@ -13,6 +13,16 @@
  */
 class UInputMappingContext;
 
+//USTRUCT()
+//struct FFlowRuntimeState
+//{
+//    GENERATED_BODY()
+//
+//    UPROPERTY() FGameFlowInfo Info;
+//    int32 Progress = 0;        // 인스턴스별 진행 카운트 (필수)
+//    
+//};
+
 USTRUCT(BlueprintType)
 struct FGameFlowInfo
 {
@@ -65,8 +75,21 @@ class SUBJECT_REM_API ASRGameFlowManager : public AActor
 public:
     ASRGameFlowManager();
 
+    UFUNCTION(BlueprintCallable)
+    void EnqueueFlows(const TArray<FGameFlowInfo>& NewFlows, bool bStartIfIdle = true);
+
+    // 병렬 플로우 추가(주입)용
+    UFUNCTION(BlueprintCallable, Category = "Flow|Parallel")
+    void AddParallelFlows(const TArray<FGameFlowInfo>& NewFlows);
+
+    UFUNCTION(BlueprintCallable, Category = "Flow|Bindings")
+    void RegisterActorForObjectiveTag(const TMap<FGameplayTag, AActor*>& Map);
+
+    UFUNCTION(BlueprintCallable, Category = "Flow|Bindings")
+    void UnregisterActorForObjectiveTag(FGameplayTag Tag, AActor* Actor);
+
     /** 외부에서 튜토리얼 목표를 달성했음을 알릴 때 호출 */
-    UFUNCTION(BlueprintCallable, Category = "Tutorial")
+    UFUNCTION(BlueprintCallable)
     void NotifyObjectiveCompleted(FGameplayTag CompletedTag);
 
     UFUNCTION(BlueprintCallable, Category = "Tutorial")
@@ -91,12 +114,18 @@ public:
 
     UPROPERTY(BlueprintAssignable)
     FOnCaptionEndedSignature OnCaptionTypewriterEnd; //자막 재생 끝남 델리게이트
-    /** 모든 튜토리얼 단계 데이터 */
-    UPROPERTY(EditAnywhere, Category = "Tutorial|Data")
+
+    UPROPERTY(EditAnywhere, Category = "Flow")
     TArray<FGameFlowInfo> SequenceFlowInfos;
 
+    UPROPERTY(EditAnywhere, Category = "Flow")
+    TArray<FGameFlowInfo> ParallelFlows;
+
     UPROPERTY(EditAnywhere)
-    TMap<FName,AActor*> EnabledActorByCaptionRow;
+    TMap<FName,AActor*> EnabledActorByCaptionRowEnded;
+
+    UPROPERTY(EditAnywhere)
+    TMap<FName, AActor*> EnabledActorByCaptionRowStart;
 
     UPROPERTY(EditAnywhere)
     TMap<FGameplayTag, AActor*> EnabledActorByObjectiveTag;
@@ -107,19 +136,20 @@ private:
     UFUNCTION()
     void OnCaptionEnded(const FName& RowName);
 
+    UFUNCTION()
+    void OnActorEnableByCaptionStart(const FName& RowName);
+
     void DoNextFlow(FGameFlowInfo* Current, FGameplayTag CompletedTag);
 
     void ActivateActorsForObjectiveTag(const FGameplayTag& CompletedTag);
 
     void ResolveAndEnableActor(AActor* ActorPtr);
+
+    void HandleParallelObjectiveCompleted(const FGameplayTag& CompletedTag);
 protected:
     virtual void BeginPlay() override;
 
-    /** 첫 번째 튜토리얼 단계 시작 */
-  
-
-    /** 특정 튜토리얼 단계로 전환 */
-    void SetupFlow(FGameplayTag TutorialID);
+      void SetupFlow(FGameplayTag TutorialID);
 
     void SetupFlowByIndex(int32 Index);
     void CompleteAndPopCurrentFlow(FGameplayTag CompletedTag);
@@ -138,6 +168,10 @@ protected:
     // 현재 각 목표 태그가 몇 번 완료되었는지를 추적
     UPROPERTY()
     TMap<FGameplayTag, int32> ObjectiveProgress;
+
+    // 병렬 진행도
+    UPROPERTY()
+    TMap<FGameplayTag, int32> ParallelProgress;   
 
  
 

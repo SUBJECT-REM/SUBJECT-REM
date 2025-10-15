@@ -30,7 +30,7 @@ public:
 	* @param 갱신하기 위한 데이터
 	*/
 	void UpdateClueGridWidget(const FSRItemBaseData& Data);
-	void UpdateClueCombineResultWidget(const FSRClueMapUIData& Data);
+	void UpdateClueCombineResultWidget(const FSRClueCombineResultUIData& Data);
 	void UpdateDeviceGridWidget(const FSRDeviceUIData& Data);
 
 	FRemoveDeviceDataSignature RemoveDeviceDataDelegate;
@@ -60,7 +60,18 @@ protected:
 	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
 	UGridPanel* Three_ClueCombineGridPanel;
 private:
+	//디바이스에 해당하는 데이터를 넣기 위한 헬퍼함수들
+	bool CanAccepDropClueGridPanel(const FSRItemBaseData& Item, USRSlotWidget* From, USRSlotWidget* To);
+	bool ValidateClueCombineDrop(const FSRItemBaseData& Item, USRSlotWidget* From, USRSlotWidget* To);
+	void RevertDrop(USRSlotWidget* DroppedSlot, USRSlotWidget* DraggedSlot, const FSRItemBaseData& MovedData);
 
+	//디바이스 비활성화, 다른 디바이스 활성화시 에 대한처리를 위한 헬퍼함수
+	void DeactivateCurrentDevice();                        
+	void MoveAllFromCombineToClue(UGridPanel* FromGrid);   
+	USRSlotWidget* FindFirstEmptyClueSlot() const;         
+
+	UFUNCTION()
+	void OnSlotDropped_ClueCombine(USRSlotWidget* DroppedSlot, USRSlotWidget* DraggedSlot);
 	/*
 	* ClueGridPanel 클릭시 ClueCombineGridPanel로 데이터 이동 및 위젯을 갱신합니다.
 	* @param 클릭한 슬롯 위젯
@@ -103,5 +114,11 @@ private:
 
 	TMap<FName, uint8> CashedDeviceUsingClueNum;
 
+	UPROPERTY()
 	USRSlotWidget* CurUsingDevicedSlot;
+
+	TMap<FName, TArray<FName>> CachedDeviceAllowedMap;
+
+	const int DefaultVaildCombineItemNum = 2;
+	const int DefaultClueCombinePanelIndex = 1;
 };

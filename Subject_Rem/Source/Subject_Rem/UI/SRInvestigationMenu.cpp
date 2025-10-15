@@ -164,8 +164,9 @@ void USRInvestigationMenu::HideWidgetAnimFinished()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("InvenComp is vaild flush stress"));
 		Invencomp->FlushStressFromClueMaps();
-		
 	}
+
+	OpenInventory();
 }
 
 void USRInvestigationMenu::NativeConstruct()
@@ -273,6 +274,11 @@ FReply USRInvestigationMenu::NativeOnPreviewKeyDown(const FGeometry& InGeometry,
 	FReply ReturnVal = Super::NativeOnPreviewKeyDown(InGeometry, InKeyEvent);
 
 	if (InKeyEvent.GetKey() == EKeys::E && GetVisibility() == ESlateVisibility::Visible)
+	{
+		HideWidget();
+		return FReply::Handled();
+	}
+	else if (InKeyEvent.GetKey() == EKeys::Escape && GetVisibility() == ESlateVisibility::Visible)
 	{
 		HideWidget();
 		return FReply::Handled();
