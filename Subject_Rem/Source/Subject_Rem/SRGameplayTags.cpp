@@ -25,6 +25,8 @@ namespace SRGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameFlow_Objectives_UsePillActiveDataArchiveRoomKey, "GameFlow.Objectives.UsePillActiveDataArchiveRoomKey", "GameFlow Objectives Tag");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameFlow_Objectives_DataStoreRoomSucced, "GameFlow.Objectives.DataStoreRoomSucced", "GameFlow Chapter Tag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameFlow_Chapter3Complete, "GameFlow.Chapter3Complete", "GameFlow Chapter Tag");
+
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameFlow_Objectives_CobmineAudio, "GameFlow.Objectives.CobmineAudio", "GameFlow  Tag");
 
 }

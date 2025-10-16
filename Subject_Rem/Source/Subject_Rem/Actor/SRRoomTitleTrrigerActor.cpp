@@ -24,7 +24,6 @@ void ASRRoomTitleTrrigerActor::BeginPlay()
 	Super::BeginPlay();
 
 	GameFlowManager = Cast<ASRGameFlowManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ASRGameFlowManager::StaticClass()));
-	GameFlowManager->OnFlowCompleteDelegate.AddDynamic(this, &ThisClass::NotifyGameFlowCompletedId);
 }
 
 void ASRRoomTitleTrrigerActor::OnBoxCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -91,22 +90,11 @@ void ASRRoomTitleTrrigerActor::OnBoxCollisionBeginOverlap(UPrimitiveComponent* O
 			GameFlowManager->AddParallelFlows(ParallelRoomGameFlowInfos);
 		}
 
-		if (EnabledActorByObjectiveTag.Num() > 0)
-		{
-			GameFlowManager->RegisterActorForObjectiveTag(EnabledActorByObjectiveTag);
-		}
 		bApplyRoomFlowInfoOnce = false;
 	}
 }
 
-void ASRRoomTitleTrrigerActor::NotifyGameFlowCompletedId(FGameplayTag Tag)
-{
-	if (Tag == RoomClearConditionTag)
-	{
-		if (GameFlowManager.IsValid())
-			GameFlowManager->NotifyObjectiveCompleted(RoomClearTag);
-	}
-}
+
 
 
 

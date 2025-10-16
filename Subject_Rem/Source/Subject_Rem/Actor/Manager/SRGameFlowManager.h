@@ -29,15 +29,15 @@ struct FGameFlowInfo
     GENERATED_BODY()
 
     // 튜토리얼 단계 ID
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flow")
     FGameplayTag ID;
 
     // 이 단계에서 달성해야 하는 목표 태그
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flow")
     FGameplayTag ObjectivesTag;
 
     // 다음 튜토리얼 단계 ID (없으면 튜토리얼 종료)
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flow")
     FGameplayTag NextFlow;
 
     //단계에서 허용할 입력 매핑
@@ -45,7 +45,7 @@ struct FGameFlowInfo
     TArray<UInputMappingContext*> AllowedInputContexts;
 
     //같은 태그가 몇번 필요한지 예) 초반 아이템 줍기 2번 이후 Clue 조합 튜토리얼로 넘어가도록 하기 위해
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tutorial")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flow")
     int32 RequiredCount = 1;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -88,7 +88,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Flow|Bindings")
     void UnregisterActorForObjectiveTag(FGameplayTag Tag, AActor* Actor);
 
-    /** 외부에서 튜토리얼 목표를 달성했음을 알릴 때 호출 */
+    /** 외부에서 플로우 목표를 달성했음을 알릴 때 호출 */
     UFUNCTION(BlueprintCallable)
     void NotifyObjectiveCompleted(FGameplayTag CompletedTag);
 
