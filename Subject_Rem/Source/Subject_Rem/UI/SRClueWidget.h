@@ -93,6 +93,9 @@ private:
 	void OnClickedCombineButton();
 
 	UFUNCTION()
+	void OnClickedDevicePutBackButton();
+
+	UFUNCTION()
 	void OnClickedDeviceSlot(USRSlotWidget* ClickedSlot);
 
 	UGridPanel* GetCurrentClueCombineGrid();
@@ -103,6 +106,9 @@ private:
 	/*단서 조합 버튼*/
 	UPROPERTY(meta = (BindWidget))
 	UButton* ClueCombineButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* DevicePutBackButton;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Styles")
 	FButtonStyle ClueSlotButtonNormalStyle;

@@ -99,7 +99,8 @@ void USRClueWidget::NativeConstruct()
 	check(ClueCombineButton)
 
 	ClueCombineButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedCombineButton);
-	
+	DevicePutBackButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedDevicePutBackButton);
+
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
@@ -393,17 +394,6 @@ void USRClueWidget::OnClickedCombineButton()
 	{
 		CombineButtonClickedDelegate.Broadcast(CombinedClueIds);
 		
-		////사용한 디바이스 삭제 
-		//if (CurUsingDevicedSlot)
-		//{
-		//	RemoveDeviceDataDelegate.Broadcast(CurUsingDevicedSlot->GetItemData().Id);
-		//	CashedDeviceUsingClueNum.Remove(CurUsingDevicedSlot->GetItemData().Id);
-		//	CurUsingDevicedSlot->Clear();
-		//	CurUsingDevicedSlot = nullptr;
-		//	ClueCombineSwitcher->SetActiveWidgetIndex(DefaultClueCombinePanelIndex); //1 default 
-		//	CurVaildCombineItemNum = DefaultVaildCombineItemNum; //2 default;
-		//}
-
 		for (UWidget* Widget : GetCurrentClueCombineGrid()->GetAllChildren())
 		{
 			USRSlotWidget* ClueCombineSlot = Cast<USRSlotWidget>(Widget);
@@ -417,6 +407,16 @@ void USRClueWidget::OnClickedCombineButton()
 
 
 
+}
+
+void USRClueWidget::OnClickedDevicePutBackButton()
+{
+	if (CurUsingDevicedSlot)
+	{
+		CurUsingDevicedSlot = nullptr;
+		ClueCombineSwitcher->SetActiveWidgetIndex(DefaultClueCombinePanelIndex); //1 default 
+		CurVaildCombineItemNum = DefaultVaildCombineItemNum; //2 default;
+	}
 }
 
 void USRClueWidget::OnClickedDeviceSlot(USRSlotWidget* ClickedSlot)
