@@ -15,6 +15,7 @@ class UUniformGridPanel;
 class UButton;
 class USRSlotWidget;
 class USRClueCombineResultWidget;
+class UPanelWidget;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRemoveDeviceDataSignature, FName, Id);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCombineButtonClickedSignature, TArray<FName>, ClickedSlot);
@@ -46,19 +47,8 @@ protected:
 	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
 	UGridPanel* DeviceGridPanel;
 	
-	/*단서 조합 패널*/
-	//디바이스에 따른 위젯스위처
-	UPROPERTY(meta = (BindWidget))
-	class UWidgetSwitcher* ClueCombineSwitcher;
-
 	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
-	UGridPanel* ClueCombineGridPanel;
-
-	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
-	UGridPanel* One_ClueCombine;
-
-	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
-	UGridPanel* Three_ClueCombineGridPanel;
+	class USRClueCombineWidget* ClueCombineWidget;
 private:
 	//디바이스에 해당하는 데이터를 넣기 위한 헬퍼함수들
 	bool CanAccepDropClueGridPanel(const FSRItemBaseData& Item, USRSlotWidget* From, USRSlotWidget* To);
@@ -67,8 +57,11 @@ private:
 
 	//디바이스 비활성화, 다른 디바이스 활성화시 에 대한처리를 위한 헬퍼함수
 	void DeactivateCurrentDevice();                        
-	void MoveAllFromCombineToClue(UGridPanel* FromGrid);   
+	void MoveAllFromCombineToClue(UPanelWidget* FromGrid);
 	USRSlotWidget* FindFirstEmptyClueSlot() const;         
+
+	UFUNCTION()
+	void OnSlotDropped_Clue(USRSlotWidget* DroppedSlot, USRSlotWidget* DraggedSlot);
 
 	UFUNCTION()
 	void OnSlotDropped_ClueCombine(USRSlotWidget* DroppedSlot, USRSlotWidget* DraggedSlot);
@@ -98,7 +91,7 @@ private:
 	UFUNCTION()
 	void OnClickedDeviceSlot(USRSlotWidget* ClickedSlot);
 
-	UGridPanel* GetCurrentClueCombineGrid();
+	UPanelWidget* GetCurrentClueCombineGrid();
 	/*단서 조합 결과*/
 	UPROPERTY(meta = (BindWidget))
 	USRClueCombineResultWidget* ClueCombineResultWidget;

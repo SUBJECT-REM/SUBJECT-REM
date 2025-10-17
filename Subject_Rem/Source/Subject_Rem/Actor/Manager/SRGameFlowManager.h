@@ -90,7 +90,10 @@ public:
 
     /** 외부에서 플로우 목표를 달성했음을 알릴 때 호출 */
     UFUNCTION(BlueprintCallable)
-    void NotifyObjectiveCompleted(FGameplayTag CompletedTag);
+    void NotifyObjectiveCompleted(FGameplayTag ObjectiveTag);
+
+    UFUNCTION()
+    void NotifyFlowCompleteId(FGameplayTag FlowIdTag);
 
     UFUNCTION(BlueprintCallable, Category = "Tutorial")
     FGameplayTag GetCurrentFlowID() const { return CurrentFlowID; }
@@ -146,6 +149,8 @@ private:
     void ResolveAndEnableActor(AActor* ActorPtr);
 
     void HandleParallelObjectiveCompleted(const FGameplayTag& CompletedTag);
+
+    void ExecuteEndingFlow();
 protected:
     virtual void BeginPlay() override;
 

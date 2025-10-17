@@ -133,6 +133,11 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void ToggleInvestigationMenu();
 
+	UFUNCTION()
+	void MoveTutorialEnd(FGameplayTag Tag);
+
+	bool NotifyMoveTag =true;
+
 	UPROPERTY(EditDefaultsOnly, Category="UI")
 	TSubclassOf<UUserWidget> InvestigationWidgetClass;
 

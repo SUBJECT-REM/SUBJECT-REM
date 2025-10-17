@@ -4,10 +4,10 @@
 #include "UI/SRClueWidget.h"
 #include "UI/SRSlotWidget.h"
 #include "UI/SRClueCombineResultWidget.h"
+#include "UI/SRClueCombineWidget.h"
 #include "Components/Button.h"
 #include "Components/GridPanel.h"
 #include "Components/UniformGridPanel.h"
-#include "Components/WidgetSwitcher.h"
 
 
 void USRClueWidget::NativeConstruct()
@@ -27,61 +27,13 @@ void USRClueWidget::NativeConstruct()
 		check(ClueSlot);
 
 		ClueSlot->Clear();
+		ClueSlot->OnSlotDropedDelegate.AddDynamic(this, &ThisClass::OnSlotDropped_Clue);
 		ClueSlot->SetSlotButtonNormalStyle(ClueSlotButtonNormalStyle);
 		ClueSlot->SetSlotButtonSelectedStyle(ClueSlotButtonSelectedStyle);
 	}
 	
-
-	check(ClueCombineGridPanel)
-	TArray<UWidget*> ClueCombineChild = ClueCombineGridPanel->GetAllChildren();
-
-	for (UWidget* Widget : ClueCombineChild)
-	{
-		USRSlotWidget* ClueCombineSlot = Cast<USRSlotWidget>(Widget);
-		if (!ClueCombineSlot)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("ClueCombineGridPanel Children Cast cannot be cast to USRSlotWidget"));
-		}
-		check(ClueCombineSlot);
-
-		ClueCombineSlot->OnSlotDropedDelegate.AddDynamic(this, &ThisClass::OnSlotDropped_ClueCombine);
-		ClueCombineSlot->Clear();
-		ClueCombineSlot->SetIsEnabled(true);
-	}
-
-	TArray<UWidget*> One_ClueCombineChild = One_ClueCombine->GetAllChildren();
-
-	for (UWidget* Widget : One_ClueCombineChild)
-	{
-		USRSlotWidget* ClueCombineSlot = Cast<USRSlotWidget>(Widget);
-		if (!ClueCombineSlot)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("ClueCombineGridPanel Children Cast cannot be cast to USRSlotWidget"));
-		}
-		check(ClueCombineSlot);
-
-		ClueCombineSlot->OnSlotDropedDelegate.AddDynamic(this, &ThisClass::OnSlotDropped_ClueCombine);
-		ClueCombineSlot->Clear();
-		ClueCombineSlot->SetIsEnabled(true);
-	}
-
-
-	TArray<UWidget*> Three_ClueCombineGridPanelChild = Three_ClueCombineGridPanel->GetAllChildren();
-
-	for (UWidget* Widget : Three_ClueCombineGridPanelChild)
-	{
-		USRSlotWidget* ClueCombineSlot = Cast<USRSlotWidget>(Widget);
-		if (!ClueCombineSlot)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("ClueCombineGridPanel Children Cast cannot be cast to USRSlotWidget"));
-		}
-		check(ClueCombineSlot);
-		ClueCombineSlot->OnSlotDropedDelegate.AddDynamic(this, &ThisClass::OnSlotDropped_ClueCombine);
-		ClueCombineSlot->Clear();
-		ClueCombineSlot->SetIsEnabled(true);
-	}
-
-	
+	ClueCombineWidget->OnCombineSlotDropped.AddUniqueDynamic(this, &ThisClass::OnSlotDropped_ClueCombine);
+	ClueCombineWidget->SetLayoutByCount(1);
 	check(DeviceGridPanel)
 		TArray<UWidget*> DeviceGridChild = DeviceGridPanel->GetAllChildren();
 
@@ -251,22 +203,23 @@ void USRClueWidget::DeactivateCurrentDevice()
 	//Default상태에서 다른 다비아스 클릭시에 대한 처리
 	if (!CurUsingDevicedSlot)
 	{
-		UGridPanel* ActiveCombine = GetCurrentClueCombineGrid();
+		UPanelWidget* ActiveCombine = GetCurrentClueCombineGrid();
 		MoveAllFromCombineToClue(ActiveCombine);
 	}
 
 	// 현재 활성 탭(조합 그리드)에서 아이템을 전부 회수
-	UGridPanel* ActiveCombine = GetCurrentClueCombineGrid();
+	UPanelWidget* ActiveCombine = GetCurrentClueCombineGrid();
 	MoveAllFromCombineToClue(ActiveCombine);
 
 	// 디폴트(2칸)로 전환 & 상태 초기화
-	ClueCombineSwitcher->SetActiveWidgetIndex(1); 
+	//ClueCombineSwitcher->SetActiveWidgetIndex(1); 
+	ClueCombineWidget->SetLayoutByCount(1);
 	CurVaildCombineItemNum = 2;
 	CurUsingDevicedSlot = nullptr;
 
 }
 
-void USRClueWidget::MoveAllFromCombineToClue(UGridPanel* FromGrid)
+void USRClueWidget::MoveAllFromCombineToClue(UPanelWidget* FromGrid)
 {
 	if (!FromGrid) return;
 
@@ -309,6 +262,18 @@ USRSlotWidget* USRClueWidget::FindFirstEmptyClueSlot() const
 	return nullptr;
 }
 
+void USRClueWidget::OnSlotDropped_Clue(USRSlotWidget* DroppedSlot, USRSlotWidget* DraggedSlot)
+{
+	if (!DroppedSlot || !DraggedSlot) return;
+
+	const FSRItemBaseData DroppedData = DroppedSlot->GetItemData(); // 지금 목적지에 들어간 데이터
+
+	if (!DroppedData.OptionalResouce.IsNull())
+	{
+		ClueCombineWidget->HandleOptionalResource(DraggedSlot, nullptr);
+	}
+}
+
 void USRClueWidget::OnSlotDropped_ClueCombine(USRSlotWidget* DroppedSlot, USRSlotWidget* DraggedSlot)
 {
 	if (!DroppedSlot || !DraggedSlot) return;
@@ -324,16 +289,19 @@ void USRClueWidget::OnSlotDropped_ClueCombine(USRSlotWidget* DroppedSlot, USRSlo
 		return;
 	}
 
+	//DroppedData.OptionalResouces
 
 	UE_LOG(LogTemp, Warning, TEXT("OnSlotDropped_ClueCombine :: VaildateClueCombineDrop Success"));
-	// 3) 성공 시 추가 처리 필요하면 여기에…
+	if (!DroppedData.OptionalResouce.IsNull())
+	{
+		ClueCombineWidget->HandleOptionalResource(DraggedSlot, nullptr);
+		ClueCombineWidget->HandleOptionalResource(DroppedSlot, DroppedData.OptionalResouce);
+	}
+
 }
 
 void USRClueWidget::ClueDataMoveToClueCombine(USRSlotWidget* ClickedSlot)
 {
-	check(ClueCombineGridPanel)
-
-
 	TArray<UWidget*> Child = GetCurrentClueCombineGrid()->GetAllChildren();
 
 	for (UWidget* Widget : Child)
@@ -353,7 +321,7 @@ void USRClueWidget::ClueDataMoveToClueCombine(USRSlotWidget* ClickedSlot)
 
 void USRClueWidget::ClueCombineDataMoveToClue(USRSlotWidget* ClickedSlot)
 {
-	check(ClueGridPanel)
+	//check(ClueGridPanel)
 	
 	TArray<UWidget*> Child = ClueGridPanel->GetAllChildren();
 
@@ -376,7 +344,7 @@ void USRClueWidget::ClueCombineDataMoveToClue(USRSlotWidget* ClickedSlot)
 
 void USRClueWidget::OnClickedCombineButton()
 {
-	check(ClueCombineGridPanel)
+	//check(ClueCombineGridPanel)
 
 	TArray<FName> CombinedClueIds;
 
@@ -411,12 +379,8 @@ void USRClueWidget::OnClickedCombineButton()
 
 void USRClueWidget::OnClickedDevicePutBackButton()
 {
-	if (CurUsingDevicedSlot)
-	{
-		CurUsingDevicedSlot = nullptr;
-		ClueCombineSwitcher->SetActiveWidgetIndex(DefaultClueCombinePanelIndex); //1 default 
-		CurVaildCombineItemNum = DefaultVaildCombineItemNum; //2 default;
-	}
+	ClueCombineWidget->PutBackDevice();
+	DeactivateCurrentDevice();
 }
 
 void USRClueWidget::OnClickedDeviceSlot(USRSlotWidget* ClickedSlot)
@@ -449,11 +413,11 @@ void USRClueWidget::OnClickedDeviceSlot(USRSlotWidget* ClickedSlot)
 	}
 
 	CurVaildCombineItemNum = *NumPtr;
-	ClueCombineSwitcher->SetActiveWidgetIndex(CurVaildCombineItemNum - 1);
+	ClueCombineWidget->SetLayoutByCount(CurVaildCombineItemNum - 1);
 	CurUsingDevicedSlot = ClickedSlot;
 }
 
-UGridPanel* USRClueWidget::GetCurrentClueCombineGrid()
+UPanelWidget* USRClueWidget::GetCurrentClueCombineGrid()
 {
-	return Cast<UGridPanel>(ClueCombineSwitcher->GetActiveWidget());
+	return ClueCombineWidget->GetActivePanelWidget();
 }

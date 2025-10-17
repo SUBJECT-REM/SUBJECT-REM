@@ -93,6 +93,12 @@ struct FSRItemBaseData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USoundBase* PickupSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bUsingOptionalResouce;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bUsingOptionalResouce"))
+	TSoftObjectPtr<UTexture2D> OptionalResouce;
 };
 
 USTRUCT(BlueprintType)

@@ -112,15 +112,6 @@ bool USRInventoryComponent::TryApplyCombineResult(const FDataTableRowHandle& Han
 
 		FSRClueMapData Out = *FoundClueMap;
 
-		////거짓 단서면 룬 텍스트로 교체
-		//if (!Out.bResult)
-		//{
-		//	const int32 Seed = USRFunctionLibrary::MakeSeedFromIds(ConsumedIds);
-		//	const int32 BaseLen = Out.Description.ToString().Len();
-		//	const int32 TargetLen = FMath::Clamp(BaseLen, 24, 96); // 길이 대략 유지
-		//	Out.Description = FText::FromString(USRFunctionLibrary::MakeRuneGibberish(TargetLen, Seed));
-		//}
-
 		ApplyClueMapResult(Out, ConsumedIds);
 		return true;
 	}
@@ -406,4 +397,19 @@ void USRInventoryComponent::FlushStressFromClueMaps()
 
 	// 같은 조합 결과가 다음에 또 중복 적용되지 않도록 초기화
 	ClueMapDatas.Reset();
+}
+
+uint8 USRInventoryComponent::GetTrueClueMapData()
+{
+	uint8 NumOfTrueClueMap = 0;
+	for (FSRClueMapData Data : ClueMapDatas)
+	{
+		if (Data.bResult == true)
+		{
+			NumOfTrueClueMap++;
+		}
+	}
+
+	return NumOfTrueClueMap;
+
 }

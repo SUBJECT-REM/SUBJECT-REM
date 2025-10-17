@@ -10,6 +10,7 @@
 #include "Component/SRInventoryComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Variant_SideScrolling/SideScrollingCharacter.h"
 
 ASRGameFlowManager::ASRGameFlowManager()
 {
@@ -166,13 +167,38 @@ void ASRGameFlowManager::HandleParallelObjectiveCompleted(const FGameplayTag& Co
                 RequestShowingCaption(Flow.CaptionRow);
             }
             //ActivateActorsForObjectiveTag(CompletedTag);
-
+            ActivateActorsForObjectiveTag(Flow.ID);
             OnFlowCompleteDelegate.Broadcast(Flow.ID);
 
             ParallelProgress.Remove(Flow.ID);
             ParallelFlows.RemoveAtSwap(i);
         }
     }
+}
+
+void ASRGameFlowManager::ExecuteEndingFlow()
+{
+    ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+    if (!PlayerCharacter)
+        return;
+    UActorComponent* ActorComp = PlayerCharacter->GetComponentByClass(USRInventoryComponent::StaticClass());
+    if (!ActorComp)
+        return;
+    USRInventoryComponent* InvenComp = Cast<USRInventoryComponent>(ActorComp);
+    if (!InvenComp)
+        return;
+
+    
+    uint8 TrueClueMapNum = InvenComp->GetTrueClueMapData();
+    if (TrueClueMapNum >= 9)
+    {
+
+    }
+    else
+    {
+
+    }
+
 }
 
 void ASRGameFlowManager::RequestShowingCaption(const FName& CaptionRow)
@@ -304,16 +330,16 @@ void ASRGameFlowManager::CompleteAndPopCurrentFlow(FGameplayTag CompletedTag)
     }
 }
 
-void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag CompletedTag)
+void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag ObjectiveTag)
 {
 
-    HandleParallelObjectiveCompleted(CompletedTag);
-    ActivateActorsForObjectiveTag(CompletedTag);
+    HandleParallelObjectiveCompleted(ObjectiveTag);
+    ActivateActorsForObjectiveTag(ObjectiveTag);
    
     //기존 시퀀스 플로우
-    if (CompletedTag != CurrentObjectiveTag) return;
+    if (ObjectiveTag != CurrentObjectiveTag) return;
 
-    int32& Count = ObjectiveProgress.FindOrAdd(CompletedTag);
+    int32& Count = ObjectiveProgress.FindOrAdd(ObjectiveTag);
     ++Count;
 
     FGameFlowInfo* Info = (SequenceFlowInfos.Num() > 0 && SequenceFlowInfos[0].ID == CurrentFlowID)
@@ -321,7 +347,7 @@ void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag CompletedTag)
     if (!Info) return;
 
     UE_LOG(LogTemp, Log, TEXT("Objective %s Progress: %d / %d"),
-        *CompletedTag.ToString(), Count, Info->RequiredCount);
+        *ObjectiveTag.ToString(), Count, Info->RequiredCount);
 
     if (Count >= Info->RequiredCount)
     {
@@ -330,8 +356,13 @@ void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag CompletedTag)
             RequestShowingCaption(Info->CaptionRow);
         }
 
-        CompleteAndPopCurrentFlow(CompletedTag);
+        CompleteAndPopCurrentFlow(ObjectiveTag);
         return;
     }
+
+}
+
+void ASRGameFlowManager::NotifyFlowCompleteId(FGameplayTag FlowIdTag)
+{
 
 }

@@ -79,6 +79,8 @@ void ASideScrollingCharacter::BeginPlay()
 	if (FoundActor)
 	{
 		CachedTutorialMgr = Cast<ASRGameFlowManager>(FoundActor);
+		if(CachedTutorialMgr.IsValid())
+			CachedTutorialMgr->OnFlowCompleteDelegate.AddDynamic(this, &ThisClass::MoveTutorialEnd);
 	}
 }
 
@@ -117,7 +119,7 @@ void ASideScrollingCharacter::Move(const FInputActionValue& Value)
 	// route the input
 	DoMove(MoveVector.Y);
 
-	if (CachedTutorialMgr.IsValid())
+	if (CachedTutorialMgr.IsValid() && NotifyMoveTag)
 	{
 		CachedTutorialMgr->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_Move);
 	}
@@ -126,7 +128,7 @@ void ASideScrollingCharacter::Move(const FInputActionValue& Value)
 
 void ASideScrollingCharacter::MoveStart(const FInputActionValue& Value)
 {
-	if (CachedTutorialMgr.IsValid())
+	if (CachedTutorialMgr.IsValid() && NotifyMoveTag)
 	{
 		CachedTutorialMgr->NotifyObjectiveCompleted(SRGameplayTags::Tutorial_Objectives_Move);
 	}
@@ -209,4 +211,15 @@ void ASideScrollingCharacter::ToggleInvestigationMenu()
 		}
 	}
 	
+}
+
+void ASideScrollingCharacter::MoveTutorialEnd(FGameplayTag Tag)
+{
+	if (Tag == SRGameplayTags::Tutorial_ID_Move)
+	{
+		NotifyMoveTag = false;
+	}
+
+	if (CachedTutorialMgr.IsValid())
+		CachedTutorialMgr->OnFlowCompleteDelegate.RemoveDynamic(this, &ThisClass::MoveTutorialEnd);
 }

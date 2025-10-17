@@ -43,6 +43,9 @@ public:
 
 	void FlushStressFromClueMaps();
 
+	UFUNCTION()
+	uint8 GetTrueClueMapData();
+
 	/*Clue 변경에 대한 델리게이트*/
 	FAddClueDatasSignatue AddClueDatasDelegate;
 	FAddDeviceDataSignature AddDeviceDataDelegate;
