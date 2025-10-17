@@ -39,6 +39,10 @@
 		{
 			"Name": "RiderSourceCodeAccess",
 			"Enabled": false
+		},
+		{
+			"Name": "MovieRenderPipeline",
+			"Enabled": true
 		}
 	]
 }
