@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Presenter/SRPresenter.h"
+#include "SRItemData.h"
 #include "SRItemPickupResultPresenter.generated.h"
 
 /**
@@ -12,7 +13,7 @@
 class USRInventoryComponent;
 class USRItemPickupResultWidget;
 class ASRCaptionManagerActor;
-
+struct FSRItemBaseData;
 
 UCLASS(Blueprinttype, Blueprintable)
 class SUBJECT_REM_API USRItemPickupResultPresenter : public USRPresenter
@@ -44,4 +45,6 @@ private:
 	TWeakObjectPtr<ASRCaptionManagerActor> ChashedCaptionManager;
 
 	FDataTableRowHandle CashedCaptionDataRow;
+
+	FSRItemBaseData CashedData;
 };

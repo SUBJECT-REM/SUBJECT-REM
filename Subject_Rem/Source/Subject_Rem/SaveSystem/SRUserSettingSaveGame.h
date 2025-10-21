@@ -13,9 +13,11 @@ UCLASS()
 class SUBJECT_REM_API USRUserSettingSaveGame : public USaveGame
 {
 	GENERATED_BODY()
-	
+
+public:
+
     UPROPERTY() 
-    float MasterVol = 1.f;
+    float SoundVol = 1.f;
     UPROPERTY()
     float MusicVol = 1.f;
     UPROPERTY() bool  bSoundOn = true;   // 전체 음소거 같은 토글

@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 #include "Engine/LevelStreaming.h"
+#include "SaveSystem/SRUserSettingSaveGame.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 //#include "Logging/StructeredLog.h"
 
@@ -25,6 +26,11 @@ void USRSaveGameSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		UE_LOG(LogTemp, Warning, TEXT("USRSaveGameSubsystem: Level Name :%s"), *Level->GetName());
 		Level->OnLevelShown.AddDynamic(this, &ThisClass::OnLevelShown);
 	}
+
+	LoadUserSettings();
+	ApplyAllSetting();
+	OnUserSettingsApplied.Broadcast(UserSettings);
+
 }
 
 void USRSaveGameSubsystem::Deinitialize()
@@ -126,8 +132,100 @@ void USRSaveGameSubsystem::CreateSaveSlot(const FString& SlotName)
 	UE_LOG(LogTemp, Warning, TEXT("[SaveTest] CreateNewSlot -> '%s' (no file yet)"), *CurrentSlotName);
 }
 
+void USRSaveGameSubsystem::SetSoundVol(float Vol)
+{
+	UserSettings.SoundVol = FMath::Clamp(Vol, 0.f, 1.f);
+	ApplyAudio();
+	SaveUserSettings();
+	//OnUserSettingsApplied.Broadcast(UserSettings);
+}
+
+void USRSaveGameSubsystem::SetMusicVol(float Vol)
+{
+	UserSettings.MusicVol = FMath::Clamp(Vol, 0.f, 1.f);
+	ApplyAudio();
+	SaveUserSettings();
+	//OnUserSettingsApplied.Broadcast(UserSettings);
+}
+
+void USRSaveGameSubsystem::SetSoundOn(bool IsOn)
+{
+	UserSettings.bSoundOn = IsOn;
+	ApplyAudio();
+	SaveUserSettings();
+	//OnUserSettingsApplied.Broadcast(UserSettings);
+}
+
+void USRSaveGameSubsystem::SetAutoSaveOnOff(bool IsOn)
+{
+	UserSettings.bAutoSave = IsOn;
+	// TODO: 실제 자동 저장 타이머/플래그 제어
+	SaveUserSettings();
+	//OnUserSettingsApplied.Broadcast(UserSettings);
+}
+
+void USRSaveGameSubsystem::LoadUserSettings()
+{
+	USRUserSettingSaveGame* SaveObj = nullptr;
+
+	if (UGameplayStatics::DoesSaveGameExist(SettingSaveSlotName, 0))
+	{
+		SaveObj = Cast<USRUserSettingSaveGame>(UGameplayStatics::LoadGameFromSlot(SettingSaveSlotName, 0));
+	}
+
+	if (!SaveObj)
+	{
+		// 최초 실행: 기본값으로 생성
+		SaveObj = Cast<USRUserSettingSaveGame>(UGameplayStatics::CreateSaveGameObject(USRUserSettingSaveGame::StaticClass()));
+		UGameplayStatics::SaveGameToSlot(SaveObj, SettingSaveSlotName, 0);
+	}
+
+	// 디스크 -> 런타임 캐시 복사
+	UserSettings.SoundVol = SaveObj->SoundVol;   
+	UserSettings.MusicVol = SaveObj->MusicVol;   
+	UserSettings.bSoundOn = SaveObj->bSoundOn;
+	UserSettings.bAutoSave = SaveObj->bAutoSave;
+
+	UserSettingsSlot = SaveObj; // (선택) 캐시 보관
+}
+
+void USRSaveGameSubsystem::SaveUserSettings()
+{
+	USRUserSettingSaveGame* SaveObj = nullptr;
+
+	if (UGameplayStatics::DoesSaveGameExist(SettingSaveSlotName, 0))
+	{
+		SaveObj = Cast<USRUserSettingSaveGame>(UGameplayStatics::LoadGameFromSlot(SettingSaveSlotName, 0));
+	}
+
+	if (!SaveObj)
+	{
+		SaveObj = Cast<USRUserSettingSaveGame>(UGameplayStatics::CreateSaveGameObject(USRUserSettingSaveGame::StaticClass()));
+	}
+
+	SaveObj->SoundVol= UserSettings.SoundVol;
+	SaveObj->MusicVol= UserSettings.MusicVol;
+	SaveObj->bSoundOn = UserSettings.bSoundOn;
+	SaveObj->bAutoSave = UserSettings.bAutoSave;
+
+	UGameplayStatics::SaveGameToSlot(SaveObj, SettingSaveSlotName, 0);
+	UserSettingsSlot = SaveObj;
+
+}
+
 
 void USRSaveGameSubsystem::OnLevelShown()
 {
+
+}
+
+void USRSaveGameSubsystem::ApplyAudio()
+{
+
+}
+
+void USRSaveGameSubsystem::ApplyAllSetting()
+{
+	ApplyAudio();
 
 }

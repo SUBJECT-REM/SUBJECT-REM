@@ -10,6 +10,20 @@
  * 
  */
 class USRSaveGame;
+class USRUserSettingSaveGame;
+
+
+USTRUCT(BlueprintType)
+struct FSRUserSettingsRuntime
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float SoundVol = 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float MusicVol = 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool  bSoundOn = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool  bAutoSave = true;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUserSettingsApplied, const FSRUserSettingsRuntime&, Settings);
 
 UCLASS()
 class SUBJECT_REM_API USRSaveGameSubsystem : public UGameInstanceSubsystem
@@ -30,6 +44,33 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SaveGame")
 	void CreateSaveSlot(const FString& SlotName);
 
+	UFUNCTION(BlueprintCallable, Category = "UserSettings")
+	void SetSoundVol(float Vol);
+
+	UFUNCTION(BlueprintCallable, Category = "UserSettings")
+	void SetMusicVol(float Vol);
+
+	UFUNCTION(BlueprintCallable, Category = "UserSettings")
+	void SetSoundOn(bool IsOn);
+
+	UFUNCTION(BlueprintCallable, Category = "UserSettings")
+	void SetAutoSaveOnOff(bool IsOn);
+
+		
+	// 명시적 로드/세이브
+	UFUNCTION(BlueprintCallable, Category = "UserSettings")
+	void LoadUserSettings();
+
+	UFUNCTION(BlueprintCallable, Category = "UserSettings")
+	void SaveUserSettings();
+
+	const TCHAR* SettingSaveSlotName = TEXT("UserSettings");
+
+	UFUNCTION(BlueprintCallable, Category = "UserSettings")
+	const FSRUserSettingsRuntime& GetUserSettings() const { return UserSettings; }
+
+	UPROPERTY(BlueprintAssignable, Category = "UserSettings")
+	FOnUserSettingsApplied OnUserSettingsApplied;
 protected:
 	UFUNCTION()
 	void OnLevelShown();
@@ -39,4 +80,12 @@ protected:
 
 	UPROPERTY(Transient)
 	TObjectPtr<USRSaveGame> CurrentSaveGame;
+
+	TObjectPtr<USRUserSettingSaveGame> UserSettingsSlot;
+
+	void ApplyAudio();
+
+	void ApplyAllSetting();
+
+	FSRUserSettingsRuntime UserSettings;
 };

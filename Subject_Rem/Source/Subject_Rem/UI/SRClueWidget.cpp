@@ -366,7 +366,7 @@ void USRClueWidget::OnClickedCombineButton()
 		{
 			USRSlotWidget* ClueCombineSlot = Cast<USRSlotWidget>(Widget);
 
-
+			ClueCombineWidget->HandleOptionalResource(ClueCombineSlot, nullptr);
 			//조합 이후 ClueCombinePanel 아이템들 제거
 			ClueCombineSlot->Clear();
 			ClueCombineSlot->SetIsEnabled(true);

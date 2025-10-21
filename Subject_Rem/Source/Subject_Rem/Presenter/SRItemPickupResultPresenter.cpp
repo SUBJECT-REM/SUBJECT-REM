@@ -44,8 +44,8 @@ void USRItemPickupResultPresenter::ShowItemPickWidget(const FSRItemBaseData& Sho
 		}
 		check(ItemPickupResultWidget);
 	}
+	CashedData = ShownItemData;
 	CashedCaptionDataRow = ShownItemData.PickupCaptionRow;
-	// ✅ 먼저 “열림” 알림으로 재생을 일시정지
 	if (ChashedCaptionManager.IsValid())
 	{
 		ChashedCaptionManager->NotifyPickupResultToggle(true);
@@ -95,6 +95,14 @@ void USRItemPickupResultPresenter::HandleWidgetClose()
 	if (ChashedCaptionManager.IsValid())
 	{
 		ChashedCaptionManager->NotifyPickupResultToggle(false); // 닫히는 순간 재생 재개
+	}
+	if (CashedData.PickupResultCloseSfx)
+	{
+		// 페이드 타이밍을 맞추고 싶으면 약간 지연도 OK:
+		// GetWorld()->GetTimerManager().SetTimerForNextTick([this, Data]{
+		//     UGameplayStatics::PlaySound2D(GetWorld(), Data->PickupResultCloseSfx);
+		// });
+		UGameplayStatics::PlaySound2D(GetWorld(), CashedData.PickupResultCloseSfx);
 	}
 }
 

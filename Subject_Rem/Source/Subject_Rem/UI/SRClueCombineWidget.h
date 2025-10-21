@@ -34,6 +34,9 @@ public:
 	FOnCombineSlotDropped OnCombineSlotDropped;
 	UPROPERTY(BlueprintAssignable) 
 	FOnCombineButtonClicked OnCombineButtonClicked;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* NormalClueBar;
 protected:
 	/*단서 조합 패널*/
 	//디바이스에 따른 위젯스위처

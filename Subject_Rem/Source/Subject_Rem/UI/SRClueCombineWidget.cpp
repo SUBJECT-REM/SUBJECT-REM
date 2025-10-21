@@ -99,26 +99,53 @@ void USRClueCombineWidget::PutBackDevice()
 			}
 		}
 	}
+	else if (CurrentActivePanel == OnePanel)
+	{
+		TArray<UWidget*> WidgetChildren = OnePanel->GetAllChildren();
+		for (UWidget* Child : WidgetChildren)
+		{
+			USRSlotWidget* SlotWidget = Cast<USRSlotWidget>(Child);
+			if (SlotWidget)
+			{
+				HandleOptionalResource(SlotWidget, NormalClueBar);
+			}
+		}
+	}
 }
 
 void USRClueCombineWidget::HandleOptionalResource(USRSlotWidget* DroppedSlot, TSoftObjectPtr<UTexture2D> Resource)
 {
-	int32 Index = ThreePanel->GetChildIndex(DroppedSlot);
-	if (UWidget* Widget = ThreeOptionalPanel->GetChildAt(Index))
+	if (CurrentActivePanel == ThreePanel)
 	{
-		UImage* Image = Cast<UImage>(Widget);
-		if (Image)
+
+		int32 Index = ThreePanel->GetChildIndex(DroppedSlot);
+		if (UWidget* Widget = ThreeOptionalPanel->GetChildAt(Index))
 		{
-			if (!Resource.IsNull())
+			UImage* Image = Cast<UImage>(Widget);
+			if (Image)
 			{
-				Image->SetBrushFromSoftTexture(Resource);
-				Image->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 1.f));
+				if (!Resource.IsNull())
+				{
+					Image->SetBrushFromSoftTexture(Resource);
+					Image->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 1.f));
+				}
+				else
+				{
+					Image->SetBrushFromTexture(nullptr);
+					Image->SetColorAndOpacity(FLinearColor(0.f, 0.f, 0.f, 1.f));
+				}
 			}
-			else
-			{
-				Image->SetBrushFromSoftTexture(nullptr);
-				Image->SetColorAndOpacity(FLinearColor(0.f, 0.f, 0.f, 1.f));
-			}
+		}
+	}
+	else
+	{
+		if (!Resource.IsNull() && DroppedSlot->GetParent() == OnePanel)
+		{
+			ClueBar->SetBrushFromSoftTexture(Resource);
+		}
+		else if(Resource.IsNull() && DroppedSlot->GetParent() == OnePanel)
+		{
+			ClueBar->SetBrushFromSoftTexture(NormalClueBar);
 		}
 	}
 }

@@ -99,6 +99,10 @@ struct FSRItemBaseData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bUsingOptionalResouce"))
 	TSoftObjectPtr<UTexture2D> OptionalResouce;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* PickupResultCloseSfx;
+
 };
 
 USTRUCT(BlueprintType)
