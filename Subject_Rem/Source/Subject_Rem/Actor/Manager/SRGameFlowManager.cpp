@@ -199,6 +199,7 @@ void ASRGameFlowManager::ExecuteEndingFlow()
 
     }
 
+    GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Cyan, TEXT("EndingFlow Start"));
 }
 
 void ASRGameFlowManager::RequestShowingCaption(const FName& CaptionRow)
@@ -327,7 +328,16 @@ void ASRGameFlowManager::CompleteAndPopCurrentFlow(FGameplayTag CompletedTag)
     {
         CurrentFlowID = FGameplayTag();
         CurrentObjectiveTag = FGameplayTag();
+
+        if ((CompletedTag == EndingTriggerFlowId /*지정ID*/)
+        {
+            bEndingStarted = true;
+            ExecuteEndingFlow();
+        }
     }
+
+
+
 }
 
 void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag ObjectiveTag)

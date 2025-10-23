@@ -55,6 +55,19 @@ struct FGameFlowInfo
     FName CaptionRow;
 };
 
+USTRUCT(BlueprintType)
+struct FEndingFlow
+{
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flow")
+    FName Id;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flow")
+    bool bShownCaption;
+
+    UPROPERTY(EditAnywhere, meta = (EditCondition = "bShownCaption"))
+    FDataTableRowHandle CaptionRow;
+};
+
 /**
  * 게임플로우매니저 - 기존 튜토리얼 매니저를 재구성함, 튜토리얼이 아니라 게임 
  * 목표 달성 시 다음 단계로 자동 전환하는 클래스
@@ -132,6 +145,15 @@ public:
 
     UPROPERTY(EditAnywhere)
     TMap<FGameplayTag, AActor*> EnabledActorByObjectiveTag;
+
+    UPROPERTY(EditAnywhere, Category = "Ending")
+    TArray<FEndingFlow> TrueEndingFlow;
+
+    UPROPERTY(EditAnywhere, Category = "Ending")
+    TArray<FEndingFlow> FalseEndingFlow;
+    
+    UPROPERTY(EditAnywhere, Category = "Ending")
+    FGameplayTag EndingTriggerFlowId; // "시퀀스 마지막 단계"의 ID
 private:
     UFUNCTION()
     void RequestShowingCaption(const FName& CaptionRow);
