@@ -22,6 +22,12 @@ class UInputMappingContext;
 //    int32 Progress = 0;        // 인스턴스별 진행 카운트 (필수)
 //    
 //};
+UENUM(BlueprintType)
+enum class ECaptionCueTiming : uint8
+{
+    OnStart,     // 스텝이 시작되자마자 재생
+    OnComplete   // 스텝 완료 시 재생 (기존 일반 플로우와 동일)
+};
 
 USTRUCT(BlueprintType)
 struct FGameFlowInfo
@@ -53,6 +59,9 @@ struct FGameFlowInfo
 
     UPROPERTY(EditAnywhere, meta = (EditCondition = "bShownCaption"))
     FName CaptionRow;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flow", meta = (EditCondition = "bShownCaption"))
+    ECaptionCueTiming CaptionTiming = ECaptionCueTiming::OnComplete; // 기본값: 기존 동
 };
 
 USTRUCT(BlueprintType)
@@ -118,6 +127,10 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Tutorial")
     FGameplayTag GetCurrentObjectiveTag() const { return CurrentObjectiveTag; }
 
+    UFUNCTION(BlueprintCallable, Category = "EndingFlow")
+    void ExecuteEndingFlow();
+
+
     //UPROPERTY(BlueprintAssignable, Category = "Tutorial")
     //FTutorialStepChanged  OnTutorialStepChanged;
     void StartFlow();
@@ -150,10 +163,10 @@ public:
     TMap<FGameplayTag, AActor*> EnabledActorByObjectiveTag;
 
     UPROPERTY(EditAnywhere, Category = "Ending")
-    TArray<FEndingFlow> TrueEndingFlow;
+    TArray<FGameFlowInfo> TrueEndingFlow;
 
     UPROPERTY(EditAnywhere, Category = "Ending")
-    TArray<FEndingFlow> FalseEndingFlow;
+    TArray<FGameFlowInfo> FalseEndingFlow;
     
     UPROPERTY(EditAnywhere, Category = "Ending")
     FGameplayTag EndingTriggerFlowId; // "시퀀스 마지막 단계"의 ID
@@ -178,7 +191,6 @@ private:
 
     void HandleParallelObjectiveCompleted(const FGameplayTag& CompletedTag);
 
-    void ExecuteEndingFlow();
 protected:
     virtual void BeginPlay() override;
 
@@ -187,6 +199,7 @@ protected:
     void SetupFlowByIndex(int32 Index);
     void CompleteAndPopCurrentFlow(FGameplayTag CompletedTag);
 
+    void ClearAllFlowsAndProgress();
     /** 튜토리얼 정보 검색 */
     FGameFlowInfo* FindNextFlowInfo(FGameplayTag TutorialID);
 

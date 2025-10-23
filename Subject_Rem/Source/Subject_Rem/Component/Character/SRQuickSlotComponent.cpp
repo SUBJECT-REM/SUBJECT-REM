@@ -252,7 +252,7 @@ void USRQuickSlotComponent::UseQuickSlotItem(uint8 QuickSlotNum)
 	{
 		if (USRStressLocalPlayerSubsystem* StressSS = LP->GetSubsystem<USRStressLocalPlayerSubsystem>())
 		{
-			if (StressSS->GetStress() <= 0.f)
+			if (StressSS->GetStress() <= 0.f && Consume->ImmediateStessDecrease >0.f)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("CurrentStressAmount <= 0.f , Can not Use Item"));
 				return;

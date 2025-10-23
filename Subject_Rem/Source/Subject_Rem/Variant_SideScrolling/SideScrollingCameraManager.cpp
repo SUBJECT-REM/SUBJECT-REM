@@ -2,6 +2,7 @@
 
 
 #include "SideScrollingCameraManager.h"
+#include "SideScrollingPlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "Engine/HitResult.h"
 #include "CollisionQueryParams.h"
@@ -10,6 +11,18 @@
 void ASideScrollingCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaTime)
 {
 	//ViewTarget이 Pawn인지 확인
+
+		// 1) 시네마틱 중엔 내 로직을 건너뛰고 기본 처리만 수행 (Sequencer/CameraCuts에 맡김)
+	APlayerController* PC = PCOwner; // 또는 GetOwningPlayerController()
+	ASideScrollingPlayerController* SideController = Cast<ASideScrollingPlayerController>(PC);
+
+	if ((SideController && SideController->IsInCinematic()))
+	{
+		Super::UpdateViewTarget(OutVT, DeltaTime);
+		return;  // ★ OutVT.POV를 절대 건드리지 않음
+	}
+
+
 	APawn* TargetPawn = Cast<APawn>(OutVT.Target);
 
 	// is our target valid?

@@ -190,14 +190,16 @@ void ASRGameFlowManager::ExecuteEndingFlow()
 
     
     uint8 TrueClueMapNum = InvenComp->GetTrueClueMapData();
-    if (TrueClueMapNum >= 9)
-    {
+    const bool bTrue = (TrueClueMapNum >= 9);
+    //const TArray<FGameFlowInfo>& Steps = bTrue ? TrueEndingFlow : FalseEndingFlow;
+    const TArray<FGameFlowInfo>& Steps = TrueEndingFlow;
 
-    }
-    else
-    {
+    // 기존 진행/리스트를 싹 비우고 엔딩 스텝으로 교체
+    ClearAllFlowsAndProgress();
+    SequenceFlowInfos = Steps;     
 
-    }
+    // 바로 엔딩 0번 스텝 시작
+    SetupFlowByIndex(0);
 }
 
 void ASRGameFlowManager::RequestShowingCaption(const FName& CaptionRow)
@@ -265,6 +267,8 @@ void ASRGameFlowManager::SetupFlow(FGameplayTag TutorialID)
 
 void ASRGameFlowManager::SetupFlowByIndex(int32 Index)
 {
+
+
     if (!SequenceFlowInfos.IsValidIndex(Index))
     {
         CurrentFlowID = FGameplayTag();
@@ -294,6 +298,12 @@ void ASRGameFlowManager::SetupFlowByIndex(int32 Index)
             }
         }
     }
+
+    // ★ 시작 시 자막 재생 옵션
+    if (Info.bShownCaption && Info.CaptionTiming == ECaptionCueTiming::OnStart && !Info.CaptionRow.IsNone())
+    {
+        RequestShowingCaption(Info.CaptionRow);
+    }
 }
 
 void ASRGameFlowManager::CompleteAndPopCurrentFlow(FGameplayTag CompletedTag)
@@ -318,10 +328,6 @@ void ASRGameFlowManager::CompleteAndPopCurrentFlow(FGameplayTag CompletedTag)
             SequenceFlowInfos.RemoveAt(Idx);
         }
     }
-    if (CurrentFlowID == EndingTriggerFlowId /*지정ID*/)
-    {
-        ExecuteEndingFlow();
-    }
     // 남아있으면 다시 0번 세팅, 없으면 종료 상태
     if (SequenceFlowInfos.Num() > 0)
     {
@@ -329,14 +335,23 @@ void ASRGameFlowManager::CompleteAndPopCurrentFlow(FGameplayTag CompletedTag)
     }
     else
     {
-
-
         CurrentFlowID = FGameplayTag();
         CurrentObjectiveTag = FGameplayTag();
     }
 
 
 
+}
+
+void ASRGameFlowManager::ClearAllFlowsAndProgress()
+{
+    SequenceFlowInfos.Reset();
+    ParallelFlows.Reset();
+    ObjectiveProgress.Empty();
+    ParallelProgress.Empty();
+
+    CurrentFlowID = FGameplayTag();
+    CurrentObjectiveTag = FGameplayTag();
 }
 
 void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag ObjectiveTag)
@@ -355,12 +370,9 @@ void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag ObjectiveTag)
         ? &SequenceFlowInfos[0] : FindNextFlowInfo(CurrentFlowID);
     if (!Info) return;
 
-    UE_LOG(LogTemp, Log, TEXT("Objective %s Progress: %d / %d"),
-        *ObjectiveTag.ToString(), Count, Info->RequiredCount);
-
     if (Count >= Info->RequiredCount)
     {
-        if (Info->bShownCaption && !Info->CaptionRow.IsNone())
+        if (Info->bShownCaption && Info->CaptionTiming == ECaptionCueTiming::OnComplete && !Info->CaptionRow.IsNone())
         {
             RequestShowingCaption(Info->CaptionRow);
         }

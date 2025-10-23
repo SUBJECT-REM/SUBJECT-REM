@@ -11,6 +11,23 @@
 #include "Engine/World.h"
 #include "Subsystem/SRInputLocalPlayerSubsystem.h"
 
+void ASideScrollingPlayerController::CameraSettingToLevelSequance(bool bActive)
+{
+
+	if (bActive)
+	{
+		bAutoManageActiveCameraTarget = false;
+		bIsInCinematic = true;
+		SetCinematicMode(true, false, false, false, false);
+	}
+	else
+	{
+		bAutoManageActiveCameraTarget = true;
+		bIsInCinematic = false;
+		SetCinematicMode(false, false, true, true, true);
+	}
+}
+
 void ASideScrollingPlayerController::SetupInputComponent()
 {
 	if (ULocalPlayer* LP = GetLocalPlayer())
@@ -65,4 +82,5 @@ void ASideScrollingPlayerController::BeginPlay()
 	FInputModeGameOnly Mode;
 	SetInputMode(Mode);
 	bShowMouseCursor=false;
+
 }

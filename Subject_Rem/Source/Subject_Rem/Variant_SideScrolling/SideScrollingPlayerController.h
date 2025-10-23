@@ -19,7 +19,11 @@ UCLASS(abstract)
 class ASideScrollingPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+public:
+	UFUNCTION(BlueprintCallable)
+	void CameraSettingToLevelSequance(bool bActive);
+
+	bool IsInCinematic() { return bIsInCinematic; }
 protected:
 
 	/** Input mapping context for this player */
@@ -29,6 +33,7 @@ protected:
 	/** Character class to respawn when the possessed pawn is destroyed */
 	UPROPERTY(EditAnywhere, Category="Respawn")
 	TSubclassOf<ASideScrollingCharacter> CharacterClass;
+
 
 protected:
 
@@ -44,4 +49,5 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	bool bIsInCinematic = false;
 };
