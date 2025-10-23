@@ -58,6 +58,9 @@ struct FGameFlowInfo
 USTRUCT(BlueprintType)
 struct FEndingFlow
 {
+    GENERATED_BODY()
+
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flow")
     FName Id;
 
@@ -154,6 +157,9 @@ public:
     
     UPROPERTY(EditAnywhere, Category = "Ending")
     FGameplayTag EndingTriggerFlowId; // "시퀀스 마지막 단계"의 ID
+
+    UPROPERTY(BlueprintAssignable)
+    FFlowCompletedSignature OnEndingFlowCompleteDelegate;
 private:
     UFUNCTION()
     void RequestShowingCaption(const FName& CaptionRow);

@@ -198,8 +198,6 @@ void ASRGameFlowManager::ExecuteEndingFlow()
     {
 
     }
-
-    GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Cyan, TEXT("EndingFlow Start"));
 }
 
 void ASRGameFlowManager::RequestShowingCaption(const FName& CaptionRow)
@@ -303,6 +301,8 @@ void ASRGameFlowManager::CompleteAndPopCurrentFlow(FGameplayTag CompletedTag)
     OnFlowCompleteDelegate.Broadcast(CurrentFlowID);
     ObjectiveProgress.Remove(CompletedTag);
 
+    UE_LOG(LogTemp, Warning, TEXT("CurrentFlowId %s"), *CurrentFlowID.GetTagName().ToString());
+
     // 일반적으로 0번이 현재 스텝이므로 바로 pop
     if (SequenceFlowInfos.Num() > 0 && SequenceFlowInfos[0].ID == CurrentFlowID)
     {
@@ -318,7 +318,10 @@ void ASRGameFlowManager::CompleteAndPopCurrentFlow(FGameplayTag CompletedTag)
             SequenceFlowInfos.RemoveAt(Idx);
         }
     }
-
+    if (CurrentFlowID == EndingTriggerFlowId /*지정ID*/)
+    {
+        ExecuteEndingFlow();
+    }
     // 남아있으면 다시 0번 세팅, 없으면 종료 상태
     if (SequenceFlowInfos.Num() > 0)
     {
@@ -326,14 +329,10 @@ void ASRGameFlowManager::CompleteAndPopCurrentFlow(FGameplayTag CompletedTag)
     }
     else
     {
+
+
         CurrentFlowID = FGameplayTag();
         CurrentObjectiveTag = FGameplayTag();
-
-        if ((CompletedTag == EndingTriggerFlowId /*지정ID*/)
-        {
-            bEndingStarted = true;
-            ExecuteEndingFlow();
-        }
     }
 
 
