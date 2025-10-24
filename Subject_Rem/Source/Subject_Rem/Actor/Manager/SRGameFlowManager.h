@@ -23,11 +23,12 @@ class UInputMappingContext;
 //    
 //};
 UENUM(BlueprintType)
-enum class ECaptionCueTiming : uint8
+enum class ESequenceCueTiming : uint8
 {
-    OnStart,     // 스텝이 시작되자마자 재생
-    OnComplete   // 스텝 완료 시 재생 (기존 일반 플로우와 동일)
+    OnStart,
+    OnComplete
 };
+
 
 USTRUCT(BlueprintType)
 struct FGameFlowInfo
@@ -61,7 +62,18 @@ struct FGameFlowInfo
     FName CaptionRow;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flow", meta = (EditCondition = "bShownCaption"))
-    ECaptionCueTiming CaptionTiming = ECaptionCueTiming::OnComplete; // 기본값: 기존 동
+    ESequenceCueTiming CaptionTiming = ESequenceCueTiming::OnComplete; // 기본값: 기존 동
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flow|LevelSequence")
+    bool bPlayLevelSequence = false;
+
+    // 어떤 타이밍에 시퀀스 재생할지
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flow|LevelSequence", meta = (EditCondition = "bPlayLevelSequence"))
+    ESequenceCueTiming SequenceTiming = ESequenceCueTiming::OnComplete;
+
+    // 재생할 시퀀스
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flow|LevelSequence", meta = (EditCondition = "bPlayLevelSequence"))
+    TSoftObjectPtr<class ULevelSequence> LevelSequence;
 };
 
 USTRUCT(BlueprintType)
@@ -130,6 +142,8 @@ public:
     UFUNCTION(BlueprintCallable, Category = "EndingFlow")
     void ExecuteEndingFlow();
 
+    UFUNCTION(BlueprintImplementableEvent)
+    void PlayLevelSequnce(ULevelSequence* PlayedSequnce);
 
     //UPROPERTY(BlueprintAssignable, Category = "Tutorial")
     //FTutorialStepChanged  OnTutorialStepChanged;
@@ -162,6 +176,9 @@ public:
     UPROPERTY(EditAnywhere)
     TMap<FGameplayTag, AActor*> EnabledActorByObjectiveTag;
 
+    UPROPERTY(EditAnywhere, Category = "Flow|Bindings")
+    TMap<FName, FGameplayTag> CaptionEndToObjectiveTag;
+
     UPROPERTY(EditAnywhere, Category = "Ending")
     TArray<FGameFlowInfo> TrueEndingFlow;
 
@@ -173,6 +190,9 @@ public:
 
     UPROPERTY(BlueprintAssignable)
     FFlowCompletedSignature OnEndingFlowCompleteDelegate;
+
+    UFUNCTION(BlueprintCallable)
+    bool IsEndingTrue() const;
 private:
     UFUNCTION()
     void RequestShowingCaption(const FName& CaptionRow);
@@ -220,5 +240,6 @@ protected:
     TMap<FGameplayTag, int32> ParallelProgress;   
 
  
+    bool bEndingIsTrue = false;
 
 };

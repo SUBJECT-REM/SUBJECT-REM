@@ -28,6 +28,13 @@ void ASRCaptionManagerActor::NotifyInvestigationToggle(bool bOpen)
 	TryRunNext();
 }
 
+void ASRCaptionManagerActor::NotifyFadeInOutActive(bool bActive)
+{
+	 bFadeInOutActive = bActive; 
+	 TryRunNext();
+
+}
+
 void ASRCaptionManagerActor::PlayCaptionImmediateNext(const FName& RowName, bool bIgnorePauses)
 {
 	if (RowName.IsNone()) return;
@@ -82,7 +89,7 @@ void ASRCaptionManagerActor::OnCaptionFinished_Implementation(FName RowName)
 
 void ASRCaptionManagerActor::TryRunNext()
 {
-	if (bInvestigationOpen || bPickupResultOpen || !Current.IsNone() || PendingQueue.Num() == 0)
+	if (bInvestigationOpen || bPickupResultOpen || bFadeInOutActive ||!Current.IsNone() || PendingQueue.Num() == 0)
 		return;
 
 	Current = PendingQueue[0];

@@ -60,6 +60,9 @@ protected:
 	bool bApplyRoomFlowInfoOnce =false;
 
 	TWeakObjectPtr<ASRGameFlowManager> GameFlowManager;
+
+	UPROPERTY(EditAnywhere)
+	FGameplayTag NotifyTag;
 private:
 	UFUNCTION()
 	void OnBoxCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

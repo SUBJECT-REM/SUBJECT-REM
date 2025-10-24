@@ -11,6 +11,10 @@
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Variant_SideScrolling/SideScrollingCharacter.h"
+#include "LevelSequenceActor.h"
+#include "LevelSequence.h"                 // ULevelSequence
+#include "LevelSequencePlayer.h"           // ULevelSequencePlayer
+#include "LevelSequenceActor.h"            // ALevelSequenceActor
 
 ASRGameFlowManager::ASRGameFlowManager()
 {
@@ -73,6 +77,22 @@ void ASRGameFlowManager::OnCaptionEnded(const FName& RowName)
                 BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
             }
         }
+    }
+
+    if (const FGameplayTag* MappedTag = CaptionEndToObjectiveTag.Find(RowName))
+    {
+        if (MappedTag->IsValid())
+        {
+            // 일반 플로우처럼 해당 태그를 달성했다고 알림 (시퀀스/다음 스텝 진행 트리거)
+            NotifyObjectiveCompleted(*MappedTag);
+        }
+        else
+        {
+            // 맵 값이 빈 태그(=그냥 다음 스텝으로)라면 바로 Pop
+            CompleteAndPopCurrentFlow(CurrentObjectiveTag);
+        }
+
+        CaptionEndToObjectiveTag.Remove(RowName);
     }
 }
 
@@ -191,8 +211,8 @@ void ASRGameFlowManager::ExecuteEndingFlow()
     
     uint8 TrueClueMapNum = InvenComp->GetTrueClueMapData();
     const bool bTrue = (TrueClueMapNum >= 9);
-    //const TArray<FGameFlowInfo>& Steps = bTrue ? TrueEndingFlow : FalseEndingFlow;
-    const TArray<FGameFlowInfo>& Steps = TrueEndingFlow;
+    const TArray<FGameFlowInfo>& Steps = bTrue ? TrueEndingFlow : FalseEndingFlow;
+    bEndingIsTrue = bTrue;
 
     // 기존 진행/리스트를 싹 비우고 엔딩 스텝으로 교체
     ClearAllFlowsAndProgress();
@@ -200,6 +220,11 @@ void ASRGameFlowManager::ExecuteEndingFlow()
 
     // 바로 엔딩 0번 스텝 시작
     SetupFlowByIndex(0);
+}
+
+bool ASRGameFlowManager::IsEndingTrue() const
+{
+    return bEndingIsTrue;
 }
 
 void ASRGameFlowManager::RequestShowingCaption(const FName& CaptionRow)
@@ -268,7 +293,6 @@ void ASRGameFlowManager::SetupFlow(FGameplayTag TutorialID)
 void ASRGameFlowManager::SetupFlowByIndex(int32 Index)
 {
 
-
     if (!SequenceFlowInfos.IsValidIndex(Index))
     {
         CurrentFlowID = FGameplayTag();
@@ -300,9 +324,22 @@ void ASRGameFlowManager::SetupFlowByIndex(int32 Index)
     }
 
     // ★ 시작 시 자막 재생 옵션
-    if (Info.bShownCaption && Info.CaptionTiming == ECaptionCueTiming::OnStart && !Info.CaptionRow.IsNone())
+    if (Info.bShownCaption && Info.CaptionTiming == ESequenceCueTiming::OnStart && !Info.CaptionRow.IsNone())
     {
         RequestShowingCaption(Info.CaptionRow);
+    }
+
+    if (Info.bPlayLevelSequence && Info.SequenceTiming == ESequenceCueTiming::OnStart && !Info.LevelSequence.IsNull())
+    {
+        //ULevelSequence* Sequence = Info.LevelSequence.LoadSynchronous();
+        //if (Sequence)
+        //{
+        //    //ALevelSequenceActor* OutActor;
+        //   /* ULevelSequencePlayer* Player = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), Sequence, FMovieSceneSequencePlaybackSettings(), OutActor);
+        //    if (Player) 
+        //        Player->Play();*/
+        //}
+        PlayLevelSequnce(Info.LevelSequence.LoadSynchronous());
     }
 }
 
@@ -372,7 +409,7 @@ void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag ObjectiveTag)
 
     if (Count >= Info->RequiredCount)
     {
-        if (Info->bShownCaption && Info->CaptionTiming == ECaptionCueTiming::OnComplete && !Info->CaptionRow.IsNone())
+        if (Info->bShownCaption && Info->CaptionTiming == ESequenceCueTiming::OnComplete&& !Info->CaptionRow.IsNone())
         {
             RequestShowingCaption(Info->CaptionRow);
         }
