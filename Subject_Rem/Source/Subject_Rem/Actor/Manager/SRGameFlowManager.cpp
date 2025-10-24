@@ -268,7 +268,6 @@ void ASRGameFlowManager::SetupFlow(FGameplayTag TutorialID)
 void ASRGameFlowManager::SetupFlowByIndex(int32 Index)
 {
 
-
     if (!SequenceFlowInfos.IsValidIndex(Index))
     {
         CurrentFlowID = FGameplayTag();

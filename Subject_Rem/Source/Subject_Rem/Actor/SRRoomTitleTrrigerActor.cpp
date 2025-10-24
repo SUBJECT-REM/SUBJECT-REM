@@ -57,7 +57,9 @@ void ASRRoomTitleTrrigerActor::OnBoxCollisionBeginOverlap(UPrimitiveComponent* O
 		{
 			RoomTitleWidget->SetRoomTitleImage(SelectedRoomTitleInfo.Image);
 			RoomTitleWidget->SetRoomTitleImageSize(SelectedRoomTitleInfo.Size);
-			RoomTitleWidget->ShowRoomTitleWidget();
+
+			if(SelectedRoomTitleInfo.Image)
+				RoomTitleWidget->ShowRoomTitleWidget();
 		}
 	}
 	
@@ -72,6 +74,12 @@ void ASRRoomTitleTrrigerActor::OnBoxCollisionBeginOverlap(UPrimitiveComponent* O
 	// 플로우 주입
 	if (GameFlowManager.IsValid())
 	{
+		if (NotifyTag.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("NotifyTag %s"), *NotifyTag.ToString());
+			GameFlowManager->NotifyObjectiveCompleted(NotifyTag);
+		}
+
 		if (!bApplyRoomFlowInfoOnce)
 		{
 			return;
@@ -89,6 +97,8 @@ void ASRRoomTitleTrrigerActor::OnBoxCollisionBeginOverlap(UPrimitiveComponent* O
 		{
 			GameFlowManager->AddParallelFlows(ParallelRoomGameFlowInfos);
 		}
+
+
 
 		bApplyRoomFlowInfoOnce = false;
 	}

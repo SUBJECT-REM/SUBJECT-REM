@@ -33,7 +33,8 @@ public:
 
 	void NotifyPickupResultToggle(bool bOpen);
 	void NotifyInvestigationToggle(bool bOpen);
-
+	UFUNCTION(BlueprintCallable)
+	void NotifyFadeInOutActive(bool bActive);
 	UFUNCTION(BlueprintCallable)
 	void PlayCaptionImmediateNext(const FName& RowName, bool bIgnorePauses = false);
 
@@ -74,6 +75,7 @@ private:
 
 	bool bPickupResultOpen = false;
 	bool bInvestigationOpen = false;
-	
+	bool bFadeInOutActive = false;
+
 
 };
