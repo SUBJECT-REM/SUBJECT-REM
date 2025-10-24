@@ -20,7 +20,8 @@ public class Subject_Rem : ModuleRules
 			"UMG",
             "SlateCore",
             "Slate",
-            "GameplayTags"
+            "GameplayTags",
+            "LevelSequence"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
