@@ -211,9 +211,8 @@ void ASRGameFlowManager::ExecuteEndingFlow()
     
     uint8 TrueClueMapNum = InvenComp->GetTrueClueMapData();
     const bool bTrue = (TrueClueMapNum >= 9);
-    //const TArray<FGameFlowInfo>& Steps = bTrue ? TrueEndingFlow : FalseEndingFlow;
-    const TArray<FGameFlowInfo>& Steps = TrueEndingFlow;
-    bEndingIsTrue = true;
+    const TArray<FGameFlowInfo>& Steps = bTrue ? TrueEndingFlow : FalseEndingFlow;
+    bEndingIsTrue = bTrue;
 
     // 기존 진행/리스트를 싹 비우고 엔딩 스텝으로 교체
     ClearAllFlowsAndProgress();
