@@ -32,6 +32,8 @@ namespace SRGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameFlow_CheckEnding, "GameFlow.CheckEnding", "GameFlow Chapter Tag");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameFlow_FadeOutComplete, "GameFlow.FadeOutComplete", "GameFlow Chapter Tag");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameFlow_MoveToincinerator, "GameFlow.MoveToincinerator", "GameFlow Chapter Tag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameFlow_ActiveIncinerator, "GameFlow.ActiveIncinerator", "GameFlow Chapter Tag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameFlow_BreakVent, "GameFlow.BreakVent", "GameFlow Chapter Tag");
 
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameFlow_Objectives_CobmineAudio, "GameFlow.Objectives.CobmineAudio", "GameFlow  Tag");
