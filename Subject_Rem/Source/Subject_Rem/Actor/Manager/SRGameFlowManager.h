@@ -190,6 +190,9 @@ public:
 
     UPROPERTY(BlueprintAssignable)
     FFlowCompletedSignature OnEndingFlowCompleteDelegate;
+
+    UFUNCTION(BlueprintCallable)
+    bool IsEndingTrue() const;
 private:
     UFUNCTION()
     void RequestShowingCaption(const FName& CaptionRow);
@@ -237,5 +240,6 @@ protected:
     TMap<FGameplayTag, int32> ParallelProgress;   
 
  
+    bool bEndingIsTrue = false;
 
 };
