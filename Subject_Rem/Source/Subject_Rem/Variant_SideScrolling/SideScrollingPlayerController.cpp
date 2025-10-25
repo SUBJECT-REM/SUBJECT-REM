@@ -18,7 +18,7 @@ void ASideScrollingPlayerController::CameraSettingToLevelSequance(bool bActive)
 	{
 		bAutoManageActiveCameraTarget = false;
 		bIsInCinematic = true;
-		SetCinematicMode(true, false, false, false, false);
+		SetCinematicMode(true, true, true, true, true);
 	}
 	else
 	{
