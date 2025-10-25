@@ -143,7 +143,7 @@ void USRInventoryComponent::ApplyClueMapResult(const FSRClueMapData& ClueMap, co
 	ClueMapDatas.Add(ClueMap);
 	if (ClueMap.bResult)
 	{
-		NumOfTrueClueMap++
+		NumOfTrueClueMap++;
 	}
 
 	// ClueMap 업데이트 페이로드
