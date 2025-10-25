@@ -47,6 +47,9 @@ private:
 	UFUNCTION()
 	void RequestRemoveDeviceData(FName Id);
 
+	UFUNCTION()
+	void HandleFlowEnd(FGameplayTag FlowIdTag);
+
 	UPROPERTY()
 	USRInventoryComponent* InvenComp;
 
@@ -54,7 +57,7 @@ private:
 	USRClueWidget* ClueWidget;
 
 	UPROPERTY()
-	ASRGameFlowManager* GameFlowMng;;
+	ASRGameFlowManager* GameFlowMng;
 
 	TWeakObjectPtr<ASRCaptionManagerActor> CaptionManager;
 };

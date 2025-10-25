@@ -103,7 +103,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCaptionEndedSignature, const FNam
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTutorialStepChanged, FGameplayTag, NewTutorialID);
 //TODO: TutorialManager가 아니라, GameFlowManager로 수정하고, 기능을 좀 많이 바꿔야할듯.플레이어의 행동 + 자막의 완료 시각이 플로우랑 많이 연관됨
-//이벤트 허브 느낌으로 접근해야할거같다.
+//이벤트 허브 느낌으로 접근해야할거같다.f
 UCLASS()
 class SUBJECT_REM_API ASRGameFlowManager : public AActor
 {

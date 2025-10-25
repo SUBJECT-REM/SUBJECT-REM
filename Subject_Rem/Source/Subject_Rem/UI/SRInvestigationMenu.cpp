@@ -173,7 +173,7 @@ void USRInvestigationMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	SetIsFocusable(true);          // (UE5.2+). 혹은 bIsFocusable = true;
+	SetIsFocusable(true);          
 
 	InventoryButton->OnClicked.AddDynamic(this, &ThisClass::OpenInventory);
 	ClueButton->OnClicked.AddDynamic(this, &ThisClass::OpenClue);
@@ -231,6 +231,11 @@ void USRInvestigationMenu::OnTutorialStart(FGameplayTag Tag)
 		ClueMapClickPulse->SetVisibility(ESlateVisibility::HitTestInvisible);
 		//InventoryButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 		//ClueButton->SetVisibility(ESlateVisibility::HitTestInvisible);*/
+	}
+	else if (Tag == SRGameplayTags::GameFlow_EndingOepnClueMap)
+	{
+		OpenClueMap();
+		TutorialManager->NotifyObjectiveCompleted(SRGameplayTags::GameFlow_EndingOepnClueMap);
 	}
 
 }

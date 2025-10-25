@@ -36,6 +36,7 @@ void USRClueWidgetPresenter::Init(UActorComponent* InitComponent, UUserWidget* I
 	if (FoundActor)
 	{
 		GameFlowMng = Cast<ASRGameFlowManager>(FoundActor);
+		//GameFlowMng->OnFlowCompleteDelegate.AddDynamic(this, ThisClass::HandleFlowEnd);
 	}
 }
 
@@ -81,4 +82,12 @@ void USRClueWidgetPresenter::RequestRemoveDeviceData(FName Id)
 	TArray<FName> Ids;
 	Ids.Add(Id);
 	InvenComp->RemoveItems(Ids);
+}
+
+void USRClueWidgetPresenter::HandleFlowEnd(FGameplayTag FlowIdTag)
+{
+	if (FlowIdTag == SRGameplayTags::GameFlow_Chapter4Complete)
+	{
+
+	}
 }

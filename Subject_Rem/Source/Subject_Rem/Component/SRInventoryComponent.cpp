@@ -283,7 +283,7 @@ void USRInventoryComponent::AddItem(const USRItem* Item)
 
 	const FSRItemData ItemData = Item->GetItemData();
 	ItemPickupDelegate.Broadcast(ItemData.BaseInfo);
-
+	bool IsItemConsume = false;
 	FSRDeviceItemData DeviceRow;
 	if (TryGetDeviceRow(ItemData, DeviceRow))
 	{
@@ -301,8 +301,10 @@ void USRInventoryComponent::AddItem(const USRItem* Item)
 	}
 	else
 	{
-
-		AddClueData(ItemData.BaseInfo);
+		if (!IsConsumable(ItemData))     
+		{
+			AddClueData(ItemData.BaseInfo);
+		}
 	}
 
 	AddItemData(ItemData);
@@ -412,4 +414,10 @@ uint8 USRInventoryComponent::GetTrueClueMapData()
 
 	return NumOfTrueClueMap;
 
+}
+
+bool USRInventoryComponent::IsConsumable(const FSRItemData& ItemData) const
+{
+	const FDataTableRowHandle& Sub = ItemData.ItemDataTable;
+	return (Sub.DataTable && Sub.DataTable->GetRowStruct() == FSRConsumeData::StaticStruct());
 }

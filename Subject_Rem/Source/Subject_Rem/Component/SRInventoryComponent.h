@@ -110,6 +110,8 @@ private:
 
 	bool TryAutoRegisterToQuickSlot(const FSRItemData& ItemData);
 
+	bool IsConsumable(const FSRItemData& ItemData) const;
+
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* AllItemsDataTable;
 	
