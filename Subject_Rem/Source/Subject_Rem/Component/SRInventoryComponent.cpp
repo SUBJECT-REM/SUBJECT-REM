@@ -141,6 +141,10 @@ void USRInventoryComponent::ApplyClueMapResult(const FSRClueMapData& ClueMap, co
 {
 	// 인벤토리 데이터 반영
 	ClueMapDatas.Add(ClueMap);
+	if (ClueMap.bResult)
+	{
+		NumOfTrueClueMap++
+	}
 
 	// ClueMap 업데이트 페이로드
 	FSRClueMapUIData ClueMapPayload;
@@ -403,17 +407,18 @@ void USRInventoryComponent::FlushStressFromClueMaps()
 
 uint8 USRInventoryComponent::GetTrueClueMapData()
 {
-	uint8 NumOfTrueClueMap = 0;
-	for (FSRClueMapData Data : ClueMapDatas)
-	{
-		if (Data.bResult == true)
-		{
-			NumOfTrueClueMap++;
-		}
-	}
+	//uint8 NumOfTrueClueMap = 0;
+	//for (FSRClueMapData Data : ClueMapDatas)
+	//{
+	//	if (Data.bResult == true)
+	//	{
+	//		NumOfTrueClueMap++;
+	//	}
+	//}
+
+	//return NumOfTrueClueMap;
 
 	return NumOfTrueClueMap;
-
 }
 
 bool USRInventoryComponent::IsConsumable(const FSRItemData& ItemData) const

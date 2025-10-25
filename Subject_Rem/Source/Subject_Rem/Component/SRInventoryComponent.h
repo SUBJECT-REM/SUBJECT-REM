@@ -66,6 +66,10 @@ public:
 	//조합 결과의 모음 - > 옮겨도 괜춘함.
 	UPROPERTY(VisibleAnywhere)
 	TArray<FSRClueMapData> ClueMapDatas;
+
+	UPROPERTY(VisibleAnywhere)
+	uint8 NumOfTrueClueMap = 0;
+
 protected:
 	virtual void BeginPlay() override;
 private:	
@@ -129,6 +133,7 @@ private:
 
 	TWeakObjectPtr<USRStressLocalPlayerSubsystem> CashedStressSubsystem;
 	TWeakObjectPtr<class ASRGameFlowManager> CashedGameFlowMng;
+
 	const int first = 0;
 	const int second = 1;
 };
