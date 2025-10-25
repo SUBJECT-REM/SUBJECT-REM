@@ -9,6 +9,7 @@
 DECLARE_MULTICAST_DELEGATE(FOnStopStressChangeDelegate)
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnStressChangeDelegate, const float)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStressChangeByTimeDelegate, const float, const float)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStressMaxReachedDelegate);
 
 UCLASS()
 class SUBJECT_REM_API USRStressLocalPlayerSubsystem : public ULocalPlayerSubsystem
@@ -20,6 +21,10 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stress")
 	void ChangeStressAmount(float ChangeValue);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnStressMaxReachedDelegate OnStressMaxReachedDelegate;
+
 
 	FTimerHandle ChangeStressTimerHandler;
 	/* 스트레스 일정 시간마다 값 증가 및 감소

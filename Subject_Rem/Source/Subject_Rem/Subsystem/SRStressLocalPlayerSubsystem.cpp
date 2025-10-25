@@ -11,6 +11,13 @@ void USRStressLocalPlayerSubsystem::ChangeStressAmount(const float ChangeValue)
 	{
 		ClearStressTimer();
 	}
+
+	if (StressAmount >= MaxStress)
+	{
+		ClearStressTimer();
+		OnStressMaxReachedDelegate.Broadcast();
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("StressAmount  :%f"), StressAmount);
 	OnStressChangeDelegate.Broadcast(StressAmount);
 	OnStopStressChangeDelegate.Broadcast();
