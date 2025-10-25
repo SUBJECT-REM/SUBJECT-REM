@@ -67,7 +67,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TArray<FSRClueMapData> ClueMapDatas;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 	uint8 NumOfTrueClueMap = 0;
 
 protected:
