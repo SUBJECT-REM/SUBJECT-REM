@@ -37,6 +37,12 @@ public:
 	*/
 	float GetStressPercent();
 
+	UFUNCTION(BlueprintCallable)
+	void PauseStressTimer();
+
+	UFUNCTION(BlueprintCallable)
+	void ResumeStressTimer();
+
 	/* 현재 스트레스 값 반환 */
 	UFUNCTION(BlueprintCallable, Category = "Stress")
 	FORCEINLINE float GetStress() const { return StressAmount; };

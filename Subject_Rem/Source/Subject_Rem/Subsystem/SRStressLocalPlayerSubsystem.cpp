@@ -37,6 +37,8 @@ void USRStressLocalPlayerSubsystem::ClearStressTimer()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Clear Stress Timer "));
 	GetWorld()->GetTimerManager().ClearTimer(ChangeStressTimerHandler);
+
+
 }
 
 float USRStressLocalPlayerSubsystem::GetStressPercent()
@@ -47,4 +49,22 @@ float USRStressLocalPlayerSubsystem::GetStressPercent()
 		ClearStressTimer();
 	}
 	return StressPercent;
+}
+
+void USRStressLocalPlayerSubsystem::PauseStressTimer()
+{
+	if (GetWorld()->GetTimerManager().IsTimerActive(ChangeStressTimerHandler))
+	{
+		GetWorld()->GetTimerManager().PauseTimer(ChangeStressTimerHandler);
+		UE_LOG(LogTemp, Warning, TEXT("Stress Timer Paused"));
+	}
+}
+
+void USRStressLocalPlayerSubsystem::ResumeStressTimer()
+{
+	if (GetWorld()->GetTimerManager().IsTimerPaused(ChangeStressTimerHandler))
+	{
+		GetWorld()->GetTimerManager().UnPauseTimer(ChangeStressTimerHandler);
+		UE_LOG(LogTemp, Warning, TEXT("Stress Timer Resumed"));
+	}
 }
