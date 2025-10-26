@@ -31,9 +31,14 @@ public:
 	
 	UFUNCTION()
 	void HandleWidgetClose();
+	
+	UFUNCTION()
+	void HandleFlow(FGameplayTag Tag);
 protected:
 
 private:
+	FTimerHandle AudioPickupSoundTimer;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> ItemPickUpResultWidgetClass;
 
@@ -47,4 +52,6 @@ private:
 	FDataTableRowHandle CashedCaptionDataRow;
 
 	FSRItemBaseData CashedData;
+
+	class ASRGameFlowManager* GameFlowManager;
 };
