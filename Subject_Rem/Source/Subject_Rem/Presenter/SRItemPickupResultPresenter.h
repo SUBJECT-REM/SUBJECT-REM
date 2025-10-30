@@ -31,9 +31,7 @@ public:
 	
 	UFUNCTION()
 	void HandleWidgetClose();
-	
-	UFUNCTION()
-	void HandleFlow(FGameplayTag Tag);
+
 protected:
 
 private:
@@ -41,6 +39,8 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> ItemPickUpResultWidgetClass;
+
+
 
 	UPROPERTY()
 	USRInventoryComponent* InvenComp;

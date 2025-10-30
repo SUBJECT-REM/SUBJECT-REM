@@ -9,6 +9,9 @@
 #include "Components/GridPanel.h"
 #include "Components/UniformGridPanel.h"
 
+#include "Kismet/GameplayStatics.h"
+
+
 
 void USRClueWidget::NativeConstruct()
 {
@@ -381,6 +384,11 @@ void USRClueWidget::OnClickedDevicePutBackButton()
 {
 	ClueCombineWidget->PutBackDevice();
 	DeactivateCurrentDevice();
+
+	if (GetWorld()->GetTimerManager().IsTimerActive(AudioPickupSoundTimer))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(AudioPickupSoundTimer);
+	}
 }
 
 void USRClueWidget::OnClickedDeviceSlot(USRSlotWidget* ClickedSlot)
@@ -390,18 +398,6 @@ void USRClueWidget::OnClickedDeviceSlot(USRSlotWidget* ClickedSlot)
 	const FName DeviceId = ClickedSlot->GetItemData().Id;
 	if (DeviceId.IsNone()) return;
 
-	//// 이미 이 디바이스가 활성이라면 → 비활성화 토글
-	//if (CurUsingDevicedSlot == ClickedSlot)
-	//{
-	//	DeactivateCurrentDevice(); // 조합칸에 있는 단서 되돌리고 디폴트로
-	//	return;
-	//}
-
-	//// 다른 디바이스가 활성이라면 먼저 정리
-	//if (CurUsingDevicedSlot)
-	//{
-	//	DeactivateCurrentDevice();
-	//}
 	DeactivateCurrentDevice();
 
 	// 새 디바이스 활성화
@@ -415,6 +411,27 @@ void USRClueWidget::OnClickedDeviceSlot(USRSlotWidget* ClickedSlot)
 	CurVaildCombineItemNum = *NumPtr;
 	ClueCombineWidget->SetLayoutByCount(CurVaildCombineItemNum - 1);
 	CurUsingDevicedSlot = ClickedSlot;
+
+	if (CurVaildCombineItemNum - 1 == 2) // audio 
+	{
+		GetWorld()->GetTimerManager().SetTimer(
+		AudioPickupSoundTimer,
+		[this]()
+		{
+		if (UWorld* InWorld = GetWorld())
+		{
+			if (PlayedSound)
+			{
+				UGameplayStatics::PlaySound2D(InWorld, PlayedSound);
+			}
+		}
+		},
+		8.f,   // Rate
+		true,       // bLooping
+		0.f    // FirstDelay (5초 뒤부터 반복 시작)
+			);
+	}
+
 }
 
 UPanelWidget* USRClueWidget::GetCurrentClueCombineGrid()

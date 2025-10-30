@@ -120,4 +120,10 @@ private:
 
 	const int DefaultVaildCombineItemNum = 2;
 	const int DefaultClueCombinePanelIndex = 1;
+
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* PlayedSound;
+
+	FTimerHandle AudioPickupSoundTimer;
 };

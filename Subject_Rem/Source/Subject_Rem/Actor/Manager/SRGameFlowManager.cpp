@@ -234,6 +234,51 @@ void ASRGameFlowManager::RequestShowingCaption(const FName& CaptionRow)
     OnRequestPlayCaptionRow.Broadcast(CaptionRow);
 }
 
+void ASRGameFlowManager::DeactivateActorsForObjectiveTag(const FGameplayTag& CompletedTag)
+{
+    if (!CompletedTag.IsValid()) return;
+
+    AActor* Target = nullptr;
+    if (!DisabledActorByObjectiveTag.RemoveAndCopyValue(CompletedTag, Target) || !IsValid(Target))
+    {
+        return;
+    }
+
+    SetActorEnabledState(Target, /*bEnable=*/false);
+}
+
+void ASRGameFlowManager::SetActorEnabledState(AActor* Actor, bool bEnable)
+{
+    if (!IsValid(Actor)) return;
+
+    //Actor->SetActorHiddenInGame(!bEnable);
+    Actor->SetActorEnableCollision(bEnable);
+
+    // 충돌/중력 등 모든 PrimitiveComponent에 일괄 적용
+    TArray<UPrimitiveComponent*> Prims;
+    Actor->GetComponents<UPrimitiveComponent>(Prims);
+    for (UPrimitiveComponent* Prim : Prims)
+    {
+        if (!Prim) continue;
+        Prim->SetCollisionEnabled(bEnable ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);
+
+        // 중력이 있는 컴포넌트는 함께 제어(있으면)
+       // Prim->SetEnableGravity(bEnable);
+        Prim->SetGenerateOverlapEvents(bEnable);
+    }
+}
+
+void ASRGameFlowManager::OnActorDisableByCaptionStart(const FName& RowName)
+{
+    if (AActor* const* FoundPtr = DisabledActorByCaptionRowStart.Find(RowName))
+    {
+        if (AActor* Target = *FoundPtr)
+        {
+            SetActorEnabledState(Target, /*bEnable=*/false);
+        }
+    }
+}
+
 void ASRGameFlowManager::BeginPlay()
 {
     Super::BeginPlay();
@@ -252,6 +297,9 @@ void ASRGameFlowManager::BeginPlay()
     {
         Caption->CaptionTypewriterCompletedDelgate.AddDynamic(this, &ThisClass::OnCaptionEnded);
         Caption->CaptionTypewriterStartDelgate.AddDynamic(this, &ThisClass::OnActorEnableByCaptionStart);
+
+        Caption->CaptionTypewriterStartDelgate.AddDynamic(this, &ThisClass::OnActorDisableByCaptionStart);
+
     }
 
     StartFlow();
@@ -396,9 +444,11 @@ void ASRGameFlowManager::NotifyObjectiveCompleted(FGameplayTag ObjectiveTag)
 
     HandleParallelObjectiveCompleted(ObjectiveTag);
     ActivateActorsForObjectiveTag(ObjectiveTag);
-   
     //기존 시퀀스 플로우
     if (ObjectiveTag != CurrentObjectiveTag) return;
+
+    DeactivateActorsForObjectiveTag(ObjectiveTag);
+
 
     int32& Count = ObjectiveProgress.FindOrAdd(ObjectiveTag);
     ++Count;

@@ -174,6 +174,11 @@ public:
     TMap<FName, AActor*> EnabledActorByCaptionRowStart;
 
     UPROPERTY(EditAnywhere)
+    TMap<FName, AActor*> DisabledActorByCaptionRowStart;
+
+    UPROPERTY(EditAnywhere, Category = "Flow|Bindings")
+    TMap<FGameplayTag, AActor*> DisabledActorByObjectiveTag;
+    UPROPERTY(EditAnywhere)
     TMap<FGameplayTag, AActor*> EnabledActorByObjectiveTag;
 
     UPROPERTY(EditAnywhere, Category = "Flow|Bindings")
@@ -197,6 +202,9 @@ private:
     UFUNCTION()
     void RequestShowingCaption(const FName& CaptionRow);
 
+    void DeactivateActorsForObjectiveTag(const FGameplayTag& CompletedTag);
+    void SetActorEnabledState(AActor* Actor, bool bEnable);
+
     UFUNCTION()
     void OnCaptionEnded(const FName& RowName);
 
@@ -211,6 +219,9 @@ private:
 
     void HandleParallelObjectiveCompleted(const FGameplayTag& CompletedTag);
 
+    // 자막 타이밍으로 Disable
+    UFUNCTION()
+    void OnActorDisableByCaptionStart(const FName& RowName);
 protected:
     virtual void BeginPlay() override;
 

@@ -98,5 +98,4 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	FVector2D ThreeClueBasedClueMapSize;
 
-
 };

@@ -25,10 +25,7 @@ void USRItemPickupResultPresenter::Init(UActorComponent* InitComponent, UUserWid
 
 	//InvenComp->AddInventoryDataDelegate.AddDynamic(this, &ThisClass::ShowItemPickWidget);
 	InvenComp->ItemPickupDelegate.AddDynamic(this, &ThisClass::ShowItemPickWidget);
-	GameFlowManager = Cast<ASRGameFlowManager>(
-			UGameplayStatics::GetActorOfClass(GetWorld(), ASRGameFlowManager::StaticClass()));
 
-	GameFlowManager->OnFlowCompleteDelegate.AddDynamic(this, &ThisClass::HandleFlow);
 	
 }
 
@@ -103,44 +100,8 @@ void USRItemPickupResultPresenter::HandleWidgetClose()
 	{
 		ChashedCaptionManager->NotifyPickupResultToggle(false); // 닫히는 순간 재생 재개
 	}
-	if (CashedData.PickupResultCloseSfx)
-	{
-		// 페이드 타이밍을 맞추고 싶으면 약간 지연도 OK:
-		// GetWorld()->GetTimerManager().SetTimerForNextTick([this, Data]{
-		//     UGameplayStatics::PlaySound2D(GetWorld(), Data->PickupResultCloseSfx);
-		// });    // 바로 한 번 재생 (원치 않으면 이 줄 삭제)
-		if (CashedData.PickupResultCloseSfx)
-		{
-			UGameplayStatics::PlaySound2D(GetWorld(), CashedData.PickupResultCloseSfx);
-		}
 
-		GetWorld()->GetTimerManager().SetTimer(
-			AudioPickupSoundTimer,
-			[this]()
-			{
-					if (UWorld* InWorld = GetWorld())
-					{
-						if (CashedData.PickupResultCloseSfx)
-						{
-							UGameplayStatics::PlaySound2D(InWorld, CashedData.PickupResultCloseSfx);
-						}
-					}
-			},
-			5.f,   // Rate
-			true,       // bLooping
-			5.f    // FirstDelay (5초 뒤부터 반복 시작)
-		);
-	}
-}
-
-void USRItemPickupResultPresenter::HandleFlow(FGameplayTag Tag)
-{
-	if (Tag == SRGameplayTags::GameFlow_Objectives_CobmineAudio)
-	{
-		GetWorld()->GetTimerManager().ClearTimer(
-		AudioPickupSoundTimer);
-
-	}
+	
 }
 
 
